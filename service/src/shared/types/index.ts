@@ -1,1 +1,1 @@
-export * from "./IApiError";
+export * from "./IApiMessage";

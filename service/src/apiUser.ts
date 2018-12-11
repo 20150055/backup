@@ -1,9 +1,9 @@
 import * as express from "express";
 import * as uuidv4 from "uuid/v4";
-import { IApiError } from "./shared/types";
+import { IApiMessage, IServerResponse, MessageType } from "./shared/types";
 import { User } from "./entity/User";
 import { database } from "./sqliteConnection";
-
+import { sendResponse } from "./ApiResponse";
 
 
 const router = express.Router();
@@ -13,22 +13,22 @@ router.post("/login", async function (request, response) {
         try {
             const user: User = await database.loadUserByUsername(request.body.username);
             if (user.password === database.hash(request.body.password)) {
-                response.status(200).json({ messages: [{ name: "api.success.user.login" }], payload: { token: uuidv4() } });
+                sendResponse(response, 200, { messages: [{ name: "api.success.user.login", type: MessageType.success }], payload: { token: uuidv4() } });
             } else {
-                response.status(400).json({ messages: [{ name: "api.error.user.login.missing-username"}] });
+                sendResponse(response, 400, { messages: [{ name: "api.error.user.login.missing-username", type: MessageType.error }] });
             }
         } catch (error) {
-            response.status(404).json({ messages: [{ name: "api.error.user.login.user-not-found", args: { "username": request.body.username } }] });
+            sendResponse(response, 404, { messages: [{ name: "api.error.user.login.user-not-found", type: MessageType.error, args: { "username": request.body.username } }]});
         }
     } else {
-        let errormessages: IApiError[] = [];
-        if(!request.body.username){
-            errormessages.push({ name: "api.error.user.login.missing-data.username" });
+        let errormessages: IApiMessage[] = [];
+        if (!request.body.username) {
+            errormessages.push({ name: "api.error.user.login.missing-data.username", type: MessageType.error });
         }
-        if(!request.body.password){
-            errormessages.push({ name: "api.error.user.login.missing-data.password" });
+        if (!request.body.password) {
+            errormessages.push({ name: "api.error.user.login.missing-data.password", type: MessageType.error });
         }
-        response.status(400).json({ messages: errormessages });
+        sendResponse(response, 400, { messages: errormessages });
     }
 });
 
@@ -36,33 +36,33 @@ router.post("/register", async function (request, response) {
     if (request.body.firstName && request.body.lastName && request.body.username && request.body.email && request.body.password) {
         try {
             if (await database.loadUserByUsername(request.body.username)) {
-                response.status(400).json({ messages: [{ name: "api.error.user.register.username-already-exists", args: { "username": request.body.username } }] });
+                sendResponse(response, 400, { messages: [{ name: "api.error.user.register.username-already-exists", type: MessageType.error, args: { "username": request.body.username } }]});
             } else {
                 database.createUser(request.body.firstName, request.body.lastName, request.body.username, request.body.email, request.body.password);
-                response.status(200).json({ messages: [{ name: "api.success.user.register" }] });
+                sendResponse(response, 200, { messages: [{ name: "api.success.user.register", type: MessageType.success }]});
             }
         } catch (error) {
             let errorstring: string = error.toString();
-            response.status(400).json({ messages: [{ name: "api.error.user.register.other", args: { "error": errorstring } }] });
+            sendResponse(response, 400, { messages: [{ name: "api.error.user.register.other", type: MessageType.error, args: { "error": errorstring } }]});
         }
     } else {
-        let errormessages: IApiError[] = [];
-        if(!request.body.firstName){
-            errormessages.push({ name: "api.error.user.missing-data.firstName" });
+        let errormessages: IApiMessage[] = [];
+        if (!request.body.firstName) {
+            errormessages.push({ name: "api.error.user.missing-data.firstName", type: MessageType.error });
         }
-        if(!request.body.lastName){
-            errormessages.push({ name: "api.error.user.missing-data.lastName" });
+        if (!request.body.lastName) {
+            errormessages.push({ name: "api.error.user.missing-data.lastName", type: MessageType.error });
         }
-        if(!request.body.username){
-            errormessages.push({ name: "api.error.user.missing-data.username" });
+        if (!request.body.username) {
+            errormessages.push({ name: "api.error.user.missing-data.username", type: MessageType.error });
         }
-        if(!request.body.email){
-            errormessages.push({ name: "api.error.user.missing-data.email" });
+        if (!request.body.email) {
+            errormessages.push({ name: "api.error.user.missing-data.email", type: MessageType.error });
         }
-        if(!request.body.password){
-            errormessages.push({ name: "api.error.user.missing-data.password" });
+        if (!request.body.password) {
+            errormessages.push({ name: "api.error.user.missing-data.password", type: MessageType.error });
         }
-        response.status(400).json({ messages: errormessages });
+        sendResponse(response, 400, { messages: errormessages });
     }
 });
 
