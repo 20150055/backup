@@ -77,11 +77,6 @@ export class Database {
         const user: User = await this.connection.manager.getRepository(User).findOne({username: searchUsername});
         return user;
     }
-
-    async loadUserByEmail(searchEmail: string){
-        const user: User = await this.connection.manager.getRepository(User).findOne({username: searchEmail});
-        return user;
-    }
     
     hash(word: string) :string {
         const hash = crypto.createHmac("sha512","").update(word).digest("hex");
