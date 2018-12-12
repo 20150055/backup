@@ -78,9 +78,9 @@ export class Database {
         return user;
     }
 
-    async loadUserByEmail(searchEmail: string){
-        const user: User = await this.connection.manager.getRepository(User).findOne({username: searchEmail});
-        return user;
+    async countUsers(){
+        const count: number = await this.connection.manager.getRepository(User).count();
+        return count;
     }
     
     hash(word: string) :string {
