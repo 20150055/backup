@@ -9,26 +9,49 @@ import "./scheduling";
 
 const app = express();
 
+// allow every origin to access the api
+app.use((req, res, next) => {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header(
+        "Access-Control-Allow-Headers",
+        "Origin, X-Requested-With, Content-Type, Accept"
+    );
+    next();
+});
+
 app.use(express.json());
 
 app.use("/api/user", userHandler);
 
 // start server (check which directory to use)
 let dir;
-if(fs.existsSync("./gui")){
+if (fs.existsSync("./gui")) {
     dir = "./gui";
-}else{
+} else {
     dir = path.join(path.dirname(path.dirname(__dirname)), "gui", "dist");
 }
-app.use("/", express.static(dir));
+app.use("/", express.static(path.resolve(dir))); // resolve transforms relative paths to absolute paths
+
+app.use("/api", (req, res, next) => {
+    if(["GET", "POST", "PUT", "PATCH", "DELETE"].indexOf(req.method) !== -1)
+        res.status(404).json({
+            messages: [
+                {
+                    name: "api.error.endpoint-not-found"
+                }
+            ]
+        }); // send a 404 for every /api route instead of serving a html page
+    else
+        next()
+});  
 
 // If the /handler could not be found ... redirect to index.html
 app.use("*", (req, res) => {
-    res.sendFile(dir + "/index.html");
+    res.sendFile(path.resolve(dir + "/index.html"));
 });
 
 // serverstart on port XXXX
-const port = 8008;
+const port = 8380;
 app.listen(port, function() {
   console.log(`API is listening on port ${port}`);
 });
