@@ -1,17 +1,17 @@
-POST http://localhost:8008/api/user/login HTTP/1.1
+POST http://localhost:8380/api/user/login HTTP/1.1
 Accept: application/json
 Content-Type: application/json
 
 { "username": "maxmuster", "password": "maxMuster1234!" }
 
 ###
-POST http://localhost:8008/api/user/register HTTP/1.1
+POST http://localhost:8380/api/user/register HTTP/1.1
 Accept: application/json
 Content-Type: application/json
 
 { "firstName": "Max", "lastName": "Mustermann", "username": "maxmuster", "email": "max.mustermann@test.com", "password": "maxMuster1234!"}
 
 ###
-GET http://localhost:8008/api/user/anyExists HTTP/1.1
+GET http://localhost:8380/api/user/anyExists HTTP/1.1
 Accept: application/json
 Content-Type: application/json

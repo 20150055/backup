@@ -48,19 +48,19 @@ router.post("/register", async function (request, response) {
     } else {
         let errormessages: IApiMessage[] = [];
         if (!request.body.firstName) {
-            errormessages.push({ name: "api.error.user.missing-data.firstName", type: MessageType.error });
+            errormessages.push({ name: "api.error.user.register.missing-data.firstName", type: MessageType.error });
         }
         if (!request.body.lastName) {
-            errormessages.push({ name: "api.error.user.missing-data.lastName", type: MessageType.error });
+            errormessages.push({ name: "api.error.user.register.missing-data.lastName", type: MessageType.error });
         }
         if (!request.body.username) {
-            errormessages.push({ name: "api.error.user.missing-data.username", type: MessageType.error });
+            errormessages.push({ name: "api.error.user.register.missing-data.username", type: MessageType.error });
         }
         if (!request.body.email) {
-            errormessages.push({ name: "api.error.user.missing-data.email", type: MessageType.error });
+            errormessages.push({ name: "api.error.user.register.missing-data.email", type: MessageType.error });
         }
         if (!request.body.password) {
-            errormessages.push({ name: "api.error.user.missing-data.password", type: MessageType.error });
+            errormessages.push({ name: "api.error.user.register.missing-data.password", type: MessageType.error });
         }
         sendResponse(response, 400, { messages: errormessages });
     }
