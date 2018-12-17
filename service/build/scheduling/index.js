@@ -1,6 +1,4 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-require("../index.js");
+//import "../index.js";
 /*  ZUM REPOSITORY ERSTELLEN:
     -->LOKAL
     restic init --repo /srv/restic-repo
