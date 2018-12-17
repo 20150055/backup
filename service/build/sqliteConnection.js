@@ -19,13 +19,16 @@ typeorm_1.createConnection({
     "synchronize": true,
     "logging": false,
     "entities": [
-        "src/entity/**/*.ts", __dirname + "/entity/**/*.ts"
+        "src/entity/**/*.ts", __dirname + "/entity/**/*.ts",
+        "src/entity/**/*.js", __dirname + "/entity/**/*.js",
     ],
     "migrations": [
-        "src/migration/**/*.ts", __dirname + "/migration/**/*.ts"
+        "src/migration/**/*.ts", __dirname + "/migration/**/*.ts",
+        "src/migration/**/*.js", __dirname + "/migration/**/*.js",
     ],
     "subscribers": [
-        "src/subscriber/**/*.ts", __dirname + "/subscriber/**/*.ts"
+        "src/subscriber/**/*.ts", __dirname + "/subscriber/**/*.ts",
+        "src/subscriber/**/*.js", __dirname + "/subscriber/**/*.js",
     ],
     "cli": {
         "entitiesDir": "src/entity",
