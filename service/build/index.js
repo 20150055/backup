@@ -26,14 +26,11 @@ app.use(express.json());
 app.use("/api/user", apiUser_1.default);
 // start server (check which directory to use)
 let dir;
-if (fs.existsSync(path.join(__dirname, "gui"))) {
-    dir = path.join(__dirname, "gui"); // check if gui is in src folder
-}
-else if (fs.existsSync(path.join(path.dirname(__dirname), "gui"))) {
-    dir = path.join(path.dirname(__dirname), "gui"); // check if gui is in service folder
+if (fs.existsSync("./gui")) {
+    dir = "./gui";
 }
 else {
-    dir = path.join(path.dirname(path.dirname(__dirname)), "gui", "dist"); // use gui folder of project directory
+    dir = path.join(path.dirname(path.dirname(__dirname)), "gui", "dist");
 }
 app.use("/", express.static(path.resolve(dir))); // resolve transforms relative paths to absolute paths
 app.use("/api", (req, res, next) => {

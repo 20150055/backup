@@ -13,29 +13,7 @@ const Database_1 = require("./Database");
 let database = null;
 exports.database = database;
 let connection = null;
-typeorm_1.createConnection({
-    "type": "sqlite",
-    "database": "../Repository.db",
-    "synchronize": true,
-    "logging": false,
-    "entities": [
-        "src/entity/**/*.ts", __dirname + "/entity/**/*.ts",
-        "src/entity/**/*.js", __dirname + "/entity/**/*.js",
-    ],
-    "migrations": [
-        "src/migration/**/*.ts", __dirname + "/migration/**/*.ts",
-        "src/migration/**/*.js", __dirname + "/migration/**/*.js",
-    ],
-    "subscribers": [
-        "src/subscriber/**/*.ts", __dirname + "/subscriber/**/*.ts",
-        "src/subscriber/**/*.js", __dirname + "/subscriber/**/*.js",
-    ],
-    "cli": {
-        "entitiesDir": "src/entity",
-        "migrationsDir": "src/migration",
-        "subscribersDir": "src/subscriber"
-    }
-}).then((conn) => __awaiter(this, void 0, void 0, function* () {
+typeorm_1.createConnection().then((conn) => __awaiter(this, void 0, void 0, function* () {
     connection = conn;
     exports.database = database = new Database_1.Database(connection);
 })).catch(error => console.log(error));
