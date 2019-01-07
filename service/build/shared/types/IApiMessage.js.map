@@ -1,1 +1,1 @@
-{"version":3,"file":"IApiMessage.js","sourceRoot":"","sources":["../../../src/shared/types/IApiMessage.ts"],"names":[],"mappings":";;AAMA,IAAY,WAAoF;AAAhG,WAAY,WAAW;IAAC,4BAAa,CAAA;IAAC,kCAAmB,CAAA;IAAE,8BAAe,CAAA;IAAE,kCAAmB,CAAA;AAAA,CAAC,EAApF,WAAW,GAAX,mBAAW,KAAX,mBAAW,QAAyE"}
+{"version":3,"file":"IApiMessage.js","sourceRoot":"","sources":["../../../src/shared/types/IApiMessage.ts"],"names":[],"mappings":";;AAQA,IAAY,WAAoF;AAAhG,WAAY,WAAW;IAAC,4BAAa,CAAA;IAAC,kCAAmB,CAAA;IAAE,8BAAe,CAAA;IAAE,kCAAmB,CAAA;AAAA,CAAC,EAApF,WAAW,GAAX,mBAAW,KAAX,mBAAW,QAAyE"}

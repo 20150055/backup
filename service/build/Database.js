@@ -16,35 +16,36 @@ const Local_SFTP_BackupRepository_1 = require("./entity/Local_SFTP_BackupReposit
 const S3_Amazon_BackupRepository_1 = require("./entity/S3_Amazon_BackupRepository");
 class Database {
     constructor(conn) { this.connection = conn; }
-    create_Local_SFTP_Repository(repoType, repoName, repoPassword, repoLocation) {
+    create_Local_SFTP_BackupRepository(repoType, repoName, repoPassword, autoUnlock, repoLocation) {
         return __awaiter(this, void 0, void 0, function* () {
             const repository = new Local_SFTP_BackupRepository_1.Local_SFTP_BackupRepository();
             repository.repoType = repoType;
             repository.repoName = repoName;
             repository.repoPassword = this.hash(repoPassword);
+            repository.autoUnlock = autoUnlock;
             repository.repoLocation = repoLocation;
             yield this.connection.manager.save(repository);
         });
     }
-    create_S3_Amazon_Repository(repoType, repoName, repoPassword, repoLocation, accessKey, secretAccessKey) {
+    create_Amazon_S3_BackupRepository(repoType, repoName, repoPassword, autoUnlock, repoLocation, accessKey, secretAccessKey) {
         return __awaiter(this, void 0, void 0, function* () {
             const repository = new S3_Amazon_BackupRepository_1.S3_Amazon_BackupRepository();
             repository.repoType = repoType;
             repository.repoName = repoName;
             repository.repoPassword = this.hash(repoPassword);
+            repository.autoUnlock = autoUnlock;
             repository.repoLocation = repoLocation;
             repository.accessKey = accessKey;
             repository.secretAccessKey = secretAccessKey;
             yield this.connection.manager.save(repository);
         });
     }
-    createBackupjob(repoId, name, maxBackups, autoUnlock, emailNotification, backupLocations) {
+    createBackupjob(repoId, name, maxBackups, emailNotification, backupLocations) {
         return __awaiter(this, void 0, void 0, function* () {
             const backupJob = new BackupJob_1.BackupJob();
             backupJob.repoId = repoId;
             backupJob.name = name;
             backupJob.maxBackups = maxBackups;
-            backupJob.autoUnlock = autoUnlock;
             backupJob.emailNotification = emailNotification;
             backupJob.backupLocations = backupLocations;
             yield this.connection.manager.save(backupJob);
@@ -81,6 +82,43 @@ class Database {
         return __awaiter(this, void 0, void 0, function* () {
             const user = yield this.connection.manager.getRepository(User_1.User).findOne({ username: searchUsername });
             return user;
+        });
+    }
+    loadBackupJobByRepoID(reopID) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const job = yield this.connection.manager.getRepository(BackupJob_1.BackupJob).findOne({ repoId: reopID });
+            return job;
+        });
+    }
+    load_S3_Amazon_BackupRepository(repoSearch) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (typeof repoSearch === "string") {
+                return yield this.connection.manager.getRepository(S3_Amazon_BackupRepository_1.S3_Amazon_BackupRepository).findOne({ repoName: repoSearch });
+            }
+            if (typeof repoSearch === "number") {
+                return yield this.connection.manager.getRepository(S3_Amazon_BackupRepository_1.S3_Amazon_BackupRepository).findOne({ id: repoSearch });
+            }
+        });
+    }
+    load_Local_SFTP_BackupRepository(repoSearch) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (typeof repoSearch === "string") {
+                return yield this.connection.manager.getRepository(Local_SFTP_BackupRepository_1.Local_SFTP_BackupRepository).findOne({ repoName: repoSearch });
+            }
+            if (typeof repoSearch === "number") {
+                return yield this.connection.manager.getRepository(Local_SFTP_BackupRepository_1.Local_SFTP_BackupRepository).findOne({ id: repoSearch });
+            }
+        });
+    }
+    backupRepositoryExists(repoSearch) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (yield this.load_Local_SFTP_BackupRepository(repoSearch)) {
+                return true;
+            }
+            if (yield this.load_S3_Amazon_BackupRepository(repoSearch)) {
+                return true;
+            }
+            return false;
         });
     }
     countUsers() {

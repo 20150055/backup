@@ -10,34 +10,14 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const typeorm_1 = require("typeorm");
-let BackupJob = class BackupJob {
+let UserSettings = class UserSettings {
 };
 __decorate([
     typeorm_1.PrimaryGeneratedColumn(),
     __metadata("design:type", Number)
-], BackupJob.prototype, "id", void 0);
-__decorate([
-    typeorm_1.Column(),
-    __metadata("design:type", Number)
-], BackupJob.prototype, "repoId", void 0);
-__decorate([
-    typeorm_1.Column({ unique: true }),
-    __metadata("design:type", String)
-], BackupJob.prototype, "name", void 0);
-__decorate([
-    typeorm_1.Column(),
-    __metadata("design:type", Number)
-], BackupJob.prototype, "maxBackups", void 0);
-__decorate([
-    typeorm_1.Column({ length: 24 }),
-    __metadata("design:type", String)
-], BackupJob.prototype, "emailNotification", void 0);
-__decorate([
-    typeorm_1.Column(),
-    __metadata("design:type", String)
-], BackupJob.prototype, "backupLocations", void 0);
-BackupJob = __decorate([
+], UserSettings.prototype, "id", void 0);
+UserSettings = __decorate([
     typeorm_1.Entity()
-], BackupJob);
-exports.BackupJob = BackupJob;
-//# sourceMappingURL=BackupJob.js.map
+], UserSettings);
+exports.UserSettings = UserSettings;
+//# sourceMappingURL=UserSettings.js.map

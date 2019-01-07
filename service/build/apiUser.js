@@ -80,6 +80,119 @@ router.post("/register", function (request, response) {
         }
     });
 });
+router.post("/createBackupJob", function (request, response) {
+    return __awaiter(this, void 0, void 0, function* () {
+        if (request.body.repoId && request.body.name && request.body.maxBackups && request.body.emailNotification && request.body.backupLocations) {
+            try {
+                let email = request.body.emailNotification;
+                email = email.toUpperCase();
+                if (email === "ALWAYS" || email === "ONLY IN CASE OF AN ERROR" || email === "NEVER") {
+                    if (!(yield sqliteConnection_1.database.loadBackupJobByRepoID(request.body.repoId))) {
+                        if (yield sqliteConnection_1.database.backupRepositoryExists(request.body.repoId)) {
+                            sqliteConnection_1.database.createBackupjob(request.body.repoId, request.body.name, request.body.maxBackups, request.body.emailNotification, request.body.backupLocations);
+                            ApiResponse_1.sendResponse(response, 200, { messages: [{ name: "api.success.backupjob.create", type: types_1.MessageType.success, args: { "repoid": request.body.repoId, "name": request.body.name } }] });
+                        }
+                        else {
+                            ApiResponse_1.sendResponse(response, 400, { messages: [{ name: "api.error.backupjob.create.repository-not-found", type: types_1.MessageType.error, args: { "repoID": request.body.repoId } }] });
+                        }
+                    }
+                    else {
+                        ApiResponse_1.sendResponse(response, 400, { messages: [{ name: "api.error.backupjob.create.job-already-existing", type: types_1.MessageType.error },
+                                { name: "api.info.backupjob.name.not-case-sensitive", type: types_1.MessageType.info }] });
+                    }
+                }
+                else {
+                    ApiResponse_1.sendResponse(response, 400, { messages: [{ name: "api.error.backupjob.create.invalid-emailnotification", type: types_1.MessageType.error, args: { "emailNotification": email } }] });
+                }
+            }
+            catch (error) {
+                let errorstring = error.toString();
+                ApiResponse_1.sendResponse(response, 400, { messages: [{ name: "api.error.backupjob.create.other", type: types_1.MessageType.error, args: { "error": errorstring } }] });
+            }
+        }
+        else {
+            let errormessages = [];
+            if (!request.body.repoId) {
+                errormessages.push({ name: "api.error.backupjob.create.missing-data.repoId", type: types_1.MessageType.error });
+            }
+            if (!request.body.name) {
+                errormessages.push({ name: "api.error.backupjob.create.missing-data.name", type: types_1.MessageType.error });
+            }
+            if (!request.body.maxBackups) {
+                errormessages.push({ name: "api.error.backupjob.create.missing-data.maxBackups", type: types_1.MessageType.error });
+            }
+            if (!request.body.emailNotification) {
+                errormessages.push({ name: "api.error.backupjob.create.missing-data.emailNotification", type: types_1.MessageType.error });
+            }
+            if (!request.body.backupLocations) {
+                errormessages.push({ name: "api.error.backupjob.create.missing-data.backupLocations", type: types_1.MessageType.error });
+            }
+            ApiResponse_1.sendResponse(response, 400, { messages: errormessages });
+        }
+    });
+});
+router.post("/createBackupRepository", function (request, response) {
+    return __awaiter(this, void 0, void 0, function* () {
+        if (request.body.repoType && request.body.repoName && request.body.repoPassword && request.body.autoUnlock && request.body.repoLocation) {
+            try {
+                if (!(yield sqliteConnection_1.database.backupRepositoryExists(request.body.repoName))) {
+                    let repoType = request.body.repoType;
+                    repoType = repoType.toUpperCase();
+                    if (repoType === "AMAZON S3") {
+                        if (request.body.accessKey && request.body.secretAccessKey) {
+                            sqliteConnection_1.database.create_Amazon_S3_BackupRepository(repoType, request.body.repoName, request.body.repoPassword, request.body.autoUnlock, request.body.repoLocation, request.body.accessKey, request.body.secretAccessKey);
+                            ApiResponse_1.sendResponse(response, 200, { messages: [{ name: "api.success.backuprepository.create", type: types_1.MessageType.success, args: { "name": request.body.repoName, "type": repoType } }] });
+                        }
+                        else {
+                            let errormessages = [];
+                            if (!request.body.accessKey) {
+                                errormessages.push({ name: "api.error.backuprepository.create.missing-data.accessKey", type: types_1.MessageType.error });
+                            }
+                            if (!request.body.secretAccessKey) {
+                                errormessages.push({ name: "api.error.backuprepository.create.missing-data.secretAccessKey", type: types_1.MessageType.error });
+                            }
+                            ApiResponse_1.sendResponse(response, 400, { messages: errormessages });
+                        }
+                    }
+                    else if (repoType === "LOCAL" || repoType === "SMTP") {
+                        sqliteConnection_1.database.create_Local_SFTP_BackupRepository(repoType, request.body.repoName, request.body.repoPassword, request.body.autoUnlock, request.body.repoLocation);
+                        ApiResponse_1.sendResponse(response, 200, { messages: [{ name: "api.success.backuprepository.create", type: types_1.MessageType.success, args: { "name": request.body.repoName, "type": repoType } }] });
+                    }
+                    else {
+                        ApiResponse_1.sendResponse(response, 400, { messages: [{ name: "api.error.backuprepository.create.unknown-repo-type", type: types_1.MessageType.error, args: { "repoType": repoType } }] });
+                    }
+                }
+                else {
+                    ApiResponse_1.sendResponse(response, 400, { messages: [{ name: "api.error.backuprepository.create.repo-already-existing", type: types_1.MessageType.error },
+                            { name: "api.info.backuprepository.name.not-case-sensitive", type: types_1.MessageType.info }] });
+                }
+            }
+            catch (error) {
+                let errorstring = error.toString();
+                ApiResponse_1.sendResponse(response, 400, { messages: [{ name: "api.error.backuprepository.create.other", type: types_1.MessageType.error, args: { "error": errorstring } }] });
+            }
+        }
+        else {
+            let errormessages = [];
+            if (!request.body.repoType) {
+                errormessages.push({ name: "api.error.backuprepository.create.missing-data.repoType", type: types_1.MessageType.error });
+            }
+            if (!request.body.repoName) {
+                errormessages.push({ name: "api.error.backuprepository.create.missing-data.repoName", type: types_1.MessageType.error });
+            }
+            if (!request.body.repoPassword) {
+                errormessages.push({ name: "api.error.backuprepository.create.missing-data.repoPassword", type: types_1.MessageType.error });
+            }
+            if (!request.body.autoUnlock) {
+                errormessages.push({ name: "api.error.backuprepository.create.missing-data.autoUnlock", type: types_1.MessageType.error });
+            }
+            if (!request.body.repoLocation) {
+                errormessages.push({ name: "api.error.backuprepository.create.missing-data.repoLocation", type: types_1.MessageType.error });
+            }
+            ApiResponse_1.sendResponse(response, 400, { messages: errormessages });
+        }
+    });
+});
 router.get("/anyExists", function (request, response) {
     return __awaiter(this, void 0, void 0, function* () {
         try {

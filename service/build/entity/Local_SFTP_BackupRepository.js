@@ -17,7 +17,7 @@ __decorate([
     __metadata("design:type", Number)
 ], Local_SFTP_BackupRepository.prototype, "id", void 0);
 __decorate([
-    typeorm_1.Column(),
+    typeorm_1.Column({ length: 9 }),
     __metadata("design:type", String)
 ], Local_SFTP_BackupRepository.prototype, "repoType", void 0);
 __decorate([
@@ -28,6 +28,10 @@ __decorate([
     typeorm_1.Column({ length: 128 }),
     __metadata("design:type", String)
 ], Local_SFTP_BackupRepository.prototype, "repoPassword", void 0);
+__decorate([
+    typeorm_1.Column(),
+    __metadata("design:type", Number)
+], Local_SFTP_BackupRepository.prototype, "autoUnlock", void 0);
 __decorate([
     typeorm_1.Column(),
     __metadata("design:type", String)
