@@ -10,16 +10,14 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const typeorm_1 = require("typeorm");
+const LocalAmazonS3BackupRepository_1 = require("./LocalAmazonS3BackupRepository");
+const Log_1 = require("./Log");
 let BackupJob = class BackupJob {
 };
 __decorate([
     typeorm_1.PrimaryGeneratedColumn(),
     __metadata("design:type", Number)
 ], BackupJob.prototype, "id", void 0);
-__decorate([
-    typeorm_1.Column(),
-    __metadata("design:type", Number)
-], BackupJob.prototype, "repoId", void 0);
 __decorate([
     typeorm_1.Column({ unique: true }),
     __metadata("design:type", String)
@@ -33,9 +31,17 @@ __decorate([
     __metadata("design:type", String)
 ], BackupJob.prototype, "emailNotification", void 0);
 __decorate([
-    typeorm_1.Column(),
+    typeorm_1.Column({ nullable: true }),
     __metadata("design:type", String)
 ], BackupJob.prototype, "backupLocations", void 0);
+__decorate([
+    typeorm_1.ManyToOne(type => LocalAmazonS3BackupRepository_1.LocalAmazonS3BackupRepository, repo => repo.id, { nullable: false }),
+    __metadata("design:type", Number)
+], BackupJob.prototype, "repo", void 0);
+__decorate([
+    typeorm_1.OneToMany(type => Log_1.Log, log => log.id),
+    __metadata("design:type", Array)
+], BackupJob.prototype, "log", void 0);
 BackupJob = __decorate([
     typeorm_1.Entity()
 ], BackupJob);

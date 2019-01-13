@@ -12,13 +12,15 @@ const crypto = require("crypto");
 const User_1 = require("./entity/User");
 const BackupJob_1 = require("./entity/BackupJob");
 const ScheduledBackup_1 = require("./entity/ScheduledBackup");
-const Local_SFTP_BackupRepository_1 = require("./entity/Local_SFTP_BackupRepository");
-const S3_Amazon_BackupRepository_1 = require("./entity/S3_Amazon_BackupRepository");
+const LocalAmazonS3BackupRepository_1 = require("./entity/LocalAmazonS3BackupRepository");
+const UserSettings_1 = require("./entity/UserSettings");
+const GlobalSettings_1 = require("./entity/GlobalSettings");
+const Log_1 = require("./entity/Log");
 class Database {
     constructor(conn) { this.connection = conn; }
-    create_Local_SFTP_BackupRepository(repoType, repoName, repoPassword, autoUnlock, repoLocation) {
+    createLocalBackupRepository(repoType, repoName, repoPassword, autoUnlock, repoLocation) {
         return __awaiter(this, void 0, void 0, function* () {
-            const repository = new Local_SFTP_BackupRepository_1.Local_SFTP_BackupRepository();
+            const repository = new LocalAmazonS3BackupRepository_1.LocalAmazonS3BackupRepository();
             repository.repoType = repoType;
             repository.repoName = repoName;
             repository.repoPassword = this.hash(repoPassword);
@@ -27,9 +29,9 @@ class Database {
             yield this.connection.manager.save(repository);
         });
     }
-    create_Amazon_S3_BackupRepository(repoType, repoName, repoPassword, autoUnlock, repoLocation, accessKey, secretAccessKey) {
+    createAmazonS3BackupRepository(repoType, repoName, repoPassword, autoUnlock, repoLocation, accessKey, secretAccessKey) {
         return __awaiter(this, void 0, void 0, function* () {
-            const repository = new S3_Amazon_BackupRepository_1.S3_Amazon_BackupRepository();
+            const repository = new LocalAmazonS3BackupRepository_1.LocalAmazonS3BackupRepository();
             repository.repoType = repoType;
             repository.repoName = repoName;
             repository.repoPassword = this.hash(repoPassword);
@@ -43,7 +45,7 @@ class Database {
     createBackupjob(repoId, name, maxBackups, emailNotification, backupLocations) {
         return __awaiter(this, void 0, void 0, function* () {
             const backupJob = new BackupJob_1.BackupJob();
-            backupJob.repoId = repoId;
+            backupJob.repo = repoId;
             backupJob.name = name;
             backupJob.maxBackups = maxBackups;
             backupJob.emailNotification = emailNotification;
@@ -78,45 +80,86 @@ class Database {
             yield this.connection.manager.save(user);
         });
     }
+    createUserSetting(userId, enableRegister, automaticUpdates, updateCheckInterval, sendEmails, reportLanguage, smtpHostname, smtpPort, smtpUsername, smtpPassword, smtpFrom, smtpTo, language, showSnackbar, themePrimary, themeSecondary, themeAccent, darktheme) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const userSettings = new UserSettings_1.UserSettings();
+            userSettings.user = userId;
+            userSettings.enableRegister = enableRegister;
+            userSettings.automaticUpdates = automaticUpdates;
+            userSettings.updateCheckInterval = updateCheckInterval;
+            userSettings.sendEmails = sendEmails;
+            userSettings.reportLanguage = reportLanguage;
+            userSettings.smtpHostname = smtpHostname;
+            userSettings.smtpPort = smtpPort;
+            userSettings.smtpUsername = smtpUsername;
+            userSettings.smtpPassword = smtpPassword;
+            userSettings.smtpFrom = smtpFrom;
+            userSettings.smtpTo = smtpTo;
+            userSettings.language = language;
+            userSettings.showSnackbar = showSnackbar;
+            userSettings.themePrimary = themePrimary;
+            userSettings.themeSecondary = themeSecondary;
+            userSettings.themeAccent = themeAccent;
+            userSettings.darktheme = darktheme;
+            yield this.connection.manager.save(userSettings);
+        });
+    }
+    createGlobalSettings(port) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const globalSettings = new GlobalSettings_1.GlobalSettings();
+            globalSettings.port = port;
+            yield this.connection.manager.save(globalSettings);
+        });
+    }
+    createLog(status, start, end, output, backupjobID, repositoryID) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const log = new Log_1.Log();
+            log.status = status;
+            log.start = start;
+            log.end = end;
+            log.output = output;
+            log.backupjob = backupjobID;
+            log.repository = repositoryID;
+            yield this.connection.manager.save(log);
+        });
+    }
     loadUserByUsername(searchUsername) {
         return __awaiter(this, void 0, void 0, function* () {
             const user = yield this.connection.manager.getRepository(User_1.User).findOne({ username: searchUsername });
             return user;
         });
     }
-    loadBackupJobByRepoID(reopID) {
+    loadUserByEmail(email) {
         return __awaiter(this, void 0, void 0, function* () {
-            const job = yield this.connection.manager.getRepository(BackupJob_1.BackupJob).findOne({ repoId: reopID });
+            const user = yield this.connection.manager.getRepository(User_1.User).findOne({ email: email });
+            return user;
+        });
+    }
+    loadUserById(id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const user = yield this.connection.manager.getRepository(User_1.User).findOne({ id: id });
+            return user;
+        });
+    }
+    loadBackupJobByName(name) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const job = yield this.connection.manager.getRepository(BackupJob_1.BackupJob).findOne({ name: name });
             return job;
         });
     }
-    load_S3_Amazon_BackupRepository(repoSearch) {
+    loadUserSettingsByUserId(userId) {
         return __awaiter(this, void 0, void 0, function* () {
-            if (typeof repoSearch === "string") {
-                return yield this.connection.manager.getRepository(S3_Amazon_BackupRepository_1.S3_Amazon_BackupRepository).findOne({ repoName: repoSearch });
-            }
-            if (typeof repoSearch === "number") {
-                return yield this.connection.manager.getRepository(S3_Amazon_BackupRepository_1.S3_Amazon_BackupRepository).findOne({ id: repoSearch });
-            }
+            const usersetting = yield this.connection.manager.getRepository(UserSettings_1.UserSettings).findOne({ user: userId });
+            return usersetting;
         });
     }
-    load_Local_SFTP_BackupRepository(repoSearch) {
+    loadBackupRepository(repoSearch) {
         return __awaiter(this, void 0, void 0, function* () {
             if (typeof repoSearch === "string") {
-                return yield this.connection.manager.getRepository(Local_SFTP_BackupRepository_1.Local_SFTP_BackupRepository).findOne({ repoName: repoSearch });
+                return yield this.connection.manager.getRepository(LocalAmazonS3BackupRepository_1.LocalAmazonS3BackupRepository).findOne({ repoName: repoSearch });
             }
             if (typeof repoSearch === "number") {
-                return yield this.connection.manager.getRepository(Local_SFTP_BackupRepository_1.Local_SFTP_BackupRepository).findOne({ id: repoSearch });
-            }
-        });
-    }
-    backupRepositoryExists(repoSearch) {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (yield this.load_Local_SFTP_BackupRepository(repoSearch)) {
-                return true;
-            }
-            if (yield this.load_S3_Amazon_BackupRepository(repoSearch)) {
-                return true;
+                return yield this.connection.manager.getRepository(LocalAmazonS3BackupRepository_1.LocalAmazonS3BackupRepository).findOne({ id: repoSearch });
             }
             return false;
         });

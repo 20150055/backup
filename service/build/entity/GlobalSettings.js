@@ -10,19 +10,18 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const typeorm_1 = require("typeorm");
-const Local_SFTP_BackupRepository_1 = require("./Local_SFTP_BackupRepository");
-let S3_Amazon_BackupRepository = class S3_Amazon_BackupRepository extends Local_SFTP_BackupRepository_1.Local_SFTP_BackupRepository {
+let GlobalSettings = class GlobalSettings {
 };
 __decorate([
-    typeorm_1.Column(),
-    __metadata("design:type", String)
-], S3_Amazon_BackupRepository.prototype, "accessKey", void 0);
+    typeorm_1.PrimaryGeneratedColumn(),
+    __metadata("design:type", Number)
+], GlobalSettings.prototype, "id", void 0);
 __decorate([
-    typeorm_1.Column(),
-    __metadata("design:type", String)
-], S3_Amazon_BackupRepository.prototype, "secretAccessKey", void 0);
-S3_Amazon_BackupRepository = __decorate([
+    typeorm_1.Column({ default: 8380 }),
+    __metadata("design:type", Number)
+], GlobalSettings.prototype, "port", void 0);
+GlobalSettings = __decorate([
     typeorm_1.Entity()
-], S3_Amazon_BackupRepository);
-exports.S3_Amazon_BackupRepository = S3_Amazon_BackupRepository;
-//# sourceMappingURL=S3_Amazon_BackupRepository.js.map
+], GlobalSettings);
+exports.GlobalSettings = GlobalSettings;
+//# sourceMappingURL=GlobalSettings.js.map

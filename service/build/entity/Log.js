@@ -10,34 +10,40 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const typeorm_1 = require("typeorm");
-let Local_SFTP_BackupRepository = class Local_SFTP_BackupRepository {
+const LocalAmazonS3BackupRepository_1 = require("./LocalAmazonS3BackupRepository");
+const BackupJob_1 = require("./BackupJob");
+let Log = class Log {
 };
 __decorate([
     typeorm_1.PrimaryGeneratedColumn(),
     __metadata("design:type", Number)
-], Local_SFTP_BackupRepository.prototype, "id", void 0);
-__decorate([
-    typeorm_1.Column({ length: 9 }),
-    __metadata("design:type", String)
-], Local_SFTP_BackupRepository.prototype, "repoType", void 0);
-__decorate([
-    typeorm_1.Column({ length: 50, unique: true }),
-    __metadata("design:type", String)
-], Local_SFTP_BackupRepository.prototype, "repoName", void 0);
-__decorate([
-    typeorm_1.Column({ length: 128 }),
-    __metadata("design:type", String)
-], Local_SFTP_BackupRepository.prototype, "repoPassword", void 0);
+], Log.prototype, "id", void 0);
 __decorate([
     typeorm_1.Column(),
+    __metadata("design:type", String)
+], Log.prototype, "status", void 0);
+__decorate([
+    typeorm_1.Column(),
+    __metadata("design:type", String)
+], Log.prototype, "start", void 0);
+__decorate([
+    typeorm_1.Column(),
+    __metadata("design:type", String)
+], Log.prototype, "end", void 0);
+__decorate([
+    typeorm_1.Column(),
+    __metadata("design:type", String)
+], Log.prototype, "output", void 0);
+__decorate([
+    typeorm_1.ManyToOne(type => BackupJob_1.BackupJob, backupjob => backupjob.id, { nullable: false }),
     __metadata("design:type", Number)
-], Local_SFTP_BackupRepository.prototype, "autoUnlock", void 0);
+], Log.prototype, "backupjob", void 0);
 __decorate([
-    typeorm_1.Column(),
-    __metadata("design:type", String)
-], Local_SFTP_BackupRepository.prototype, "repoLocation", void 0);
-Local_SFTP_BackupRepository = __decorate([
+    typeorm_1.ManyToOne(type => LocalAmazonS3BackupRepository_1.LocalAmazonS3BackupRepository, repository => repository.id, { nullable: false }),
+    __metadata("design:type", Number)
+], Log.prototype, "repository", void 0);
+Log = __decorate([
     typeorm_1.Entity()
-], Local_SFTP_BackupRepository);
-exports.Local_SFTP_BackupRepository = Local_SFTP_BackupRepository;
-//# sourceMappingURL=Local_SFTP_BackupRepository.js.map
+], Log);
+exports.Log = Log;
+//# sourceMappingURL=Log.js.map

@@ -10,12 +10,86 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const typeorm_1 = require("typeorm");
+const User_1 = require("./User");
 let UserSettings = class UserSettings {
 };
 __decorate([
     typeorm_1.PrimaryGeneratedColumn(),
     __metadata("design:type", Number)
 ], UserSettings.prototype, "id", void 0);
+__decorate([
+    typeorm_1.OneToOne(type => User_1.User, { nullable: false }),
+    typeorm_1.JoinColumn(),
+    __metadata("design:type", Number)
+], UserSettings.prototype, "user", void 0);
+__decorate([
+    typeorm_1.Column({ default: false }),
+    __metadata("design:type", Boolean)
+], UserSettings.prototype, "enableRegister", void 0);
+__decorate([
+    typeorm_1.Column({ default: false }),
+    __metadata("design:type", Boolean)
+], UserSettings.prototype, "automaticUpdates", void 0);
+__decorate([
+    typeorm_1.Column({ nullable: true }),
+    __metadata("design:type", String)
+], UserSettings.prototype, "updateCheckInterval", void 0);
+__decorate([
+    typeorm_1.Column({ default: true }),
+    __metadata("design:type", Boolean)
+], UserSettings.prototype, "sendEmails", void 0);
+__decorate([
+    typeorm_1.Column(),
+    __metadata("design:type", String)
+], UserSettings.prototype, "reportLanguage", void 0);
+__decorate([
+    typeorm_1.Column({ nullable: true }),
+    __metadata("design:type", String)
+], UserSettings.prototype, "smtpHostname", void 0);
+__decorate([
+    typeorm_1.Column({ nullable: true }),
+    __metadata("design:type", Number)
+], UserSettings.prototype, "smtpPort", void 0);
+__decorate([
+    typeorm_1.Column({ nullable: true }),
+    __metadata("design:type", String)
+], UserSettings.prototype, "smtpUsername", void 0);
+__decorate([
+    typeorm_1.Column({ nullable: true }),
+    __metadata("design:type", String)
+], UserSettings.prototype, "smtpPassword", void 0);
+__decorate([
+    typeorm_1.Column({ nullable: true }),
+    __metadata("design:type", String)
+], UserSettings.prototype, "smtpFrom", void 0);
+__decorate([
+    typeorm_1.Column({ nullable: true }),
+    __metadata("design:type", String)
+], UserSettings.prototype, "smtpTo", void 0);
+__decorate([
+    typeorm_1.Column({ default: "en", length: 2 }),
+    __metadata("design:type", String)
+], UserSettings.prototype, "language", void 0);
+__decorate([
+    typeorm_1.Column({ default: true }),
+    __metadata("design:type", Boolean)
+], UserSettings.prototype, "showSnackbar", void 0);
+__decorate([
+    typeorm_1.Column(),
+    __metadata("design:type", String)
+], UserSettings.prototype, "themePrimary", void 0);
+__decorate([
+    typeorm_1.Column(),
+    __metadata("design:type", String)
+], UserSettings.prototype, "themeSecondary", void 0);
+__decorate([
+    typeorm_1.Column(),
+    __metadata("design:type", String)
+], UserSettings.prototype, "themeAccent", void 0);
+__decorate([
+    typeorm_1.Column({ default: true }),
+    __metadata("design:type", Boolean)
+], UserSettings.prototype, "darktheme", void 0);
 UserSettings = __decorate([
     typeorm_1.Entity()
 ], UserSettings);

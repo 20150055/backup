@@ -5,6 +5,7 @@ const express = require("express");
 const path = require("path");
 const fs = require("fs");
 const apiUser_1 = require("./apiUser");
+const apiSystem_1 = require("./apiSystem");
 require("./scheduling");
 const app = express();
 // allow every origin to access the api
@@ -15,6 +16,7 @@ app.use((req, res, next) => {
 });
 app.use(express.json());
 app.use("/api/user", apiUser_1.default);
+app.use("/api/system", apiSystem_1.default);
 // start server (check which directory to use)
 let dir;
 if (fs.existsSync(path.join(__dirname, "gui"))) {
