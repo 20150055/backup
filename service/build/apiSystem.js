@@ -20,16 +20,16 @@ router.get("/ping", function (request, response) {
 });
 router.post("/globalsettings", function (request, response) {
     return __awaiter(this, void 0, void 0, function* () {
-        let error = false;
+        let errorOccured = false;
         let errormessages = [];
         try {
             if (!(request.body.port)) {
-                error = true;
+                errorOccured = true;
                 if (!request.body.port) {
                     errormessages.push({ name: "api.error.globalsettings.create.missing-data.port", type: types_1.MessageType.error });
                 }
             }
-            if (!error) {
+            if (!errorOccured) {
                 sqliteConnection_1.database.createGlobalSettings(request.body.port);
                 ApiResponse_1.sendResponse(response, 200, { messages: [{ name: "api.success.globalsettings.create", type: types_1.MessageType.success }] });
             }
