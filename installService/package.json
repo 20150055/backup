@@ -8,5 +8,8 @@
   },
   "author": "",
   "license": "ISC",
-  "dependencies": {}
+  "dependencies": {
+    "forever": "^0.15.3",
+    "node-windows": "^0.1.14"
+  }
 }
