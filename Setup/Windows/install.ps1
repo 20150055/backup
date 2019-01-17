@@ -15,23 +15,16 @@ if($update){
     del -Force -r -exclude "Repository.db" "$path\*";
     $directoryInfo = Get-ChildItem $path | Measure-Object
     
-    if($directoryInfo.count -neq 0){
+    if($directoryInfo.count -ne 1){
         echo "Success: The previous version was successfully removed";
     }else{
         echo "Error: Removing previous version failed";
     }
 }
 
-cd $currentdir;
 
 
 cd $path;
-if((Test-Path -Path ".\Setup")){
-    echo "Success: The setup data was successfully copied";
-}else{
-    echo "Error: Copying of the setup data failed";
-}
-
 
 curl -Uri https://github.com/20150055/backup/archive/gh-pages.zip -OutFile master.zip;
 Expand-Archive -Path master.zip -DestinationPath $path;
