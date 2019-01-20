@@ -12,50 +12,56 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const typeorm_1 = require("typeorm");
 const BackupJob_1 = require("./BackupJob");
 const Log_1 = require("./Log");
-let LocalAmazonS3BackupRepository = class LocalAmazonS3BackupRepository {
+const User_1 = require("./User");
+const enumTypes_1 = require("../shared/types/enumTypes");
+let LocalS3BackupRepository = class LocalS3BackupRepository {
 };
 __decorate([
     typeorm_1.PrimaryGeneratedColumn(),
     __metadata("design:type", Number)
-], LocalAmazonS3BackupRepository.prototype, "id", void 0);
+], LocalS3BackupRepository.prototype, "id", void 0);
 __decorate([
     typeorm_1.Column({ length: 9 }),
     __metadata("design:type", String)
-], LocalAmazonS3BackupRepository.prototype, "repoType", void 0);
+], LocalS3BackupRepository.prototype, "repoType", void 0);
 __decorate([
     typeorm_1.Column({ length: 50, unique: true }),
     __metadata("design:type", String)
-], LocalAmazonS3BackupRepository.prototype, "repoName", void 0);
+], LocalS3BackupRepository.prototype, "repoName", void 0);
 __decorate([
     typeorm_1.Column({ length: 128 }),
     __metadata("design:type", String)
-], LocalAmazonS3BackupRepository.prototype, "repoPassword", void 0);
+], LocalS3BackupRepository.prototype, "repoPassword", void 0);
 __decorate([
     typeorm_1.Column(),
     __metadata("design:type", Number)
-], LocalAmazonS3BackupRepository.prototype, "autoUnlock", void 0);
+], LocalS3BackupRepository.prototype, "autoUnlock", void 0);
 __decorate([
     typeorm_1.Column(),
     __metadata("design:type", String)
-], LocalAmazonS3BackupRepository.prototype, "repoLocation", void 0);
+], LocalS3BackupRepository.prototype, "repoLocation", void 0);
 __decorate([
     typeorm_1.Column({ nullable: true }),
     __metadata("design:type", String)
-], LocalAmazonS3BackupRepository.prototype, "accessKey", void 0);
+], LocalS3BackupRepository.prototype, "accessKey", void 0);
 __decorate([
     typeorm_1.Column({ nullable: true }),
     __metadata("design:type", String)
-], LocalAmazonS3BackupRepository.prototype, "secretAccessKey", void 0);
+], LocalS3BackupRepository.prototype, "secretAccessKey", void 0);
 __decorate([
     typeorm_1.OneToMany(type => BackupJob_1.BackupJob, backupjob => backupjob.id),
     __metadata("design:type", Array)
-], LocalAmazonS3BackupRepository.prototype, "backupjob", void 0);
+], LocalS3BackupRepository.prototype, "backupjob", void 0);
+__decorate([
+    typeorm_1.ManyToOne(type => User_1.User, user => user.id, { nullable: false }),
+    __metadata("design:type", Number)
+], LocalS3BackupRepository.prototype, "user", void 0);
 __decorate([
     typeorm_1.OneToMany(type => Log_1.Log, log => log.id),
     __metadata("design:type", Array)
-], LocalAmazonS3BackupRepository.prototype, "log", void 0);
-LocalAmazonS3BackupRepository = __decorate([
+], LocalS3BackupRepository.prototype, "log", void 0);
+LocalS3BackupRepository = __decorate([
     typeorm_1.Entity()
-], LocalAmazonS3BackupRepository);
-exports.LocalAmazonS3BackupRepository = LocalAmazonS3BackupRepository;
-//# sourceMappingURL=LocalAmazonS3BackupRepository.js.map
+], LocalS3BackupRepository);
+exports.LocalS3BackupRepository = LocalS3BackupRepository;
+//# sourceMappingURL=LocalS3BackupRepository.js.map

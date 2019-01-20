@@ -4,9 +4,10 @@ require("reflect-metadata");
 const express = require("express");
 const path = require("path");
 const fs = require("fs");
-const apiUser_1 = require("./apiUser");
-const apiSystem_1 = require("./apiSystem");
 require("./scheduling");
+const routes = require("./routes");
+const ApiResponse_1 = require("./ApiResponse");
+const types_1 = require("./shared/types");
 const app = express();
 // allow every origin to access the api
 app.use((req, res, next) => {
@@ -15,8 +16,17 @@ app.use((req, res, next) => {
     next();
 });
 app.use(express.json());
-app.use("/api/user", apiUser_1.default);
-app.use("/api/system", apiSystem_1.default);
+// Routes
+app.use("", routes.router);
+// Error handler
+app.use((err, req, res, next) => {
+    let errorstring = err.message.toString();
+    let errormessage = [{
+            name: errorstring,
+            type: types_1.MessageType.error
+        }];
+    ApiResponse_1.sendResponse(res, 400, { messages: errormessage });
+});
 // start server (check which directory to use)
 let dir;
 if (fs.existsSync(path.join(__dirname, "gui"))) {

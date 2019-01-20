@@ -10,8 +10,10 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const typeorm_1 = require("typeorm");
-const LocalAmazonS3BackupRepository_1 = require("./LocalAmazonS3BackupRepository");
+const LocalS3BackupRepository_1 = require("./LocalS3BackupRepository");
 const Log_1 = require("./Log");
+const User_1 = require("./User");
+const enumTypes_1 = require("../shared/types/enumTypes");
 let BackupJob = class BackupJob {
 };
 __decorate([
@@ -35,9 +37,13 @@ __decorate([
     __metadata("design:type", String)
 ], BackupJob.prototype, "backupLocations", void 0);
 __decorate([
-    typeorm_1.ManyToOne(type => LocalAmazonS3BackupRepository_1.LocalAmazonS3BackupRepository, repo => repo.id, { nullable: false }),
+    typeorm_1.ManyToOne(type => LocalS3BackupRepository_1.LocalS3BackupRepository, repo => repo.id, { nullable: false }),
     __metadata("design:type", Number)
 ], BackupJob.prototype, "repo", void 0);
+__decorate([
+    typeorm_1.ManyToOne(type => User_1.User, user => user.id, { nullable: false }),
+    __metadata("design:type", Number)
+], BackupJob.prototype, "user", void 0);
 __decorate([
     typeorm_1.OneToMany(type => Log_1.Log, log => log.id),
     __metadata("design:type", Array)

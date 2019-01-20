@@ -10,12 +10,25 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const typeorm_1 = require("typeorm");
+const enumTypes_1 = require("../shared/types/enumTypes");
 let GlobalSettings = class GlobalSettings {
 };
 __decorate([
     typeorm_1.PrimaryGeneratedColumn(),
     __metadata("design:type", Number)
 ], GlobalSettings.prototype, "id", void 0);
+__decorate([
+    typeorm_1.Column({ default: false }),
+    __metadata("design:type", Boolean)
+], GlobalSettings.prototype, "enableRegister", void 0);
+__decorate([
+    typeorm_1.Column({ default: true }),
+    __metadata("design:type", Boolean)
+], GlobalSettings.prototype, "automaticUpdates", void 0);
+__decorate([
+    typeorm_1.Column({ nullable: true }),
+    __metadata("design:type", String)
+], GlobalSettings.prototype, "updateCheckInterval", void 0);
 __decorate([
     typeorm_1.Column({ default: 8380 }),
     __metadata("design:type", Number)

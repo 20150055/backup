@@ -11,6 +11,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const typeorm_1 = require("typeorm");
 const User_1 = require("./User");
+const enumTypes_1 = require("../shared/types/enumTypes");
 let UserSettings = class UserSettings {
 };
 __decorate([
@@ -23,23 +24,11 @@ __decorate([
     __metadata("design:type", Number)
 ], UserSettings.prototype, "user", void 0);
 __decorate([
-    typeorm_1.Column({ default: false }),
-    __metadata("design:type", Boolean)
-], UserSettings.prototype, "enableRegister", void 0);
-__decorate([
-    typeorm_1.Column({ default: false }),
-    __metadata("design:type", Boolean)
-], UserSettings.prototype, "automaticUpdates", void 0);
-__decorate([
-    typeorm_1.Column({ nullable: true }),
-    __metadata("design:type", String)
-], UserSettings.prototype, "updateCheckInterval", void 0);
-__decorate([
     typeorm_1.Column({ default: true }),
     __metadata("design:type", Boolean)
 ], UserSettings.prototype, "sendEmails", void 0);
 __decorate([
-    typeorm_1.Column(),
+    typeorm_1.Column({ default: enumTypes_1.ReportLanguage.gui }),
     __metadata("design:type", String)
 ], UserSettings.prototype, "reportLanguage", void 0);
 __decorate([
@@ -67,7 +56,7 @@ __decorate([
     __metadata("design:type", String)
 ], UserSettings.prototype, "smtpTo", void 0);
 __decorate([
-    typeorm_1.Column({ default: "en", length: 2 }),
+    typeorm_1.Column({ default: enumTypes_1.Language.en, length: 2 }),
     __metadata("design:type", String)
 ], UserSettings.prototype, "language", void 0);
 __decorate([
@@ -90,6 +79,18 @@ __decorate([
     typeorm_1.Column({ default: true }),
     __metadata("design:type", Boolean)
 ], UserSettings.prototype, "darktheme", void 0);
+__decorate([
+    typeorm_1.Column({ nullable: true }),
+    __metadata("design:type", String)
+], UserSettings.prototype, "defaultEmailNotification", void 0);
+__decorate([
+    typeorm_1.Column({ nullable: true }),
+    __metadata("design:type", Number)
+], UserSettings.prototype, "defaultMaxBackupsPerRepo", void 0);
+__decorate([
+    typeorm_1.Column({ nullable: true }),
+    __metadata("design:type", Number)
+], UserSettings.prototype, "defaultUnlockTime", void 0);
 UserSettings = __decorate([
     typeorm_1.Entity()
 ], UserSettings);

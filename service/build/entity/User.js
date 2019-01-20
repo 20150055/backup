@@ -10,12 +10,18 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const typeorm_1 = require("typeorm");
+const LocalS3BackupRepository_1 = require("./LocalS3BackupRepository");
+const BackupJob_1 = require("./BackupJob");
 let User = class User {
 };
 __decorate([
     typeorm_1.PrimaryGeneratedColumn(),
     __metadata("design:type", Number)
 ], User.prototype, "id", void 0);
+__decorate([
+    typeorm_1.Column({ nullable: true }),
+    __metadata("design:type", String)
+], User.prototype, "token", void 0);
 __decorate([
     typeorm_1.Column({ length: 50 }),
     __metadata("design:type", String)
@@ -36,6 +42,14 @@ __decorate([
     typeorm_1.Column({ length: 128 }),
     __metadata("design:type", String)
 ], User.prototype, "password", void 0);
+__decorate([
+    typeorm_1.OneToMany(type => BackupJob_1.BackupJob, job => job.id),
+    __metadata("design:type", Array)
+], User.prototype, "job", void 0);
+__decorate([
+    typeorm_1.OneToMany(type => LocalS3BackupRepository_1.LocalS3BackupRepository, repo => repo.id),
+    __metadata("design:type", Array)
+], User.prototype, "repo", void 0);
 User = __decorate([
     typeorm_1.Entity()
 ], User);

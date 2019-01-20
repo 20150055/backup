@@ -10,7 +10,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const typeorm_1 = require("typeorm");
-const LocalAmazonS3BackupRepository_1 = require("./LocalAmazonS3BackupRepository");
+const LocalS3BackupRepository_1 = require("./LocalS3BackupRepository");
 const BackupJob_1 = require("./BackupJob");
 let Log = class Log {
 };
@@ -39,7 +39,7 @@ __decorate([
     __metadata("design:type", Number)
 ], Log.prototype, "backupjob", void 0);
 __decorate([
-    typeorm_1.ManyToOne(type => LocalAmazonS3BackupRepository_1.LocalAmazonS3BackupRepository, repository => repository.id, { nullable: false }),
+    typeorm_1.ManyToOne(type => LocalS3BackupRepository_1.LocalS3BackupRepository, repository => repository.id, { nullable: false }),
     __metadata("design:type", Number)
 ], Log.prototype, "repository", void 0);
 Log = __decorate([
