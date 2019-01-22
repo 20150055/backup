@@ -6,7 +6,7 @@ then
   dirPath=$(sudo systemctl show backup.service | grep -o "argv\[\]=[^;]*;" | cut -d " " -f 2)&&dirPath=$(dirname $dirPath)
   if [ "$dirPath" != " " ];
 then
-  sudo systemctl stop backup && sudo systemctl disable backup && sudo rm "/lib/systemd/system/backup.service" && sudo systemctl daemon-reload && cd $dirPath && cd .. && cd .. && dirPath=$PWD && find ./* -prune  -not -name "Repository.db" -not -name "install.sh" -not -name "uninstall.sh" -exec rm -r "{}" \;
+  sudo systemctl stop backup && sudo systemctl disable backup && sudo rm "/lib/systemd/system/backup.service" && sudo systemctl daemon-reload && cd $dirPath && cd .. && cd .. && mv ./service/Repository.db ./Repository.db && dirPath=$PWD && find ./* -prune  -not -name "Repository.db" -not -name "install.sh" -not -name "uninstall.sh" -exec rm -r "{}" \;
 fi;
   fi;
   if [ "$1" != "-update" ] && [ "$1" != "-u" ]; 
@@ -34,4 +34,4 @@ WantedBy=multi-user.target" > backup.service && sudo mv "backup.service" "/lib/s
 Encoding=UTF-8
 Name=Backup380         
 Type=Link
-URL=http://localhost:8380/" >> Backup.desktop && echo "finished"
+URL=http://localhost:8380/" >> Backup.desktop && mv ./Repository.db ./service/Repository.db 2> /dev/null
