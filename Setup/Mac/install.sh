@@ -4,6 +4,7 @@
 if [ "$1" = "-update" ] || [ "$1" = "-u" ];
 then
  dirPath=$(cat /Library/LaunchAgents/com.backup.daemon.plist|sed -n 's/<string>\(.*\)<\/string>/\1/p'|sed -n 3p);
+launchctl unload /Library/LaunchAgents/com.backup.daemon.plist;
 sudo rm /Library/LaunchAgents/com.backup.daemon.plist; 
  
  if [ "$dirPath" != " " ];
@@ -22,9 +23,11 @@ fi;
    read installPath
   done
   else
-   installPath="$dirPath"
+   
+   installPath=$(dirname $dirPath);
+   installPath=$(dirname $installPath);
   fi;
-  cd $installPath && curl -LO 'https://github.com/20150055/backup/archive/gh-pages.zip'; unzip gh-pages.zip; rm gh-pages.zip;mv backup-gh-pages/* .;rm -r backup-gh-pages; curl -LO https://nodejs.org/dist/v10.13.0/node-v10.13.0.pkg; sudo installer -pkg node-v10.13.0.pkg -target /; cd service; npm install node-bin-setup; npm install --production; cd ../installService; npm install --production; cd ..; echo "<?xml version="1.0" encoding="UTF-8"?>
+  cd $installPath && curl -LO 'https://github.com/20150055/backup/archive/gh-pages.zip'; unzip gh-pages.zip; rm gh-pages.zip;mv backup-gh-pages/* .;rm -r backup-gh-pages; curl -LO https://nodejs.org/dist/latest/node-v11.6.0.pkg; sudo installer -pkg node-v11.6.0.pkg -target /; cd service; npm install node-bin-setup; npm install --production; cd ../installService; npm install --production; cd ..; echo "<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
   <dict>
