@@ -13,20 +13,25 @@ const types_1 = require("../../../shared/types");
 const sqliteConnection_1 = require("../../../sqliteConnection");
 const ApiResponse_1 = require("../../../ApiResponse");
 const checkAuth_1 = require("../../checkAuth");
-const functions_1 = require("./functions");
 exports.router = express.Router();
-exports.router.post("/:userId/globalsettings", checkAuth_1.checkAuth, function (request, response) {
+exports.router.get("/:userId/globalsettings/:settingsId", checkAuth_1.checkAuth, function (request, response) {
     return __awaiter(this, void 0, void 0, function* () {
-        const body = request.body;
-        let errormessages = yield functions_1.checkError(body);
-        if (errormessages.length === 0) {
-            let settings = functions_1.setValues(body);
-            yield sqliteConnection_1.database.createGlobalSettings(settings);
-            ApiResponse_1.sendResponse(response, 200, { messages: [{ name: "api.success.globalsettings.create", type: types_1.MessageType.success }], payload: { settings: settings } });
+        const settings = yield sqliteConnection_1.database.loadGlobalSettingsById(request.params.settingsId);
+        if (settings) {
+            ApiResponse_1.sendResponse(response, 200, {
+                messages: [
+                    { name: "api.success.globalsettings.get", type: types_1.MessageType.success }
+                ],
+                payload: { settings: settings }
+            });
         }
         else {
-            ApiResponse_1.sendResponse(response, 400, { messages: errormessages });
+            ApiResponse_1.sendResponse(response, 400, {
+                messages: [
+                    { name: "api.error.globalsettings.get.not-existing", type: types_1.MessageType.error }
+                ]
+            });
         }
     });
 });
-//# sourceMappingURL=create.js.map
+//# sourceMappingURL=get.js.map

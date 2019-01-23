@@ -82,7 +82,6 @@ $count = 0;
 do{
     $count++;
     if($count -eq 20){
-		Start-Service Backup380;
         break;
     }
     $service = Get-Service | Where-Object {$_.DisplayName -eq "Backup380"} | Where-Object {$_.Status -eq "Running"}

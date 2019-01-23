@@ -15,18 +15,25 @@ const ApiResponse_1 = require("../../../ApiResponse");
 const checkAuth_1 = require("../../checkAuth");
 const functions_1 = require("./functions");
 exports.router = express.Router();
-exports.router.post("/:userId/globalsettings", checkAuth_1.checkAuth, function (request, response) {
+exports.router.put("/:userId/globalsettings/:settingsId", checkAuth_1.checkAuth, function (request, response) {
     return __awaiter(this, void 0, void 0, function* () {
         const body = request.body;
         let errormessages = yield functions_1.checkError(body);
         if (errormessages.length === 0) {
-            let settings = functions_1.setValues(body);
-            yield sqliteConnection_1.database.createGlobalSettings(settings);
-            ApiResponse_1.sendResponse(response, 200, { messages: [{ name: "api.success.globalsettings.create", type: types_1.MessageType.success }], payload: { settings: settings } });
+            const oldSettings = yield sqliteConnection_1.database.loadGlobalSettingsById(request.params.settingsId);
+            let newSettings = functions_1.setValues(body);
+            newSettings.id = oldSettings.id;
+            yield sqliteConnection_1.database.createGlobalSettings(newSettings);
+            ApiResponse_1.sendResponse(response, 200, {
+                messages: [
+                    { name: "api.success.usersettings.create", type: types_1.MessageType.success }
+                ],
+                payload: { settings: newSettings }
+            });
         }
         else {
             ApiResponse_1.sendResponse(response, 400, { messages: errormessages });
         }
     });
 });
-//# sourceMappingURL=create.js.map
+//# sourceMappingURL=update.js.map
