@@ -13,6 +13,7 @@ const types_1 = require("../../../shared/types");
 const sqliteConnection_1 = require("../../../sqliteConnection");
 const ApiResponse_1 = require("../../../ApiResponse");
 const functions_1 = require("./functions");
+const UserSettings_1 = require("../../../entity/UserSettings");
 exports.router = express.Router();
 exports.router.post("/register", function (request, response) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -20,7 +21,10 @@ exports.router.post("/register", function (request, response) {
         let errormessages = yield functions_1.checkError(body, null, true);
         if (errormessages.length === 0) {
             let user = functions_1.setValues(body);
-            yield sqliteConnection_1.database.createUser(user);
+            user = yield sqliteConnection_1.database.createUser(user);
+            let settings = new UserSettings_1.UserSettings;
+            settings.user = user.id;
+            yield sqliteConnection_1.database.createUserSettings(settings);
             ApiResponse_1.sendResponse(response, 200, {
                 messages: [
                     { name: "api.success.user.register", type: types_1.MessageType.success }
