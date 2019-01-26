@@ -1,11 +1,7 @@
 "use strict";
+function __export(m) {
+    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
+}
 Object.defineProperty(exports, "__esModule", { value: true });
-const express = require("express");
-const create = require("./create");
-const update = require("./update");
-const get = require("./get");
-exports.router = express.Router();
-exports.router.use("", create.router);
-exports.router.use("", update.router);
-exports.router.use("", get.router);
+__export(require("./create"));
 //# sourceMappingURL=index.js.map
