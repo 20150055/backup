@@ -9,12 +9,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express = require("express");
-const types_1 = require("../../../shared/types");
 const ApiResponse_1 = require("../../../ApiResponse");
 exports.router = express.Router();
 exports.router.get("/ping", function (request, response) {
     return __awaiter(this, void 0, void 0, function* () {
-        ApiResponse_1.sendResponse(response, 200, { messages: [{ name: "api.info.system.ping", type: types_1.MessageType.info }] });
+        ApiResponse_1.sendResponse(response, 200, { messages: [] });
     });
 });
 //# sourceMappingURL=index.js.map

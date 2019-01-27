@@ -12,29 +12,26 @@ const express = require("express");
 const types_1 = require("../../../shared/types");
 const sqliteConnection_1 = require("../../../sqliteConnection");
 const ApiResponse_1 = require("../../../ApiResponse");
-const functions_1 = require("./functions");
-const UserSettings_1 = require("../../../entity/UserSettings");
+const checkAuth_1 = require("../../checkAuth");
 exports.router = express.Router();
-exports.router.post("/register", function (request, response) {
+exports.router.get("/:userId/globalsettings/:settingsId", checkAuth_1.checkAuth, function (request, response) {
     return __awaiter(this, void 0, void 0, function* () {
-        const body = request.body;
-        let errormessages = yield functions_1.checkError(body, null, true);
-        if (errormessages.length === 0) {
-            let user = functions_1.setValues(body);
-            user = yield sqliteConnection_1.database.createUser(user);
-            let settings = new UserSettings_1.UserSettings;
-            settings.user = user.id;
-            yield sqliteConnection_1.database.createUserSettings(settings);
+        const settings = yield sqliteConnection_1.database.loadGlobalSettingsById(request.params.settingsId);
+        if (settings) {
             ApiResponse_1.sendResponse(response, 200, {
                 messages: [
-                    { name: "api.success.user.register", type: types_1.MessageType.success }
+                    { name: "api.success.globalsettings.get", type: types_1.MessageType.success }
                 ],
-                payload: { user: user }
+                payload: { settings: settings }
             });
         }
         else {
-            ApiResponse_1.sendResponse(response, 400, { messages: errormessages });
+            ApiResponse_1.sendResponse(response, 400, {
+                messages: [
+                    { name: "api.error.globalsettings.get.not-existing", type: types_1.MessageType.error }
+                ]
+            });
         }
     });
 });
-//# sourceMappingURL=register.js.map
+//# sourceMappingURL=get.js.map
