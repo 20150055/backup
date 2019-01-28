@@ -42,7 +42,7 @@ function checkError(body, userId, insert) {
                         type: types_1.MessageType.error
                     });
                 }
-                if (!body.showSnackbar) {
+                if (!("showSnackbar" in body) || typeof body.showSnackbar !== "boolean") {
                     errormessages.push({
                         name: "api.error.usersettings.create.missing-data.showSnackbar",
                         type: types_1.MessageType.error
@@ -66,7 +66,7 @@ function checkError(body, userId, insert) {
                         type: types_1.MessageType.error
                     });
                 }
-                if (!body.darktheme) {
+                if (!("darktheme" in body) || typeof body.darktheme !== "boolean") {
                     errormessages.push({
                         name: "api.error.usersettings.create.missing-data.darktheme",
                         type: types_1.MessageType.error

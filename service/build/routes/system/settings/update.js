@@ -12,24 +12,23 @@ const express = require("express");
 const types_1 = require("../../../shared/types");
 const sqliteConnection_1 = require("../../../sqliteConnection");
 const ApiResponse_1 = require("../../../ApiResponse");
+const checkAuth_1 = require("../../checkAuth");
 const functions_1 = require("./functions");
-const UserSettings_1 = require("../../../entity/UserSettings");
 exports.router = express.Router();
-exports.router.post("/register", function (request, response) {
+exports.router.put("/:userId/globalsettings/:settingsId", checkAuth_1.checkAuth, function (request, response) {
     return __awaiter(this, void 0, void 0, function* () {
         const body = request.body;
-        let errormessages = yield functions_1.checkError(body, null, true);
+        let errormessages = yield functions_1.checkError(body);
         if (errormessages.length === 0) {
-            let user = functions_1.setValues(body);
-            user = yield sqliteConnection_1.database.createUser(user);
-            let settings = new UserSettings_1.UserSettings;
-            settings.user = user.id;
-            yield sqliteConnection_1.database.createUserSettings(settings);
+            const oldSettings = yield sqliteConnection_1.database.loadGlobalSettingsById(request.params.settingsId);
+            let newSettings = functions_1.setValues(body);
+            newSettings.id = oldSettings.id;
+            yield sqliteConnection_1.database.createGlobalSettings(newSettings);
             ApiResponse_1.sendResponse(response, 200, {
                 messages: [
-                    { name: "api.success.user.register", type: types_1.MessageType.success }
+                    { name: "api.success.usersettings.create", type: types_1.MessageType.success }
                 ],
-                payload: { user: user }
+                payload: { settings: newSettings }
             });
         }
         else {
@@ -37,4 +36,4 @@ exports.router.post("/register", function (request, response) {
         }
     });
 });
-//# sourceMappingURL=register.js.map
+//# sourceMappingURL=update.js.map

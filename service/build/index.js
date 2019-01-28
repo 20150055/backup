@@ -1,4 +1,12 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 require("reflect-metadata");
 const express = require("express");
@@ -8,10 +16,12 @@ require("./scheduling");
 const routes = require("./routes");
 const ApiResponse_1 = require("./ApiResponse");
 const types_1 = require("./shared/types");
+const sqliteConnection_1 = require("./sqliteConnection");
 const app = express();
 // allow every origin to access the api
 app.use((req, res, next) => {
     res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, HEAD, DELETE, PATCH");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
     next();
 });
@@ -51,9 +61,18 @@ app.use("/api", (req, res, next) => {
 app.use("*", (req, res) => {
     res.sendFile(path.resolve(dir + "/index.html"));
 });
-// serverstart on port 8380
-const port = 8380;
-app.listen(port, function () {
-    console.log(`API is listening on port ${port}`);
-});
+setTimeout(() => __awaiter(this, void 0, void 0, function* () {
+    let port = 8380;
+    const settings = yield sqliteConnection_1.database.loadGlobalSettingsById(1);
+    if (settings) {
+        port = settings.port;
+    }
+    else {
+        yield sqliteConnection_1.database.createDefaultGlobalSettingsById();
+    }
+    // serverstart on port XXXX
+    app.listen(port, function () {
+        console.log(`API is listening on port ${port}`);
+    });
+}), 2000);
 //# sourceMappingURL=index.js.map

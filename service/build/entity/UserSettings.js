@@ -24,11 +24,11 @@ __decorate([
     __metadata("design:type", Number)
 ], UserSettings.prototype, "user", void 0);
 __decorate([
-    typeorm_1.Column({ default: true }),
+    typeorm_1.Column({ default: true, nullable: true }),
     __metadata("design:type", Boolean)
 ], UserSettings.prototype, "sendEmails", void 0);
 __decorate([
-    typeorm_1.Column({ default: enumTypes_1.ReportLanguage.gui }),
+    typeorm_1.Column({ default: enumTypes_1.ReportLanguage.gui, nullable: true }),
     __metadata("design:type", String)
 ], UserSettings.prototype, "reportLanguage", void 0);
 __decorate([
@@ -56,27 +56,27 @@ __decorate([
     __metadata("design:type", String)
 ], UserSettings.prototype, "smtpTo", void 0);
 __decorate([
-    typeorm_1.Column({ default: enumTypes_1.Language.en, length: 2 }),
+    typeorm_1.Column({ default: enumTypes_1.Language.en, length: 2, nullable: true }),
     __metadata("design:type", String)
 ], UserSettings.prototype, "language", void 0);
 __decorate([
-    typeorm_1.Column({ default: true }),
+    typeorm_1.Column({ default: true, nullable: true }),
     __metadata("design:type", Boolean)
 ], UserSettings.prototype, "showSnackbar", void 0);
 __decorate([
-    typeorm_1.Column(),
+    typeorm_1.Column({ nullable: true }),
     __metadata("design:type", String)
 ], UserSettings.prototype, "themePrimary", void 0);
 __decorate([
-    typeorm_1.Column(),
+    typeorm_1.Column({ nullable: true }),
     __metadata("design:type", String)
 ], UserSettings.prototype, "themeSecondary", void 0);
 __decorate([
-    typeorm_1.Column(),
+    typeorm_1.Column({ nullable: true }),
     __metadata("design:type", String)
 ], UserSettings.prototype, "themeAccent", void 0);
 __decorate([
-    typeorm_1.Column({ default: true }),
+    typeorm_1.Column({ default: true, nullable: true }),
     __metadata("design:type", Boolean)
 ], UserSettings.prototype, "darktheme", void 0);
 __decorate([

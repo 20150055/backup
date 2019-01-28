@@ -63,7 +63,7 @@ exports.router.post("/login", function (request, response) {
                     messages: [
                         { name: "api.success.user.login", type: types_1.MessageType.success }
                     ],
-                    payload: { token: token }
+                    payload: { token: token, userId: user.id }
                 });
             }
             else {

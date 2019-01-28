@@ -1,6 +1,7 @@
 ﻿ param (
     [switch]$update,
     [string]$path,
+    [string]$currentdir
  )
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12;
 

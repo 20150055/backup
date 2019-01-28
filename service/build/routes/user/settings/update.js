@@ -22,7 +22,9 @@ exports.router.put("/:userId/usersettings", checkAuth_1.checkAuth, function (req
         if (errormessages.length === 0) {
             const oldSettings = yield sqliteConnection_1.database.loadUserSettingsByUserId(request.params.userId);
             let newSettings = functions_1.setValues(body, request.params.userId);
-            newSettings.id = oldSettings.id;
+            if (oldSettings) {
+                newSettings.id = oldSettings.id;
+            }
             yield sqliteConnection_1.database.createUserSettings(newSettings);
             ApiResponse_1.sendResponse(response, 200, {
                 messages: [

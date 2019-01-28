@@ -9,11 +9,19 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express = require("express");
+const sqliteConnection_1 = require("../../../sqliteConnection");
 const ApiResponse_1 = require("../../../ApiResponse");
+const checkAuth_1 = require("../../checkAuth");
 exports.router = express.Router();
-exports.router.get("/ping", function (request, response) {
+exports.router.get("/:userId/repository", checkAuth_1.checkAuth, function (request, response) {
     return __awaiter(this, void 0, void 0, function* () {
-        ApiResponse_1.sendResponse(response, 200, { messages: [] });
+        const repo = yield sqliteConnection_1.database.loadAllLocalS3BackupRepositoryById(request.params.userId);
+        ApiResponse_1.sendResponse(response, 200, {
+            messages: [
+            // { name: "api.success.backuprepository.get", type: MessageType.success }
+            ],
+            payload: { repo: repo }
+        });
     });
 });
-//# sourceMappingURL=index.js.map
+//# sourceMappingURL=getAll.js.map
