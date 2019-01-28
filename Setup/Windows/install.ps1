@@ -1,7 +1,6 @@
 ﻿ param (
     [switch]$update,
-    [string]$path,
-    [string]$currentdir
+    [string]$path
  )
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12;
 
@@ -15,7 +14,7 @@ if($update){
     del -Force -r -exclude "Repository.db" "$path\*";
     $directoryInfo = Get-ChildItem $path | Measure-Object
     
-    if($directoryInfo.count -ne 1){
+    if($directoryInfo.count -eq 1){
         echo "Success: The previous version was successfully removed";
     }else{
         echo "Error: Removing previous version failed";
