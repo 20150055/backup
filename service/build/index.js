@@ -61,7 +61,8 @@ app.use("/api", (req, res, next) => {
 app.use("*", (req, res) => {
     res.sendFile(path.resolve(dir + "/index.html"));
 });
-setTimeout(() => __awaiter(this, void 0, void 0, function* () {
+(() => __awaiter(this, void 0, void 0, function* () {
+    yield sqliteConnection_1.databaseReady;
     let port = 8380;
     const settings = yield sqliteConnection_1.database.loadGlobalSettingsById(1);
     if (settings) {
@@ -74,5 +75,5 @@ setTimeout(() => __awaiter(this, void 0, void 0, function* () {
     app.listen(port, function () {
         console.log(`API is listening on port ${port}`);
     });
-}), 2000);
+}))();
 //# sourceMappingURL=index.js.map

@@ -7,9 +7,9 @@ const update = require("./update");
 const login = require("./login");
 const anyExists = require("./anyExists");
 exports.router = express.Router();
+exports.router.use("", anyExists.router);
 exports.router.use("", register.router);
 exports.router.use("", login.router);
 exports.router.use("", get.router);
 exports.router.use("", update.router);
-exports.router.use("", anyExists.router);
 //# sourceMappingURL=index.js.map

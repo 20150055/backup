@@ -13,6 +13,11 @@ const Database_1 = require("./Database");
 let database = null;
 exports.database = database;
 let connection = null;
+let databaseReadyResolve;
+const databaseReady = new Promise(resolve => {
+    databaseReadyResolve = resolve;
+});
+exports.databaseReady = databaseReady;
 typeorm_1.createConnection({
     "type": "sqlite",
     "database": "../Repository.db",
@@ -38,5 +43,6 @@ typeorm_1.createConnection({
 }).then((conn) => __awaiter(this, void 0, void 0, function* () {
     connection = conn;
     exports.database = database = new Database_1.Database(connection);
+    databaseReadyResolve();
 })).catch(error => console.log(error));
 //# sourceMappingURL=sqliteConnection.js.map
