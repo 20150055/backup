@@ -89,7 +89,12 @@ do{
 }while(!$service)
 
 if($count -eq 20){
-    echo "Error: Starting the Service failed";
+    $service = Get-Service | Where-Object {$_.DisplayName -eq "Backup380"} | Where-Object {$_.Status -eq "Running"};
+    if(!$service){
+        echo "Error: Starting the Service failed";
+    }else{
+        Start-Process http://localhost:8380/setup
+    }
 }else{
     Start-Process http://localhost:8380/setup
 }
