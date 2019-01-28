@@ -13,8 +13,6 @@ const User_1 = require("./entity/User");
 const BackupJob_1 = require("./entity/BackupJob");
 const LocalS3BackupRepository_1 = require("./entity/LocalS3BackupRepository");
 const UserSettings_1 = require("./entity/UserSettings");
-const GlobalSettings_1 = require("./entity/GlobalSettings");
-const enumTypes_1 = require("./shared/types/enumTypes");
 class Database {
     constructor(conn) { this.connection = conn; }
     // Create
@@ -43,8 +41,7 @@ class Database {
     createUser(user) {
         return __awaiter(this, void 0, void 0, function* () {
             user.password = this.hash(user.password);
-            user = yield this.connection.manager.save(user);
-            return user;
+            yield this.connection.manager.save(user);
         });
     }
     setUserToken(userId, token) {
@@ -118,18 +115,6 @@ class Database {
             return repo;
         });
     }
-    loadAllLocalS3BackupRepositoryById(userId) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const repo = yield this.connection.manager.getRepository(LocalS3BackupRepository_1.LocalS3BackupRepository).find({ user: userId });
-            return repo;
-        });
-    }
-    loadGlobalSettingsById(id) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const settings = yield this.connection.manager.getRepository(GlobalSettings_1.GlobalSettings).findOne({ id: id });
-            return settings;
-        });
-    }
     // Delete
     deleteLocalS3BackupRepositoryById(repoId) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -141,17 +126,6 @@ class Database {
         return __awaiter(this, void 0, void 0, function* () {
             const count = yield this.connection.manager.getRepository(User_1.User).count();
             return count;
-        });
-    }
-    createDefaultGlobalSettingsById() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const settings = new GlobalSettings_1.GlobalSettings;
-            settings.id = 1;
-            settings.enableRegister = true;
-            settings.automaticUpdates = true;
-            settings.updateCheckInterval = enumTypes_1.UpdateCheckInterval.daily;
-            settings.port = 8380;
-            yield this.connection.manager.save(settings);
         });
     }
     hash(word) {
