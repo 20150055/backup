@@ -47,6 +47,12 @@ class Database {
             return user;
         });
     }
+    patchUser(user) {
+        return __awaiter(this, void 0, void 0, function* () {
+            user = yield this.connection.manager.save(user);
+            return user;
+        });
+    }
     setUserToken(userId, token) {
         return __awaiter(this, void 0, void 0, function* () {
             const user = yield this.connection.manager.getRepository(User_1.User).findOne({ id: userId });
@@ -94,6 +100,12 @@ class Database {
             return job;
         });
     }
+    loadBackupJobById(id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const job = yield this.connection.manager.getRepository(BackupJob_1.BackupJob).findOne({ id: id });
+            return job;
+        });
+    }
     loadSettingsByUserId(userId) {
         return __awaiter(this, void 0, void 0, function* () {
             const settings = yield this.connection.manager.getRepository(UserSettings_1.UserSettings).findOne({ user: userId });
@@ -124,6 +136,12 @@ class Database {
             return repo;
         });
     }
+    loadAllBackupJobById(userId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const jobs = yield this.connection.manager.getRepository(BackupJob_1.BackupJob).find({ user: userId });
+            return jobs;
+        });
+    }
     loadGlobalSettingsById(id) {
         return __awaiter(this, void 0, void 0, function* () {
             const settings = yield this.connection.manager.getRepository(GlobalSettings_1.GlobalSettings).findOne({ id: id });
@@ -134,6 +152,11 @@ class Database {
     deleteLocalS3BackupRepositoryById(repoId) {
         return __awaiter(this, void 0, void 0, function* () {
             yield this.connection.manager.getRepository(LocalS3BackupRepository_1.LocalS3BackupRepository).delete({ id: repoId });
+        });
+    }
+    deleteBackupJobById(jobId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.connection.manager.getRepository(BackupJob_1.BackupJob).delete({ id: jobId });
         });
     }
     // Others

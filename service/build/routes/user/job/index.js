@@ -1,7 +1,15 @@
 "use strict";
-function __export(m) {
-    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
-}
 Object.defineProperty(exports, "__esModule", { value: true });
-__export(require("./create"));
+const express = require("express");
+const create = require("./create");
+const update = require("./update");
+const remove = require("./delete");
+const get = require("./get");
+const getAll = require("./getAll");
+exports.router = express.Router();
+exports.router.use("", create.router);
+exports.router.use("", update.router);
+exports.router.use("", get.router);
+exports.router.use("", getAll.router);
+exports.router.use("", remove.router);
 //# sourceMappingURL=index.js.map

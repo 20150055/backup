@@ -15,6 +15,16 @@ const Log_1 = require("./Log");
 const User_1 = require("./User");
 const enumTypes_1 = require("../shared/types/enumTypes");
 let BackupJob = class BackupJob {
+    getResponseObject() {
+        return {
+            id: this.id,
+            name: this.name,
+            maxBackups: this.maxBackups,
+            emailNotification: this.emailNotification,
+            backupLocations: this.backupLocations,
+            nextScheduleDate: this.nextScheduleDate.toString()
+        };
+    }
 };
 __decorate([
     typeorm_1.PrimaryGeneratedColumn(),
@@ -36,6 +46,10 @@ __decorate([
     typeorm_1.Column({ nullable: true }),
     __metadata("design:type", String)
 ], BackupJob.prototype, "backupLocations", void 0);
+__decorate([
+    typeorm_1.Column({ nullable: true }),
+    __metadata("design:type", Date)
+], BackupJob.prototype, "nextScheduleDate", void 0);
 __decorate([
     typeorm_1.ManyToOne(type => LocalS3BackupRepository_1.LocalS3BackupRepository, repo => repo.id, { nullable: false }),
     __metadata("design:type", Number)

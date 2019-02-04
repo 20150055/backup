@@ -11,15 +11,16 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const types_1 = require("../../../shared/types");
 const User_1 = require("../../../entity/User");
 const sqliteConnection_1 = require("../../../sqliteConnection");
-function checkError(body, userId, insert) {
+function checkError(body, userId, patching) {
     return __awaiter(this, void 0, void 0, function* () {
         let errormessages = [];
         try {
-            if (!(body.firstName &&
-                body.lastName &&
-                body.username &&
-                body.email &&
-                body.password)) {
+            if (!patching &&
+                !(body.firstName &&
+                    body.lastName &&
+                    body.username &&
+                    body.email &&
+                    body.password)) {
                 if (!body.firstName) {
                     errormessages.push({
                         name: "api.error.user.register.missing-data.firstName",

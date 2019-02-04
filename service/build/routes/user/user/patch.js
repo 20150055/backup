@@ -15,21 +15,39 @@ const ApiResponse_1 = require("../../../ApiResponse");
 const functions_1 = require("./functions");
 const checkAuth_1 = require("../../checkAuth");
 exports.router = express.Router();
-exports.router.put("/:userId", checkAuth_1.checkAuth, function (request, response) {
+exports.router.patch("/:userId", checkAuth_1.checkAuth, function (request, response) {
     return __awaiter(this, void 0, void 0, function* () {
         const body = request.body;
         const oldUser = yield sqliteConnection_1.database.loadUserById(request.params.userId);
-        let errormessages = yield functions_1.checkError(body, request.params.userId, false);
+        let errormessages = yield functions_1.checkError(body, request.params.userId, true);
         if (errormessages.length === 0) {
             let newUser = functions_1.setValues(body);
+            if (!newUser.firstName) {
+                newUser.firstName = oldUser.firstName;
+            }
+            if (!newUser.lastName) {
+                newUser.lastName = oldUser.lastName;
+            }
+            if (!newUser.email) {
+                newUser.email = oldUser.email;
+            }
+            if (!newUser.username) {
+                newUser.username = oldUser.username;
+            }
             newUser.id = oldUser.id;
             newUser.job = oldUser.job;
             newUser.repo = oldUser.repo;
             newUser.token = oldUser.token; // TODO: Sicher?
-            yield sqliteConnection_1.database.createUser(newUser);
+            if (!newUser.password) {
+                newUser.password = oldUser.password;
+                yield sqliteConnection_1.database.patchUser(newUser);
+            }
+            else {
+                yield sqliteConnection_1.database.createUser(newUser);
+            }
             ApiResponse_1.sendResponse(response, 200, {
                 messages: [
-                    { name: "api.success.user.update", type: types_1.MessageType.success }
+                    { name: "api.success.user.patch", type: types_1.MessageType.success }
                 ],
                 payload: { user: newUser }
             });
@@ -39,4 +57,4 @@ exports.router.put("/:userId", checkAuth_1.checkAuth, function (request, respons
         }
     });
 });
-//# sourceMappingURL=update.js.map
+//# sourceMappingURL=patch.js.map

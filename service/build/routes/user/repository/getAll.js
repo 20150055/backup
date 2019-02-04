@@ -9,6 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express = require("express");
+const types_1 = require("../../../shared/types");
 const sqliteConnection_1 = require("../../../sqliteConnection");
 const ApiResponse_1 = require("../../../ApiResponse");
 const checkAuth_1 = require("../../checkAuth");
@@ -18,7 +19,7 @@ exports.router.get("/:userId/repository", checkAuth_1.checkAuth, function (reque
         const repo = yield sqliteConnection_1.database.loadAllLocalS3BackupRepositoryById(request.params.userId);
         ApiResponse_1.sendResponse(response, 200, {
             messages: [
-            // { name: "api.success.backuprepository.get", type: MessageType.success }
+                { name: "api.success.backuprepository.getAll", type: types_1.MessageType.success }
             ],
             payload: { repo: repo }
         });

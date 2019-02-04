@@ -19,7 +19,7 @@ exports.router = express.Router();
 exports.router.post("/register", function (request, response) {
     return __awaiter(this, void 0, void 0, function* () {
         const body = request.body;
-        let errormessages = yield functions_1.checkError(body, null, true);
+        let errormessages = yield functions_1.checkError(body, null, false);
         if (errormessages.length === 0) {
             let user = functions_1.setValues(body);
             user = yield sqliteConnection_1.database.createUser(user);

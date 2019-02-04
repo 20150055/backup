@@ -13,28 +13,20 @@ const types_1 = require("../../../shared/types");
 const sqliteConnection_1 = require("../../../sqliteConnection");
 const ApiResponse_1 = require("../../../ApiResponse");
 const checkAuth_1 = require("../../checkAuth");
-const functions_1 = require("./functions");
 exports.router = express.Router();
-exports.router.post("/:userId/backupJob", checkAuth_1.checkAuth, function (request, response) {
+exports.router.get("/:userId/backupJob", checkAuth_1.checkAuth, function (request, response) {
     return __awaiter(this, void 0, void 0, function* () {
-        const body = request.body;
-        let errormessages = yield functions_1.checkError(body, request.params.userId, null);
-        if (errormessages.length === 0) {
-            let job = functions_1.setValues(body, request.params.userId);
-            yield sqliteConnection_1.database.createBackupjob(job);
-            ApiResponse_1.sendResponse(response, 200, {
-                messages: [
-                    {
-                        name: "api.success.backupjob.create",
-                        type: types_1.MessageType.success
-                    }
-                ],
-                payload: { job: job.getResponseObject() }
-            });
-        }
-        else {
-            ApiResponse_1.sendResponse(response, 400, { messages: errormessages });
-        }
+        const jobs = yield sqliteConnection_1.database.loadAllBackupJobById(request.params.userId);
+        const responseJobs = [];
+        jobs.forEach((job) => {
+            responseJobs.push(job.getResponseObject());
+        });
+        ApiResponse_1.sendResponse(response, 200, {
+            messages: [
+                { name: "api.success.backuprepository.getAll", type: types_1.MessageType.success }
+            ],
+            payload: { jobs: responseJobs }
+        });
     });
 });
-//# sourceMappingURL=create.js.map
+//# sourceMappingURL=getAll.js.map

@@ -13,29 +13,28 @@ const types_1 = require("../../../shared/types");
 const sqliteConnection_1 = require("../../../sqliteConnection");
 const ApiResponse_1 = require("../../../ApiResponse");
 const checkAuth_1 = require("../../checkAuth");
-const functions_1 = require("./functions");
 exports.router = express.Router();
-exports.router.put("/:userId/usersettings", checkAuth_1.checkAuth, function (request, response) {
+exports.router.delete("/:userId/backupJob/:jobId", checkAuth_1.checkAuth, function (request, response) {
     return __awaiter(this, void 0, void 0, function* () {
-        const body = request.body;
-        let errormessages = yield functions_1.checkError(body, request.params.userId, false);
-        if (errormessages.length === 0) {
-            const oldSettings = yield sqliteConnection_1.database.loadUserSettingsByUserId(request.params.userId);
-            let newSettings = functions_1.setValues(body, request.params.userId);
-            if (oldSettings) {
-                newSettings.id = oldSettings.id;
-            }
-            yield sqliteConnection_1.database.createUserSettings(newSettings);
+        const jobId = request.params.jobId;
+        try {
+            yield sqliteConnection_1.database.deleteBackupJobById(jobId);
             ApiResponse_1.sendResponse(response, 200, {
                 messages: [
-                    { name: "api.success.usersettings.update", type: types_1.MessageType.success }
-                ],
-                payload: { settings: newSettings }
+                    { name: "api.success.backuprepository.delete", type: types_1.MessageType.success }
+                ]
             });
         }
-        else {
-            ApiResponse_1.sendResponse(response, 400, { messages: errormessages });
+        catch (error) {
+            let errorstring = error.toString();
+            ApiResponse_1.sendResponse(response, 400, {
+                messages: [{
+                        name: "api.error.backuprepository.delete.other",
+                        type: types_1.MessageType.error,
+                        args: { error: errorstring }
+                    }]
+            });
         }
     });
 });
-//# sourceMappingURL=update.js.map
+//# sourceMappingURL=delete.js.map
