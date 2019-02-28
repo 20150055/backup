@@ -8,30 +8,29 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+// update ausführen
 const express = require("express");
 const types_1 = require("../../../shared/types");
-const sqliteConnection_1 = require("../../../sqliteConnection");
 const ApiResponse_1 = require("../../../ApiResponse");
 const checkAuth_1 = require("../../checkAuth");
 exports.router = express.Router();
-exports.router.get("/:userId/globalsettings/:settingsId", checkAuth_1.checkAuth, function (request, response) {
+exports.router.post("/update", checkAuth_1.checkAuth, function (request, response) {
     return __awaiter(this, void 0, void 0, function* () {
-        const responseObject = yield sqliteConnection_1.database.loadGlobalSettingsById(request.params.settingsId);
-        if (responseObject) {
-            ApiResponse_1.sendResponse(response, 200, {
-                messages: [
-                    { name: "api.success.globalsettings.get", type: types_1.MessageType.success }
-                ],
-                payload: { settings: responseObject }
-            });
-        }
-        else {
-            ApiResponse_1.sendResponse(response, 400, {
-                messages: [
-                    { name: "api.error.globalsettings.get.not-existing", type: types_1.MessageType.error }
-                ]
-            });
-        }
+        //const http = new XMLHttpRequest();
+        // const url='https://jsonplaceholder.typicode.com/posts';
+        // http.open("GET", url);
+        // http.send();
+        // http.onreadystatechange=(e)=>{
+        //     console.log(http.responseText)
+        // }
+        // let a = $.get("");
+        //https://api.github.com/repos/20150055/backup/contents/version?ref=gh-pages
+        //const version = Number(Buffer.from(b64string, 'base64').toString()); 
+        ApiResponse_1.sendResponse(response, 400, {
+            messages: [
+                { name: "api.error.globalsettings.get.not-existing", type: types_1.MessageType.error }
+            ]
+        });
     });
 });
-//# sourceMappingURL=get.js.map
+//# sourceMappingURL=post.js.map

@@ -25,12 +25,13 @@ exports.router.put("/:userId/usersettings", checkAuth_1.checkAuth, function (req
             if (oldSettings) {
                 newSettings.id = oldSettings.id;
             }
-            yield sqliteConnection_1.database.createUserSettings(newSettings);
+            newSettings = yield sqliteConnection_1.database.createUserSettings(newSettings);
+            const responseObject = newSettings;
             ApiResponse_1.sendResponse(response, 200, {
                 messages: [
                     { name: "api.success.usersettings.update", type: types_1.MessageType.success }
                 ],
-                payload: { settings: newSettings }
+                payload: { settings: responseObject }
             });
         }
         else {

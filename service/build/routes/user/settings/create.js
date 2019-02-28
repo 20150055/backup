@@ -21,12 +21,13 @@ exports.router.post("/:userId/usersettings", checkAuth_1.checkAuth, function (re
         let errormessages = yield functions_1.checkError(body, request.params.userId, true);
         if (errormessages.length === 0) {
             let settings = functions_1.setValues(body, request.params.userId);
-            yield sqliteConnection_1.database.createUserSettings(settings);
+            settings = yield sqliteConnection_1.database.createUserSettings(settings);
+            const responseObject = settings;
             ApiResponse_1.sendResponse(response, 200, {
                 messages: [
                     { name: "api.success.usersettings.create", type: types_1.MessageType.success }
                 ],
-                payload: { settings: settings }
+                payload: { settings: responseObject }
             });
         }
         else {

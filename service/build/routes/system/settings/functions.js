@@ -6,18 +6,33 @@ const enumTypes = require("../../../shared/types/enumTypes");
 function checkError(body) {
     let errormessages = [];
     try {
-        if (!(body.port && body.automaticUpdates && body.enableRegister && body.updateCheckInterval)) {
+        if (!(body.port &&
+            body.automaticUpdates &&
+            body.enableRegister &&
+            body.updateCheckInterval)) {
             if (!body.port) {
-                errormessages.push({ name: "api.error.globalsettings.create.missing-data.port", type: types_1.MessageType.error });
+                errormessages.push({
+                    name: "api.error.globalsettings.create.missing-data.port",
+                    type: types_1.MessageType.error
+                });
             }
             if (!body.automaticUpdates) {
-                errormessages.push({ name: "api.error.globalsettings.create.missing-data.automaticUpdates", type: types_1.MessageType.error });
+                errormessages.push({
+                    name: "api.error.globalsettings.create.missing-data.automaticUpdates",
+                    type: types_1.MessageType.error
+                });
             }
             if (!body.enableRegister) {
-                errormessages.push({ name: "api.error.globalsettings.create.missing-data.enableRegister", type: types_1.MessageType.error });
+                errormessages.push({
+                    name: "api.error.globalsettings.create.missing-data.enableRegister",
+                    type: types_1.MessageType.error
+                });
             }
             if (!body.updateCheckInterval) {
-                errormessages.push({ name: "api.error.globalsettings.create.missing-data.updateCheckInterval", type: types_1.MessageType.error });
+                errormessages.push({
+                    name: "api.error.globalsettings.create.missing-data.updateCheckInterval",
+                    type: types_1.MessageType.error
+                });
             }
         }
         if (body.updateCheckInterval) {
@@ -33,13 +48,17 @@ function checkError(body) {
     }
     catch (error) {
         let errorstring = error.toString();
-        errormessages.push({ name: "api.error.globalsettings.create.other", type: types_1.MessageType.error, args: { "error": errorstring } });
+        errormessages.push({
+            name: "api.error.globalsettings.create.other",
+            type: types_1.MessageType.error,
+            args: { error: errorstring }
+        });
     }
     return errormessages;
 }
 exports.checkError = checkError;
 function setValues(body) {
-    let settings = new GlobalSettings_1.GlobalSettings;
+    let settings = new GlobalSettings_1.GlobalSettings();
     settings.port = body.port;
     settings.automaticUpdates = body.automaticUpdates;
     settings.enableRegister = body.enableRegister;

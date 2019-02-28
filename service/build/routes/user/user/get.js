@@ -16,13 +16,13 @@ const checkAuth_1 = require("../../checkAuth");
 exports.router = express.Router();
 exports.router.get("/:userId", checkAuth_1.checkAuth, function (request, response) {
     return __awaiter(this, void 0, void 0, function* () {
-        const user = yield sqliteConnection_1.database.loadUserById(request.params.userId);
-        if (user) {
+        const responseObject = yield sqliteConnection_1.database.loadUserById(request.params.userId);
+        if (responseObject) {
             ApiResponse_1.sendResponse(response, 200, {
                 messages: [
                     { name: "api.success.user.get", type: types_1.MessageType.success }
                 ],
-                payload: { user: user }
+                payload: { user: responseObject }
             });
         }
         else {

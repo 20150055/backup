@@ -40,16 +40,17 @@ exports.router.patch("/:userId", checkAuth_1.checkAuth, function (request, respo
             newUser.token = oldUser.token; // TODO: Sicher?
             if (!newUser.password) {
                 newUser.password = oldUser.password;
-                yield sqliteConnection_1.database.patchUser(newUser);
+                newUser = yield sqliteConnection_1.database.patchUser(newUser);
             }
             else {
-                yield sqliteConnection_1.database.createUser(newUser);
+                newUser = yield sqliteConnection_1.database.createUser(newUser);
             }
+            const responseObject = newUser;
             ApiResponse_1.sendResponse(response, 200, {
                 messages: [
                     { name: "api.success.user.patch", type: types_1.MessageType.success }
                 ],
-                payload: { user: newUser }
+                payload: { user: responseObject }
             });
         }
         else {

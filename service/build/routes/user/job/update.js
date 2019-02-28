@@ -27,7 +27,8 @@ exports.router.put("/:userId/backupJob/:jobId", checkAuth_1.checkAuth, function 
             newJob.user = oldJob.user;
             newJob.repo = oldJob.repo;
             newJob.log = oldJob.log;
-            yield sqliteConnection_1.database.createBackupjob(newJob);
+            newJob = yield sqliteConnection_1.database.createBackupjob(newJob);
+            const responseObject = newJob.getResponseObject();
             ApiResponse_1.sendResponse(response, 200, {
                 messages: [
                     {
@@ -35,7 +36,7 @@ exports.router.put("/:userId/backupJob/:jobId", checkAuth_1.checkAuth, function 
                         type: types_1.MessageType.success
                     }
                 ],
-                payload: { job: newJob.getResponseObject() }
+                payload: { job: responseObject }
             });
         }
         else {

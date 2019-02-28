@@ -21,7 +21,8 @@ exports.router.post("/:userId/backupJob", checkAuth_1.checkAuth, function (reque
         let errormessages = yield functions_1.checkError(body, request.params.userId, null);
         if (errormessages.length === 0) {
             let job = functions_1.setValues(body, request.params.userId);
-            yield sqliteConnection_1.database.createBackupjob(job);
+            job = yield sqliteConnection_1.database.createBackupjob(job);
+            let responseObject = job.getResponseObject();
             ApiResponse_1.sendResponse(response, 200, {
                 messages: [
                     {
@@ -29,7 +30,7 @@ exports.router.post("/:userId/backupJob", checkAuth_1.checkAuth, function (reque
                         type: types_1.MessageType.success
                     }
                 ],
-                payload: { job: job.getResponseObject() }
+                payload: { job: responseObject }
             });
         }
         else {

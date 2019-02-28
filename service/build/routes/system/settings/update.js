@@ -24,11 +24,12 @@ exports.router.put("/:userId/globalsettings/:settingsId", checkAuth_1.checkAuth,
             let newSettings = functions_1.setValues(body);
             newSettings.id = oldSettings.id;
             yield sqliteConnection_1.database.createGlobalSettings(newSettings);
+            let responseObject = newSettings;
             ApiResponse_1.sendResponse(response, 200, {
                 messages: [
                     { name: "api.success.usersettings.create", type: types_1.MessageType.success }
                 ],
-                payload: { settings: newSettings }
+                payload: { settings: responseObject }
             });
         }
         else {

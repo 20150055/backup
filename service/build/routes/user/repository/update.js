@@ -31,11 +31,12 @@ exports.router.put("/:userId/repository/:repoId", checkAuth_1.checkAuth, functio
             if (body.repoType === enumTypes_1.RepoType.S3) {
                 newRepo.accessKey = body.accessKey;
                 newRepo.secretAccessKey = body.secretAccessKey;
-                yield sqliteConnection_1.database.createS3BackupRepository(newRepo);
+                newRepo = yield sqliteConnection_1.database.createS3BackupRepository(newRepo);
             }
             else {
-                yield sqliteConnection_1.database.createLocalBackupRepository(newRepo);
+                newRepo = yield sqliteConnection_1.database.createLocalBackupRepository(newRepo);
             }
+            const responseObject = newRepo;
             ApiResponse_1.sendResponse(response, 200, {
                 messages: [
                     {
@@ -43,7 +44,7 @@ exports.router.put("/:userId/repository/:repoId", checkAuth_1.checkAuth, functio
                         type: types_1.MessageType.success
                     }
                 ],
-                payload: { repo: newRepo }
+                payload: { repo: responseObject }
             });
         }
         else {

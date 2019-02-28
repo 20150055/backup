@@ -25,14 +25,15 @@ exports.router.post("/register", function (request, response) {
             user = yield sqliteConnection_1.database.createUser(user);
             let settings = new UserSettings_1.UserSettings;
             settings.user = user.id;
-            yield sqliteConnection_1.database.createUserSettings(settings);
+            settings = yield sqliteConnection_1.database.createUserSettings(settings);
             const token = uuidv4();
             yield sqliteConnection_1.database.setUserToken(user.id, token);
+            const responseObject = user;
             ApiResponse_1.sendResponse(response, 200, {
                 messages: [
                     { name: "api.success.user.register", type: types_1.MessageType.success }
                 ],
-                payload: { user: user, token }
+                payload: { user: responseObject, token }
             });
         }
         else {

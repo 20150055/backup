@@ -17,15 +17,15 @@ exports.router = express.Router();
 exports.router.get("/:userId/backupJob", checkAuth_1.checkAuth, function (request, response) {
     return __awaiter(this, void 0, void 0, function* () {
         const jobs = yield sqliteConnection_1.database.loadAllBackupJobById(request.params.userId);
-        const responseJobs = [];
+        const responseObjects = [];
         jobs.forEach((job) => {
-            responseJobs.push(job.getResponseObject());
+            responseObjects.push(job.getResponseObject());
         });
         ApiResponse_1.sendResponse(response, 200, {
             messages: [
                 { name: "api.success.backuprepository.getAll", type: types_1.MessageType.success }
             ],
-            payload: { jobs: responseJobs }
+            payload: { jobs: responseObjects }
         });
     });
 });

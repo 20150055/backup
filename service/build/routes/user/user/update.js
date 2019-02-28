@@ -26,12 +26,13 @@ exports.router.put("/:userId", checkAuth_1.checkAuth, function (request, respons
             newUser.job = oldUser.job;
             newUser.repo = oldUser.repo;
             newUser.token = oldUser.token; // TODO: Sicher?
-            yield sqliteConnection_1.database.createUser(newUser);
+            newUser = yield sqliteConnection_1.database.createUser(newUser);
+            const responseObject = newUser;
             ApiResponse_1.sendResponse(response, 200, {
                 messages: [
                     { name: "api.success.user.update", type: types_1.MessageType.success }
                 ],
-                payload: { user: newUser }
+                payload: { user: responseObject }
             });
         }
         else {

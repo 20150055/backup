@@ -21,8 +21,14 @@ exports.router.post("/:userId/globalsettings", checkAuth_1.checkAuth, function (
         let errormessages = yield functions_1.checkError(body);
         if (errormessages.length === 0) {
             let settings = functions_1.setValues(body);
-            yield sqliteConnection_1.database.createGlobalSettings(settings);
-            ApiResponse_1.sendResponse(response, 200, { messages: [{ name: "api.success.globalsettings.create", type: types_1.MessageType.success }], payload: { settings: settings } });
+            settings = yield sqliteConnection_1.database.createGlobalSettings(settings);
+            let responseObject = settings;
+            ApiResponse_1.sendResponse(response, 200, {
+                messages: [
+                    { name: "api.success.globalsettings.create", type: types_1.MessageType.success }
+                ],
+                payload: { settings: responseObject }
+            });
         }
         else {
             ApiResponse_1.sendResponse(response, 400, { messages: errormessages });

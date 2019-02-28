@@ -21,18 +21,18 @@ class Database {
     createLocalBackupRepository(repository) {
         return __awaiter(this, void 0, void 0, function* () {
             repository.repoPassword = this.hash(repository.repoPassword);
-            yield this.connection.manager.save(repository);
+            return yield this.connection.manager.save(repository);
         });
     }
     createS3BackupRepository(repository) {
         return __awaiter(this, void 0, void 0, function* () {
             repository.repoPassword = this.hash(repository.repoPassword);
-            yield this.connection.manager.save(repository);
+            return yield this.connection.manager.save(repository);
         });
     }
     createBackupjob(backupJob) {
         return __awaiter(this, void 0, void 0, function* () {
-            yield this.connection.manager.save(backupJob);
+            return yield this.connection.manager.save(backupJob);
         });
     }
     createScheduledBackup(scheduledBackup) {
@@ -49,8 +49,7 @@ class Database {
     }
     patchUser(user) {
         return __awaiter(this, void 0, void 0, function* () {
-            user = yield this.connection.manager.save(user);
-            return user;
+            return yield this.connection.manager.save(user);
         });
     }
     setUserToken(userId, token) {
@@ -62,12 +61,12 @@ class Database {
     }
     createUserSettings(userSettings) {
         return __awaiter(this, void 0, void 0, function* () {
-            yield this.connection.manager.save(userSettings);
+            return yield this.connection.manager.save(userSettings);
         });
     }
     createGlobalSettings(globalSettings) {
         return __awaiter(this, void 0, void 0, function* () {
-            yield this.connection.manager.save(globalSettings);
+            return yield this.connection.manager.save(globalSettings);
         });
     }
     createLog(log) {
