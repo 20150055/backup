@@ -15,6 +15,8 @@ const LocalS3BackupRepository_1 = require("./entity/LocalS3BackupRepository");
 const UserSettings_1 = require("./entity/UserSettings");
 const GlobalSettings_1 = require("./entity/GlobalSettings");
 const enumTypes_1 = require("./shared/types/enumTypes");
+const Client_1 = require("./entity/Client");
+const Admin_1 = require("./entity/Admin");
 class Database {
     constructor(conn) { this.connection = conn; }
     // Create
@@ -74,7 +76,32 @@ class Database {
             yield this.connection.manager.save(log);
         });
     }
+    createClient(client) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.connection.manager.save(client);
+        });
+    }
+    createAdmin() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const admin = new Admin_1.Admin();
+            admin.clients = [];
+            admin.id = 1;
+            yield this.connection.manager.save(admin);
+        });
+    }
     // Load
+    loadClientById(clientId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const client = yield this.connection.manager.getRepository(Client_1.Client).findOne({ id: clientId });
+            return client;
+        });
+    }
+    loadAllClients() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const clients = yield this.connection.manager.getRepository(Client_1.Client).find();
+            return clients;
+        });
+    }
     loadUserByUsername(searchUsername) {
         return __awaiter(this, void 0, void 0, function* () {
             const user = yield this.connection.manager.getRepository(User_1.User).findOne({ username: searchUsername });
@@ -91,6 +118,12 @@ class Database {
         return __awaiter(this, void 0, void 0, function* () {
             const user = yield this.connection.manager.getRepository(User_1.User).findOne({ id: id });
             return user;
+        });
+    }
+    loadAdminById(id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const admin = yield this.connection.manager.getRepository(Admin_1.Admin).findOne({ id: id });
+            return admin;
         });
     }
     loadBackupJobByName(name) {
@@ -151,6 +184,11 @@ class Database {
     deleteLocalS3BackupRepositoryById(repoId) {
         return __awaiter(this, void 0, void 0, function* () {
             yield this.connection.manager.getRepository(LocalS3BackupRepository_1.LocalS3BackupRepository).delete({ id: repoId });
+        });
+    }
+    deleteClientById(clientId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.connection.manager.getRepository(Client_1.Client).delete({ id: clientId });
         });
     }
     deleteBackupJobById(jobId) {

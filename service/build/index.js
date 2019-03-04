@@ -17,7 +17,10 @@ const routes = require("./routes");
 const ApiResponse_1 = require("./ApiResponse");
 const types_1 = require("./shared/types");
 const sqliteConnection_1 = require("./sqliteConnection");
+const http = require("http");
+const sio = require("socket.io");
 const app = express();
+const server = http.createServer(app);
 // allow every origin to access the api
 app.use((req, res, next) => {
     res.header("Access-Control-Allow-Origin", "*");
@@ -61,18 +64,29 @@ app.use("/api", (req, res, next) => {
 app.use("*", (req, res) => {
     res.sendFile(path.resolve(dir + "/index.html"));
 });
+exports.io = sio(server);
+exports.io.of("/api/").on("connection", (socket) => {
+    console.log("connected");
+    socket.on('disconnect', function () {
+        console.log('user disconnected');
+    });
+});
 (() => __awaiter(this, void 0, void 0, function* () {
     yield sqliteConnection_1.databaseReady;
     let port = 8380;
     const settings = yield sqliteConnection_1.database.loadGlobalSettingsById(1);
+    const admin = yield sqliteConnection_1.database.loadAdminById(1);
     if (settings) {
         port = settings.port;
     }
     else {
         yield sqliteConnection_1.database.createDefaultGlobalSettingsById();
     }
+    if (!admin) {
+        yield sqliteConnection_1.database.createAdmin();
+    }
     // serverstart on port XXXX
-    app.listen(port, function () {
+    server.listen(port, function () {
         console.log(`API is listening on port ${port}`);
     });
 }))();
