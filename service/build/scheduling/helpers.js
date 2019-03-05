@@ -1,0 +1,22 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+function createEnv(commonArgs) {
+    if (commonArgs.type === "local") {
+        return {
+            RESTIC_PASSWORD: commonArgs.password,
+            RESTIC_REPOSITORY: commonArgs.location
+        };
+    }
+    // restic expects s3 locations to look like this: `s3:https://my.server/backup-bucket`
+    const location = commonArgs.location.startsWith("s3:")
+        ? commonArgs.location
+        : `s3:${commonArgs.location}`;
+    return {
+        RESTIC_PASSWORD: commonArgs.password,
+        RESTIC_REPOSITORY: location,
+        AWS_ACCESS_KEY_ID: commonArgs.s3AccessKey,
+        AWS_SECRET_ACCESS_KEY: commonArgs.s3SecretKey
+    };
+}
+exports.createEnv = createEnv;
+//# sourceMappingURL=helpers.js.map
