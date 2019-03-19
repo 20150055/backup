@@ -18,11 +18,15 @@ let BackupJob = class BackupJob {
     getResponseObject() {
         return {
             id: this.id,
+            repoId: this.repoId,
             name: this.name,
             maxBackups: this.maxBackups,
             emailNotification: this.emailNotification,
             backupLocations: this.backupLocations,
-            nextScheduleDate: this.nextScheduleDate.toString()
+            prevScheduledDate: this.prevScheduledDate,
+            active: this.active,
+            cronInterval: this.cronInterval,
+            startDate: this.startDate
         };
     }
 };
@@ -48,12 +52,24 @@ __decorate([
 ], BackupJob.prototype, "backupLocations", void 0);
 __decorate([
     typeorm_1.Column({ nullable: true }),
-    __metadata("design:type", Date)
-], BackupJob.prototype, "nextScheduleDate", void 0);
+    __metadata("design:type", Number)
+], BackupJob.prototype, "prevScheduledDate", void 0);
+__decorate([
+    typeorm_1.Column({ nullable: true }),
+    __metadata("design:type", Boolean)
+], BackupJob.prototype, "active", void 0);
+__decorate([
+    typeorm_1.Column({ nullable: true }),
+    __metadata("design:type", String)
+], BackupJob.prototype, "cronInterval", void 0);
+__decorate([
+    typeorm_1.Column({ nullable: true }),
+    __metadata("design:type", Number)
+], BackupJob.prototype, "startDate", void 0);
 __decorate([
     typeorm_1.ManyToOne(type => LocalS3BackupRepository_1.LocalS3BackupRepository, repo => repo.id, { nullable: false }),
     __metadata("design:type", Number)
-], BackupJob.prototype, "repo", void 0);
+], BackupJob.prototype, "repoId", void 0);
 __decorate([
     typeorm_1.ManyToOne(type => User_1.User, user => user.id, { nullable: false }),
     __metadata("design:type", Number)

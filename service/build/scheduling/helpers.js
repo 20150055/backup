@@ -1,7 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const types_1 = require("../shared/types");
 function createEnv(commonArgs) {
-    if (commonArgs.type === "local") {
+    if (commonArgs.type === types_1.RepoType.Local) {
         return {
             RESTIC_PASSWORD: commonArgs.password,
             RESTIC_REPOSITORY: commonArgs.location

@@ -17,11 +17,11 @@ exports.router = express.Router();
 exports.router.get("/directory", function (request, response) {
     return __awaiter(this, void 0, void 0, function* () {
         const body = { path: typeof request.query.path !== "string" || request.query.path === "false" ? false : request.query.path };
-        let invalidValues = true;
+        let invalidValue = true;
         let availableFolders = [];
         let path = typeof body.path === "string" ? body.path : false;
         if (typeof body.path === "boolean" && !body.path) {
-            invalidValues = false;
+            invalidValue = false;
             if (process.platform.startsWith("win")) {
                 yield Promise.all(new Array(26)
                     .fill(false)
@@ -39,7 +39,7 @@ exports.router.get("/directory", function (request, response) {
             }
         }
         if (path) {
-            invalidValues = false;
+            invalidValue = false;
             const items = yield fsextra.readdir(path);
             if (items) {
                 yield Promise.all(items.map((item) => __awaiter(this, void 0, void 0, function* () {
@@ -54,7 +54,7 @@ exports.router.get("/directory", function (request, response) {
                 })));
             }
         }
-        if (invalidValues) {
+        if (invalidValue) {
             ApiResponse_1.sendResponse(response, 400, {
                 messages: [
                     {
@@ -63,10 +63,12 @@ exports.router.get("/directory", function (request, response) {
                     }
                 ]
             });
+            return;
         }
         // order them a-z if they're both folders or files
         availableFolders.sort((a, b) => a.folder === b.folder ? a.name.localeCompare(b.name) : a.folder ? -1 : 1);
         if (availableFolders.length > 0) {
+            availableFolders.sort((a, b) => a.name.localeCompare(b.name));
             ApiResponse_1.sendResponse(response, 200, {
                 messages: [
                     {

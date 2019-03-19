@@ -10,16 +10,17 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const _1 = require(".");
 const path = require("path");
+const types_1 = require("../shared/types");
 (() => __awaiter(this, void 0, void 0, function* () {
     console.log((yield _1.createRepository({
         location: path.join(__dirname, "myRepo"),
         password: "superSecretPassword",
-        type: "local"
+        type: types_1.RepoType.Local
     })).fullOutput);
     console.log((yield _1.executeBackup({
         location: path.join(__dirname, "myRepo"),
         password: "superSecretPassword",
-        type: "local"
+        type: types_1.RepoType.Local
     }, 1, ["node_modules"], progressInfo => {
         console.log("current progress: ", progressInfo);
     })).fullOutput);

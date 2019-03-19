@@ -22,7 +22,10 @@ function checkError(body, userId, jobId) {
                 body.maxBackups &&
                 body.emailNotification &&
                 body.backupLocations &&
-                body.nextScheduleDate)) {
+                body.active != undefined &&
+                body.active != null &&
+                body.cronInterval &&
+                body.startDate)) {
                 if (!body.repoId) {
                     errormessages.push({
                         name: "api.error.backupjob.create.missing-data.repoId",
@@ -53,9 +56,21 @@ function checkError(body, userId, jobId) {
                         type: types_1.MessageType.error
                     });
                 }
-                if (!body.nextScheduleDate) {
+                if (!body.active) {
                     errormessages.push({
-                        name: "api.error.backupjob.create.missing-data.nextScheduleDate",
+                        name: "api.error.backupjob.create.missing-data.active",
+                        type: types_1.MessageType.error
+                    });
+                }
+                if (!body.cronInterval) {
+                    errormessages.push({
+                        name: "api.error.backupjob.create.missing-data.cronInterval",
+                        type: types_1.MessageType.error
+                    });
+                }
+                if (!body.startDate) {
+                    errormessages.push({
+                        name: "api.error.backupjob.create.missing-data.startDate",
                         type: types_1.MessageType.error
                     });
                 }
@@ -90,11 +105,10 @@ function checkError(body, userId, jobId) {
                     });
                 }
             }
-            if (body.nextScheduleDate) {
+            if (body.cronInterval) {
                 try {
-                    let interval = parser.parseExpression(body.nextScheduleDate);
-                    let nextDate = new Date(Date.parse(interval.next().toString()));
-                    body.nextScheduleDate = nextDate.toString();
+                    let interval = parser.parseExpression(body.cronInterval);
+                    new Date(Date.parse(interval.next().toString()));
                 }
                 catch (error) {
                     let errorstring = error.toString();
@@ -151,12 +165,15 @@ exports.checkError = checkError;
 function setValues(body, userId) {
     let job = new BackupJob_1.BackupJob();
     job.user = userId;
-    job.repo = body.repoId;
+    job.repoId = body.repoId;
     job.name = body.name;
     job.maxBackups = body.maxBackups;
     job.emailNotification = body.emailNotification;
     job.backupLocations = body.backupLocations;
-    job.nextScheduleDate = new Date(body.nextScheduleDate);
+    job.cronInterval = body.cronInterval;
+    job.prevScheduledDate = parser.parseExpression(body.cronInterval).prev().getTime() + (body.startDate - new Date().getTime());
+    job.startDate = body.startDate;
+    job.active = body.active;
     return job;
 }
 exports.setValues = setValues;
