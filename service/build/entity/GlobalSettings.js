@@ -12,9 +12,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const typeorm_1 = require("typeorm");
 const enumTypes_1 = require("../shared/types/enumTypes");
 let GlobalSettings = class GlobalSettings {
-    constructor() {
-        this.lastUpdateCheck = 0;
-    }
 };
 __decorate([
     typeorm_1.PrimaryGeneratedColumn(),
@@ -32,10 +29,6 @@ __decorate([
     typeorm_1.Column({ nullable: true }),
     __metadata("design:type", String)
 ], GlobalSettings.prototype, "updateCheckInterval", void 0);
-__decorate([
-    typeorm_1.Column({ nullable: true }),
-    __metadata("design:type", Number)
-], GlobalSettings.prototype, "lastUpdateCheck", void 0);
 __decorate([
     typeorm_1.Column({ default: 8380 }),
     __metadata("design:type", Number)

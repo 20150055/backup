@@ -10,8 +10,8 @@ var EmailNotification;
 //Repository
 var RepoType;
 (function (RepoType) {
-    RepoType["Local"] = "local";
-    RepoType["S3"] = "s3";
+    RepoType["Local"] = "Local";
+    RepoType["S3"] = "S3";
 })(RepoType = exports.RepoType || (exports.RepoType = {}));
 // Settings
 var UpdateCheckInterval;
@@ -31,13 +31,4 @@ var Language;
     Language["de"] = "de";
     Language["en"] = "en";
 })(Language = exports.Language || (exports.Language = {}));
-//Update
-var UpdateResponse;
-(function (UpdateResponse) {
-    UpdateResponse["done"] = "done";
-    UpdateResponse["doneDummy"] = "done-dummy";
-    UpdateResponse["upToDate"] = "version-up-to-date";
-    UpdateResponse["updateFailed"] = "update-failed";
-    UpdateResponse["downloadFailed"] = "download-failed";
-})(UpdateResponse = exports.UpdateResponse || (exports.UpdateResponse = {}));
 //# sourceMappingURL=enumTypes.js.map

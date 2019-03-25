@@ -17,7 +17,6 @@ const routes = require("./routes");
 const ApiResponse_1 = require("./ApiResponse");
 const types_1 = require("./shared/types");
 const sqliteConnection_1 = require("./sqliteConnection");
-const update_1 = require("./update");
 const http = require("http");
 const sio = require("socket.io");
 const app = express();
@@ -90,6 +89,5 @@ exports.io.of("/api/").on("connection", (socket) => {
     server.listen(port, function () {
         console.log(`API is listening on port ${port}`);
     });
-    update_1.checkForUpdate();
 }))();
 //# sourceMappingURL=index.js.map
