@@ -56,7 +56,7 @@ if ($mode -eq "d") {
     npm install;
     cd $path\installService;
     npm install node-windows;
-    echo "Operation finished";
+    
 
 }
 if ($mode -eq "u") {
@@ -103,19 +103,16 @@ if ($mode -eq "u") {
             }
             else {
                 echo "Success: Backup380 is now installed";
-                echo "Operation finished";
                 Start-Process http://localhost:8380/setup
             }
         }
         else {
             echo "Success: Backup380 is now installed";
-            echo "Operation finished";
             Start-Process http://localhost:8380/setup
         }
     }
     else {
         echo "Success: Backup380 is now installed";
-        echo "Operation finished";
     }
 }
 
@@ -248,19 +245,16 @@ if ($mode -eq "i") {
             }
             else {
                 echo "Success: Backup380 is now installed";
-                echo "Operation finished";
                 Start-Process http://localhost:8380/setup
             }
         }
         else {
             echo "Success: Backup380 is now installed";
-            echo "Operation finished";
             Start-Process http://localhost:8380/setup
         }
     }
     else {
         echo "Success: Backup380 is now installed";
-        echo "Operation finished";
     }
 }
 

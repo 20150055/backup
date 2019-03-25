@@ -16,14 +16,17 @@ function checkError(body, userId, insert) {
     return __awaiter(this, void 0, void 0, function* () {
         let errormessages = [];
         try {
-            if (!(body.sendEmails &&
+            if (!(body.sendEmails != undefined &&
+                body.sendEmails != null &&
                 body.reportLanguage &&
                 body.language &&
-                body.showSnackbar &&
+                body.showSnackbar != undefined &&
+                body.showSnackbar != null &&
                 body.themePrimary &&
                 body.themeSecondary &&
                 body.themeAccent &&
-                body.darktheme)) {
+                body.darktheme != undefined &&
+                body.darktheme != null)) {
                 if (!body.sendEmails) {
                     errormessages.push({
                         name: "api.error.usersettings.create.missing-data.sendEmails",

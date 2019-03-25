@@ -24,14 +24,14 @@ fi
     Encoding=UTF-8
     Name=Backup380         
     Type=Link
-    URL=http://localhost:8380/" >> Backup.desktop && cd $installPath  && rm -rf /home/$USER/temp_backup380 && echo "Installation of Backup380 finished" && echo "Operation finished"
+    URL=http://localhost:8380/" >> Backup.desktop && cd $installPath  && rm -rf /home/$USER/temp_backup380 && echo "Installation of Backup380 finished"
 
   fi;
 
 if [ "$1" = "-download" ] || [ "$1" = "-d" ];
 then
   sudo apt install jq && sudo apt install curl;
-  mkdir /home/$USER/temp_backup380 && cd /home/$USER/temp_backup380  && wget -T 360 "https://github.com/20150055/backup/archive/gh-pages.zip" && unzip -o gh-pages.zip && rm gh-pages.zip && mv -f backup-gh-pages/* . && rm -r backup-gh-pages && version=$(curl -s "https://api.github.com/repos/restic/restic/releases/latest"| jq -r ".tag_name" | cut -d 'v' -f 2) &&  wget "https://github.com/restic/restic/releases/download/v$version/restic_${version}_linux_amd64.bz2" -O "restic.bz2" && bzip2 -d restic.bz2 && mv restic service/build && sudo apt-get update && sudo apt-get -y install nodejs && sudo apt-get -y install npm && cd service  && npm install node-bin-setup && npm install --production && echo "Operation finished";
+  mkdir /home/$USER/temp_backup380 && cd /home/$USER/temp_backup380  && wget -T 360 "https://github.com/20150055/backup/archive/gh-pages.zip" && unzip -o gh-pages.zip && rm gh-pages.zip && mv -f backup-gh-pages/* . && rm -r backup-gh-pages && version=$(curl -s "https://api.github.com/repos/restic/restic/releases/latest"| jq -r ".tag_name" | cut -d 'v' -f 2) &&  wget "https://github.com/restic/restic/releases/download/v$version/restic_${version}_linux_amd64.bz2" -O "restic.bz2" && bzip2 -d restic.bz2 && mv restic service/build && sudo apt-get update && sudo apt-get -y install nodejs && sudo apt-get -y install npm && cd service  && npm install node-bin-setup && npm install --production;
 fi;
 if [ "$1" = "-update" ] || [ "$1" = "-u" ];
 then
@@ -50,9 +50,10 @@ then
     Restart=on-failure
 
     [Install]
-    WantedBy=multi-user.target" > backup.service' && echo backup.service && sudo mv "backup.service" "/lib/systemd/system" &&  sudo mv /home/$USER/temp_backup380/* $dirPath && sudo systemctl daemon-reload && sudo systemctl start backup && sudo systemctl enable backup && && echo "Operation finished"
+    WantedBy=multi-user.target" > backup.service' && echo backup.service && sudo mv "backup.service" "/lib/systemd/system" &&  sudo mv /home/$USER/temp_backup380/* $dirPath && sudo systemctl daemon-reload && sudo systemctl start backup && sudo systemctl enable backup
   else
-    echo "Error: could not find service";
-    exit 1;
+    echo "Error: could not find service"
   fi;
+  
+  
 fi;

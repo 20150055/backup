@@ -24,11 +24,11 @@ __decorate([
 ], Log.prototype, "status", void 0);
 __decorate([
     typeorm_1.Column(),
-    __metadata("design:type", Date)
+    __metadata("design:type", Number)
 ], Log.prototype, "start", void 0);
 __decorate([
     typeorm_1.Column(),
-    __metadata("design:type", Date)
+    __metadata("design:type", Number)
 ], Log.prototype, "end", void 0);
 __decorate([
     typeorm_1.Column(),
