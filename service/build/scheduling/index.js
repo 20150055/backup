@@ -21,7 +21,8 @@ function createRepository(commonArgs) {
     });
 }
 exports.createRepository = createRepository;
-function executeBackup(commonArgs, backupJobId, paths, onProgress) {
+function executeBackup(commonArgs, backupJobId, paths, // TODO: Deleted type path
+onProgress) {
     return __awaiter(this, void 0, void 0, function* () {
         const environmentVariables = helpers_1.createEnv(commonArgs);
         let highestPercentage = 0;

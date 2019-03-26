@@ -25,21 +25,17 @@ __decorate([
 __decorate([
     typeorm_1.Column(),
     __metadata("design:type", Number)
-], Log.prototype, "start", void 0);
-__decorate([
-    typeorm_1.Column(),
-    __metadata("design:type", Number)
-], Log.prototype, "end", void 0);
+], Log.prototype, "date", void 0);
 __decorate([
     typeorm_1.Column(),
     __metadata("design:type", String)
-], Log.prototype, "output", void 0);
+], Log.prototype, "eventDescription", void 0);
 __decorate([
-    typeorm_1.ManyToOne(type => BackupJob_1.BackupJob, backupjob => backupjob.id, { nullable: false }),
+    typeorm_1.ManyToOne(type => BackupJob_1.BackupJob, backupjob => backupjob.id, { nullable: true }),
     __metadata("design:type", Number)
-], Log.prototype, "backupjob", void 0);
+], Log.prototype, "backupJob", void 0);
 __decorate([
-    typeorm_1.ManyToOne(type => LocalS3BackupRepository_1.LocalS3BackupRepository, repository => repository.id, { nullable: false }),
+    typeorm_1.ManyToOne(type => LocalS3BackupRepository_1.LocalS3BackupRepository, repository => repository.id, { nullable: true }),
     __metadata("design:type", Number)
 ], Log.prototype, "repository", void 0);
 Log = __decorate([

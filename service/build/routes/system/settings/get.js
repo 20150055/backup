@@ -13,11 +13,14 @@ const types_1 = require("../../../shared/types");
 const sqliteConnection_1 = require("../../../sqliteConnection");
 const ApiResponse_1 = require("../../../ApiResponse");
 const checkAuth_1 = require("../../checkAuth");
+const logging_1 = require("../../../logging");
 exports.router = express.Router();
 exports.router.get("/:userId/globalsettings/:settingsId", checkAuth_1.checkAuth, function (request, response) {
     return __awaiter(this, void 0, void 0, function* () {
         const responseObject = yield sqliteConnection_1.database.loadGlobalSettingsById(request.params.settingsId);
         if (responseObject) {
+            const logValues = { status: types_1.MessageType.success, eventDescription: "api.success.globalsettings.get" };
+            logging_1.createLog(logValues);
             ApiResponse_1.sendResponse(response, 200, {
                 messages: [
                     { name: "api.success.globalsettings.get", type: types_1.MessageType.success }
@@ -26,6 +29,8 @@ exports.router.get("/:userId/globalsettings/:settingsId", checkAuth_1.checkAuth,
             });
         }
         else {
+            const logValues = { status: types_1.MessageType.error, eventDescription: "api.error.globalsettings.get.not-existing" };
+            logging_1.createLog(logValues);
             ApiResponse_1.sendResponse(response, 400, {
                 messages: [
                     { name: "api.error.globalsettings.get.not-existing", type: types_1.MessageType.error }

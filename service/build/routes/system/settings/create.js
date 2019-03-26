@@ -14,6 +14,7 @@ const sqliteConnection_1 = require("../../../sqliteConnection");
 const ApiResponse_1 = require("../../../ApiResponse");
 const checkAuth_1 = require("../../checkAuth");
 const functions_1 = require("./functions");
+const logging_1 = require("../../../logging");
 exports.router = express.Router();
 exports.router.post("/:userId/globalsettings", checkAuth_1.checkAuth, function (request, response) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -23,6 +24,8 @@ exports.router.post("/:userId/globalsettings", checkAuth_1.checkAuth, function (
             let settings = functions_1.setValues(body);
             settings = yield sqliteConnection_1.database.createGlobalSettings(settings);
             let responseObject = settings;
+            const logValues = { status: types_1.MessageType.success, eventDescription: "api.success.globalsettings.create" };
+            logging_1.createLog(logValues);
             ApiResponse_1.sendResponse(response, 200, {
                 messages: [
                     { name: "api.success.globalsettings.create", type: types_1.MessageType.success }
@@ -31,6 +34,9 @@ exports.router.post("/:userId/globalsettings", checkAuth_1.checkAuth, function (
             });
         }
         else {
+            const logValues = { status: types_1.MessageType.success, eventDescription: "api.error.globalsettings.create",
+                message: "The following errors occured:\n" + errormessages.toLocaleString() };
+            logging_1.createLog(logValues);
             ApiResponse_1.sendResponse(response, 400, { messages: errormessages });
         }
     });

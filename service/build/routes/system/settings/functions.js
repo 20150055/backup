@@ -9,7 +9,8 @@ function checkError(body) {
         if (!(body.port &&
             body.automaticUpdates &&
             body.enableRegister &&
-            body.updateCheckInterval)) {
+            body.updateCheckInterval &&
+            body.logfileSize)) {
             if (!body.port) {
                 errormessages.push({
                     name: "api.error.globalsettings.create.missing-data.port",
@@ -31,6 +32,12 @@ function checkError(body) {
             if (!body.updateCheckInterval) {
                 errormessages.push({
                     name: "api.error.globalsettings.create.missing-data.updateCheckInterval",
+                    type: types_1.MessageType.error
+                });
+            }
+            if (!body.logfileSize) {
+                errormessages.push({
+                    name: "api.error.globalsettings.create.missing-data.logfileSize",
                     type: types_1.MessageType.error
                 });
             }
@@ -63,6 +70,7 @@ function setValues(body) {
     settings.automaticUpdates = body.automaticUpdates;
     settings.enableRegister = body.enableRegister;
     settings.updateCheckInterval = body.updateCheckInterval;
+    settings.logfileSize = body.logfileSize;
     return settings;
 }
 exports.setValues = setValues;

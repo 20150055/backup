@@ -40,6 +40,10 @@ __decorate([
     typeorm_1.Column({ default: 8380 }),
     __metadata("design:type", Number)
 ], GlobalSettings.prototype, "port", void 0);
+__decorate([
+    typeorm_1.Column({ default: 8380 }),
+    __metadata("design:type", Number)
+], GlobalSettings.prototype, "logfileSize", void 0);
 GlobalSettings = __decorate([
     typeorm_1.Entity()
 ], GlobalSettings);

@@ -22,7 +22,7 @@ exports.router.post("/:userId/backupJob", checkAuth_1.checkAuth, function (reque
         if (errormessages.length === 0) {
             let job = functions_1.setValues(body, request.params.userId);
             job = yield sqliteConnection_1.database.createBackupjob(job);
-            let responseObject = job.getResponseObject();
+            let responseObject = job;
             ApiResponse_1.sendResponse(response, 200, {
                 messages: [
                     {

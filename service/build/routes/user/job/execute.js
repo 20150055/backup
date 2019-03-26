@@ -9,24 +9,20 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express = require("express");
-const types_1 = require("../../../shared/types");
 const sqliteConnection_1 = require("../../../sqliteConnection");
-const ApiResponse_1 = require("../../../ApiResponse");
 const checkAuth_1 = require("../../checkAuth");
+const functions_1 = require("./functions");
 exports.router = express.Router();
-exports.router.get("/:userId/backupJob", checkAuth_1.checkAuth, function (request, response) {
+exports.router.post("/:userId/backupJob/:jobId/execute", checkAuth_1.checkAuth, function (request, response) {
     return __awaiter(this, void 0, void 0, function* () {
-        const jobs = yield sqliteConnection_1.database.loadAllBackupJobById(request.params.userId);
-        const responseObjects = [];
-        jobs.forEach((job) => {
-            responseObjects.push((job));
-        });
-        ApiResponse_1.sendResponse(response, 200, {
-            messages: [
-                { name: "api.success.backuprepository.getAll", type: types_1.MessageType.success }
-            ],
-            payload: { jobs: responseObjects }
-        });
+        const jobId = request.params.jobId;
+        const job = yield sqliteConnection_1.database.loadBackupJobById(jobId);
+        const repo = yield sqliteConnection_1.database.loadLocalS3BackupRepositoryById(job.repoId);
+        const success = yield functions_1.executeJob(job, repo);
+        if (success) {
+        }
+        else {
+        }
     });
 });
-//# sourceMappingURL=getAll.js.map
+//# sourceMappingURL=execute.js.map

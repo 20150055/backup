@@ -177,4 +177,11 @@ function setValues(body, userId) {
     return job;
 }
 exports.setValues = setValues;
+function executeJob(job, repo) {
+    return __awaiter(this, void 0, void 0, function* () {
+        // executeBackup();
+        return true;
+    });
+}
+exports.executeJob = executeJob;
 //# sourceMappingURL=functions.js.map

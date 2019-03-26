@@ -28,7 +28,7 @@ exports.router.put("/:userId/backupJob/:jobId", checkAuth_1.checkAuth, function 
             newJob.repoId = oldJob.repoId;
             newJob.log = oldJob.log;
             newJob = yield sqliteConnection_1.database.createBackupjob(newJob);
-            const responseObject = newJob.getResponseObject();
+            const responseObject = newJob;
             ApiResponse_1.sendResponse(response, 200, {
                 messages: [
                     {

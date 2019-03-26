@@ -21,6 +21,10 @@ __decorate([
     __metadata("design:type", Number)
 ], LocalS3BackupRepository.prototype, "id", void 0);
 __decorate([
+    typeorm_1.Column({ nullable: true }),
+    __metadata("design:type", Boolean)
+], LocalS3BackupRepository.prototype, "archived", void 0);
+__decorate([
     typeorm_1.Column({ length: 9 }),
     __metadata("design:type", String)
 ], LocalS3BackupRepository.prototype, "repoType", void 0);

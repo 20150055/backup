@@ -15,25 +15,15 @@ const Log_1 = require("./Log");
 const User_1 = require("./User");
 const enumTypes_1 = require("../shared/types/enumTypes");
 let BackupJob = class BackupJob {
-    getResponseObject() {
-        return {
-            id: this.id,
-            repoId: this.repoId,
-            name: this.name,
-            maxBackups: this.maxBackups,
-            emailNotification: this.emailNotification,
-            backupLocations: this.backupLocations,
-            prevScheduledDate: this.prevScheduledDate,
-            active: this.active,
-            cronInterval: this.cronInterval,
-            startDate: this.startDate
-        };
-    }
 };
 __decorate([
     typeorm_1.PrimaryGeneratedColumn(),
     __metadata("design:type", Number)
 ], BackupJob.prototype, "id", void 0);
+__decorate([
+    typeorm_1.Column({ nullable: true }),
+    __metadata("design:type", Boolean)
+], BackupJob.prototype, "archived", void 0);
 __decorate([
     typeorm_1.Column({ unique: true }),
     __metadata("design:type", String)

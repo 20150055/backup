@@ -15,6 +15,7 @@ const LocalS3BackupRepository_1 = require("./entity/LocalS3BackupRepository");
 const UserSettings_1 = require("./entity/UserSettings");
 const GlobalSettings_1 = require("./entity/GlobalSettings");
 const enumTypes_1 = require("./shared/types/enumTypes");
+const Log_1 = require("./entity/Log");
 const Client_1 = require("./entity/Client");
 const Admin_1 = require("./entity/Admin");
 class Database {
@@ -73,7 +74,7 @@ class Database {
     }
     createLog(log) {
         return __awaiter(this, void 0, void 0, function* () {
-            yield this.connection.manager.save(log);
+            return yield this.connection.manager.save(log);
         });
     }
     createClient(client) {
@@ -203,6 +204,28 @@ class Database {
             return count;
         });
     }
+    countLogs() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const count = yield this.connection.manager.getRepository(Log_1.Log).count();
+            return count;
+        });
+    }
+    getNextLogId() {
+        return __awaiter(this, void 0, void 0, function* () {
+            let logs = yield this.getLogs();
+            if (logs.length === 0 || logs.length === 1) {
+                return logs.length;
+            }
+            logs = logs.sort((a, b) => a.id > b.id ? 1 : -1);
+            return logs[0].id;
+        });
+    }
+    getLogs() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const logs = yield this.connection.manager.getRepository(Log_1.Log).find();
+            return logs;
+        });
+    }
     createDefaultGlobalSettingsById() {
         return __awaiter(this, void 0, void 0, function* () {
             const settings = new GlobalSettings_1.GlobalSettings;
@@ -211,11 +234,12 @@ class Database {
             settings.automaticUpdates = true;
             settings.updateCheckInterval = enumTypes_1.UpdateCheckInterval.daily;
             settings.port = 8380;
+            settings.logfileSize = 500;
             yield this.connection.manager.save(settings);
         });
     }
     hash(word) {
-        const hash = crypto.createHmac("sha512", "").update(word).digest("hex");
+        const hash = crypto.createHmac("sha512", "dsfpoldkqp").update(word).digest("hex");
         return hash;
     }
 }

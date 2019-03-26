@@ -43,7 +43,7 @@ exports.router.post("/:userId/repository", checkAuth_1.checkAuth, function (requ
                     location: repo.repoLocation,
                     type: enumTypes_1.RepoType.Local
                 };
-                console.log(yield restic.createRepository(args));
+                console.log(yield restic.createRepository(args)); // TODO remove console.log
                 repo = yield sqliteConnection_1.database.createLocalBackupRepository(repo);
             }
             const responseObject = repo;
