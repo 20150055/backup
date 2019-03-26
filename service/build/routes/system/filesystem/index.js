@@ -13,7 +13,6 @@ const ApiResponse_1 = require("../../../ApiResponse");
 const types_1 = require("../../../shared/types");
 const fsextra = require("fs-extra");
 const pathModule = require("path");
-const logging_1 = require("../../../logging");
 exports.router = express.Router();
 exports.router.get("/directory", function (request, response) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -56,8 +55,6 @@ exports.router.get("/directory", function (request, response) {
             }
         }
         if (invalidValue) {
-            const logValues = { status: types_1.MessageType.error, eventDescription: "api.error.system.directory.invalid-values" };
-            logging_1.createLog(logValues);
             ApiResponse_1.sendResponse(response, 400, {
                 messages: [
                     {
@@ -72,8 +69,6 @@ exports.router.get("/directory", function (request, response) {
         availableFolders.sort((a, b) => a.folder === b.folder ? a.name.localeCompare(b.name) : a.folder ? -1 : 1);
         if (availableFolders.length > 0) {
             availableFolders.sort((a, b) => a.name.localeCompare(b.name));
-            const logValues = { status: types_1.MessageType.success, eventDescription: "api.success.system.directory" };
-            logging_1.createLog(logValues);
             ApiResponse_1.sendResponse(response, 200, {
                 messages: [
                     {
@@ -85,8 +80,6 @@ exports.router.get("/directory", function (request, response) {
             });
         }
         else {
-            const logValues = { status: types_1.MessageType.error, eventDescription: "api.error.system.directory.not-found" };
-            logging_1.createLog(logValues);
             ApiResponse_1.sendResponse(response, 400, {
                 messages: [
                     {

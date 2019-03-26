@@ -12,17 +12,13 @@ const express = require("express");
 const types_1 = require("../../../shared/types");
 const ApiResponse_1 = require("../../../ApiResponse");
 const update_1 = require("./../../../update");
-const logging_1 = require("../../../logging");
 exports.router = express.Router();
 exports.router.post("/update", function (request, response) {
     return __awaiter(this, void 0, void 0, function* () {
         const res = yield update_1.execUpdate();
-        let logValues;
         switch (res) {
             case types_1.UpdateResponse.done:
             case types_1.UpdateResponse.doneDummy:
-                logValues = { status: types_1.MessageType.success, eventDescription: "api.success.system.update." + res };
-                logging_1.createLog(logValues);
                 ApiResponse_1.sendResponse(response, 200, {
                     messages: [{
                             name: "api.success.system.update." + res,
@@ -32,8 +28,6 @@ exports.router.post("/update", function (request, response) {
                 break;
             case types_1.UpdateResponse.downloadFailed:
             case types_1.UpdateResponse.updateFailed:
-                logValues = { status: types_1.MessageType.error, eventDescription: "api.error.system.update." + res };
-                logging_1.createLog(logValues);
                 ApiResponse_1.sendResponse(response, 400, {
                     messages: [{
                             name: "api.error.system.update." + res,
@@ -42,8 +36,6 @@ exports.router.post("/update", function (request, response) {
                 });
                 break;
             case types_1.UpdateResponse.upToDate:
-                logValues = { status: types_1.MessageType.error, eventDescription: "api.info.system.update." + res };
-                logging_1.createLog(logValues);
                 ApiResponse_1.sendResponse(response, 200, {
                     messages: [{
                             name: "api.info.system.update." + res,
@@ -52,8 +44,6 @@ exports.router.post("/update", function (request, response) {
                 });
                 break;
             default:
-                logValues = { status: types_1.MessageType.error, eventDescription: "api.error.system.update.other" };
-                logging_1.createLog(logValues);
                 ApiResponse_1.sendResponse(response, 400, {
                     messages: [{
                             name: "api.error.system.update.other",

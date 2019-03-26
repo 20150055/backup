@@ -12,12 +12,13 @@ const express = require("express");
 const path = require("path");
 const os = require("os");
 const fs = require("fs");
+const index_1 = require("../index");
 const fs_extra_1 = require("fs-extra");
 const checkForUpdate_1 = require("./checkForUpdate");
 const child_process_1 = require("child_process");
 const types_1 = require("../shared/types");
 exports.router = express.Router(); // TODO Logfiles
-const dummyInstall = false;
+const dummyInstall = true;
 function execUpdate() {
     return __awaiter(this, void 0, void 0, function* () {
         let upToDate = yield checkForUpdate_1.versionUpToDate(); // once again check version (not necessary)
@@ -51,6 +52,7 @@ function execUpdate() {
                 if (resultsDownload.status === "success") {
                     const resultsUpdate = yield executeScript("powershell", argsUpdate);
                     if (resultsUpdate.status === "success") {
+                        notifyUpdateComplete();
                         return types_1.UpdateResponse.done;
                     }
                     else {
@@ -62,6 +64,7 @@ function execUpdate() {
                 }
             }
             else {
+                notifyUpdateComplete();
                 return types_1.UpdateResponse.doneDummy;
             }
         }
@@ -112,6 +115,9 @@ function executeScript(scriptPath, args) {
             });
         });
     });
+}
+function notifyUpdateComplete() {
+    index_1.io.of("/api/").emit("updateComplete");
 }
 function copyFiles(src, dst) {
     return __awaiter(this, void 0, void 0, function* () {

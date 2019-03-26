@@ -14,7 +14,6 @@ const sqliteConnection_1 = require("../../../sqliteConnection");
 const ApiResponse_1 = require("../../../ApiResponse");
 const checkAuth_1 = require("../../checkAuth");
 const functions_1 = require("./functions");
-const logging_1 = require("../../../logging");
 exports.router = express.Router();
 exports.router.put("/:userId/globalsettings/:settingsId", checkAuth_1.checkAuth, function (request, response) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -26,8 +25,6 @@ exports.router.put("/:userId/globalsettings/:settingsId", checkAuth_1.checkAuth,
             newSettings.id = oldSettings.id;
             yield sqliteConnection_1.database.createGlobalSettings(newSettings);
             let responseObject = newSettings;
-            const logValues = { status: types_1.MessageType.success, eventDescription: "api.success.usersettings.update" };
-            logging_1.createLog(logValues);
             ApiResponse_1.sendResponse(response, 200, {
                 messages: [
                     { name: "api.success.usersettings.update", type: types_1.MessageType.success }
@@ -36,9 +33,6 @@ exports.router.put("/:userId/globalsettings/:settingsId", checkAuth_1.checkAuth,
             });
         }
         else {
-            const logValues = { status: types_1.MessageType.success, eventDescription: "api.error.globalsettings.update",
-                message: "The following errors occured:\n" + errormessages.toLocaleString() };
-            logging_1.createLog(logValues);
             ApiResponse_1.sendResponse(response, 400, { messages: errormessages });
         }
     });

@@ -38,12 +38,22 @@ function createLog(logArgs) {
         let dir = path.join(path.dirname(path.dirname(__dirname)), "logs");
         if (!fsextra.existsSync(dir)) {
             fsextra.mkdirSync(dir);
-            fsextra.createFile(dir + `/log.txt`); // TODO: + `/log_0-${globalSettings.logfileSize}.txt`
         }
-        else if (!fsextra.existsSync(dir + "/log.txt")) {
-            fsextra.createFile(dir + "/log.txt");
+        dir = path.join(dir, logArgs.logType);
+        if (!fsextra.existsSync(dir)) {
+            fsextra.mkdirSync(dir);
         }
-        dir += "/log.txt";
+        const configDir = path.join(dir, logArgs.logType + ".config");
+        if (!fsextra.existsSync(configDir)) {
+            fsextra.createFileSync(configDir);
+            fsextra.writeJSONSync(configDir, { count: "0" });
+        }
+        else {
+            const counter = Number.parseInt((yield fsextra.readJSON(configDir)).count);
+            fsextra.writeJSONSync(configDir, { count: (counter + 1).toString() });
+        }
+        // TODO
+        dir = path.join(dir, "log.txt");
         fsextra.appendFile(dir, output);
         // await database.createLog(newLog as Log); TODO: fix bug
     });

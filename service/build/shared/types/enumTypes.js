@@ -1,13 +1,13 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-//BackupJob
+// BackupJob
 var EmailNotification;
 (function (EmailNotification) {
     EmailNotification["always"] = "always";
     EmailNotification["onerror"] = "onError";
     EmailNotification["never"] = "never";
 })(EmailNotification = exports.EmailNotification || (exports.EmailNotification = {}));
-//Repository
+// Repository
 var RepoType;
 (function (RepoType) {
     RepoType["Local"] = "local";
@@ -31,7 +31,7 @@ var Language;
     Language["de"] = "de";
     Language["en"] = "en";
 })(Language = exports.Language || (exports.Language = {}));
-//Update
+// Update
 var UpdateResponse;
 (function (UpdateResponse) {
     UpdateResponse["done"] = "done";
@@ -40,4 +40,12 @@ var UpdateResponse;
     UpdateResponse["updateFailed"] = "update-failed";
     UpdateResponse["downloadFailed"] = "download-failed";
 })(UpdateResponse = exports.UpdateResponse || (exports.UpdateResponse = {}));
+// Logging
+var LogType;
+(function (LogType) {
+    LogType["General"] = "general";
+    LogType["Client"] = "client";
+    LogType["BackupJob"] = "backupjob";
+    LogType["Repository"] = "repository";
+})(LogType = exports.LogType || (exports.LogType = {}));
 //# sourceMappingURL=enumTypes.js.map
