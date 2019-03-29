@@ -11,20 +11,20 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const sqliteConnection_1 = require("../sqliteConnection");
 const fsextra = require("fs-extra");
 const path = require("path");
+const entity_1 = require("../entity");
 function createLog(logArgs) {
     return __awaiter(this, void 0, void 0, function* () {
-        const globalSettings = yield sqliteConnection_1.database.loadGlobalSettingsById(0);
-        const id = yield sqliteConnection_1.database.getNextLogId();
-        let newLog = { id: id, date: new Date().getTime(), status: logArgs.status, eventDescription: logArgs.eventDescription,
-            backupJob: logArgs.backupJobId, repository: logArgs.repositoryId };
+        const globalSettings = yield sqliteConnection_1.database.loadGlobalSettingsById(1);
+        let log = setValues(logArgs); // create log-object for database
+        log = yield sqliteConnection_1.database.createLog(log); // write log to database
         // Generate logging pattern
-        let output = `ID: ${newLog.id}\t---\t\t${new Date(newLog.date).toLocaleDateString()} / ${new Date(newLog.date).toLocaleTimeString()}\t\t---\t\t Status: ${newLog.status}\n`
-            + `\t\t\t\tDescription: ${newLog.eventDescription}\n`;
-        if (newLog.repository) {
-            output += `\t\t\t\tRepositoryId: ${newLog.repository}\n`;
+        let output = `ID: ${log.id}\t---\t\t${new Date(log.date).toLocaleDateString()} / ${new Date(log.date).toLocaleTimeString()}\t\t---\t\t Status: ${log.status}\n`
+            + `\t\t\t\tDescription: ${log.eventDescription}\n`;
+        if (log.repository) {
+            output += `\t\t\t\tRepositoryId: ${log.repository}\n`;
         }
-        if (newLog.backupJob) {
-            output += `\t\t\t\tBackupJobId: ${newLog.backupJob}\n`;
+        if (log.backupJob) {
+            output += `\t\t\t\tBackupJobId: ${log.backupJob}\n`;
         }
         if (logArgs.message) {
             logArgs.message = logArgs.message.replace(new RegExp("\n", 'g'), "\n\t\t\t\t\t\t\t");
@@ -36,26 +36,41 @@ function createLog(logArgs) {
         }
         // path to log folder
         let dir = path.join(path.dirname(path.dirname(__dirname)), "logs");
-        if (!fsextra.existsSync(dir)) {
+        if (!fsextra.existsSync(dir)) { // create "logs" folder (if not existion)
             fsextra.mkdirSync(dir);
         }
         dir = path.join(dir, logArgs.logType);
-        if (!fsextra.existsSync(dir)) {
+        if (!fsextra.existsSync(dir)) { // create folder for specified logType (if not existion)
             fsextra.mkdirSync(dir);
         }
         const configDir = path.join(dir, logArgs.logType + ".config");
-        if (!fsextra.existsSync(configDir)) {
+        let config;
+        if (!fsextra.existsSync(configDir)) { // create config file for managing the folder (if not existion)
             fsextra.createFileSync(configDir);
-            fsextra.writeJSONSync(configDir, { count: "0" });
+            config = { logCount: 1, lastModification: new Date() };
         }
         else {
-            const counter = Number.parseInt((yield fsextra.readJSON(configDir)).count);
-            fsextra.writeJSONSync(configDir, { count: (counter + 1).toString() });
+            config = yield fsextra.readJSON(configDir);
+            if (config.logCount >= globalSettings.logfileSize) { // check filesize
+                const archivePath = path.join(dir, "archived");
+                if (!fsextra.existsSync(archivePath)) { // create log archive folder (if not existion)
+                    fsextra.mkdirSync(archivePath);
+                }
+                const curDate = new Date();
+                const fileName = `log_${curDate.toLocaleDateString()}_${curDate.getHours()}-${curDate.getMinutes()}-${curDate.getSeconds()}.txt`;
+                yield fsextra.copySync(path.join(dir, "log.txt"), path.join(archivePath, fileName)); // move logfile
+                yield fsextra.removeSync(path.join(dir, "log.txt"));
+                yield fsextra.createFileSync(path.join(dir, "log.txt"));
+                config.logCount = 1;
+                config.lastModification = new Date();
+            }
+            else {
+                config.logCount++;
+                config.lastModification = new Date();
+            }
         }
-        // TODO
-        dir = path.join(dir, "log.txt");
-        fsextra.appendFile(dir, output);
-        // await database.createLog(newLog as Log); TODO: fix bug
+        fsextra.writeJSONSync(configDir, config); // update configfile
+        fsextra.appendFile(path.join(dir, "log.txt"), output); // update logfile
     });
 }
 exports.createLog = createLog;
@@ -74,4 +89,15 @@ function checkError(logArgs) {
     return errormessage;
 }
 exports.checkError = checkError;
+function setValues(log) {
+    let dbLog = new entity_1.Log();
+    dbLog.status = log.status;
+    dbLog.date = new Date().getTime();
+    dbLog.eventDescription = log.eventDescription;
+    if (log.backupJob && log.repository) {
+        dbLog.backupJob = log.backupJob;
+        dbLog.repository = log.repository;
+    }
+    return dbLog;
+}
 //# sourceMappingURL=functions.js.map

@@ -210,16 +210,6 @@ class Database {
             return count;
         });
     }
-    getNextLogId() {
-        return __awaiter(this, void 0, void 0, function* () {
-            let logs = yield this.getLogs();
-            if (logs.length === 0 || logs.length === 1) {
-                return logs.length;
-            }
-            logs = logs.sort((a, b) => a.id > b.id ? 1 : -1);
-            return logs[0].id;
-        });
-    }
     getLogs() {
         return __awaiter(this, void 0, void 0, function* () {
             const logs = yield this.connection.manager.getRepository(Log_1.Log).find();
