@@ -181,6 +181,12 @@ class Database {
             return settings;
         });
     }
+    loadLogById(id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const log = yield this.connection.manager.getRepository(Log_1.Log).findOne({ id: id });
+            return log;
+        });
+    }
     // Delete
     deleteLocalS3BackupRepositoryById(repoId) {
         return __awaiter(this, void 0, void 0, function* () {

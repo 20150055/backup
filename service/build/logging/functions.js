@@ -8,12 +8,17 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const types_1 = require("../shared/types");
 const sqliteConnection_1 = require("../sqliteConnection");
 const fsextra = require("fs-extra");
 const path = require("path");
 const entity_1 = require("../entity");
 function createLog(logArgs) {
     return __awaiter(this, void 0, void 0, function* () {
+        let errormessages = checkError(logArgs);
+        if (errormessages.length !== 0) {
+            return errormessages;
+        }
         const globalSettings = yield sqliteConnection_1.database.loadGlobalSettingsById(1);
         let log = setValues(logArgs); // create log-object for database
         log = yield sqliteConnection_1.database.createLog(log); // write log to database
@@ -30,7 +35,6 @@ function createLog(logArgs) {
             logArgs.message = logArgs.message.replace(new RegExp("\n", 'g'), "\n\t\t\t\t\t\t\t");
             output += `\t\t\t\tMessage: { \t${logArgs.message}`;
         }
-        output += checkError(logArgs);
         if (logArgs.message) {
             output += `\n\t\t\t\t}\n\n\n`;
         }
@@ -71,26 +75,32 @@ function createLog(logArgs) {
         }
         fsextra.writeJSONSync(configDir, config); // update configfile
         fsextra.appendFile(path.join(dir, "log.txt"), output); // update logfile
+        return true;
     });
 }
 exports.createLog = createLog;
 function checkError(logArgs) {
-    let errormessage = "";
+    let errormessages = [];
     if ((!logArgs.eventDescription) || (!logArgs.status)) {
-        errormessage += "ERROR: Missing Data for Log {";
         if (!logArgs.eventDescription) {
-            errormessage += " Event Description is missing!";
+            errormessages.push({
+                name: "api.error.system.log.missing-arguments-eventDescription",
+                type: types_1.MessageType.error
+            });
         }
         if (!logArgs.status) {
-            errormessage += " ERROR: Status is missing!";
+            errormessages.push({
+                name: "api.error.system.log.missing-arguments-status",
+                type: types_1.MessageType.error
+            });
         }
-        errormessage += " }\n";
     }
-    return errormessage;
+    return errormessages;
 }
 exports.checkError = checkError;
 function setValues(log) {
     let dbLog = new entity_1.Log();
+    dbLog.logType = log.logType;
     dbLog.status = log.status;
     dbLog.date = new Date().getTime();
     dbLog.eventDescription = log.eventDescription;
@@ -100,4 +110,10 @@ function setValues(log) {
     }
     return dbLog;
 }
+function findLogFile(date) {
+    return __awaiter(this, void 0, void 0, function* () {
+        // TODO
+    });
+}
+exports.findLogFile = findLogFile;
 //# sourceMappingURL=functions.js.map
