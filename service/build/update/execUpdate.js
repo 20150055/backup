@@ -18,7 +18,7 @@ const checkForUpdate_1 = require("./checkForUpdate");
 const child_process_1 = require("child_process");
 const types_1 = require("../shared/types");
 exports.router = express.Router(); // TODO Logfiles
-const dummyInstall = true;
+const dummyInstall = false;
 function execUpdate() {
     return __awaiter(this, void 0, void 0, function* () {
         let upToDate = yield checkForUpdate_1.versionUpToDate(); // once again check version (not necessary)
