@@ -1,2 +1,2 @@
 # backup
-I was ehrlich gsogt ned um wos geht oba i warad dabei :ok_hand:
+Das Setup wird manuell hochgeladen und nicht via gitlab CI / CD
