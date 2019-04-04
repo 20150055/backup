@@ -17,6 +17,7 @@ const path = require("path");
 const ssh = require("ssh2");
 const scp = require("scp2");
 const index_1 = require("../../../index");
+const logging_1 = require("../../../logging");
 const resticPath = path.join(__dirname, "../../../../../scripts/PsExec.exe");
 exports.router = express.Router();
 const app = express();
@@ -52,6 +53,24 @@ exports.router.post("/clientInstall", function (request, response) {
                                 "installation finished successfully, a log can be found in the installation folder (C:\\Program Files\\Backup380)\n";
                             responseString += data;
                         }
+                        if (responseString.indexOf("Operation finished") >= 0) {
+                            const log = {
+                                message: responseString,
+                                logType: types_1.LogType.Client,
+                                status: types_1.MessageType.success,
+                                eventDescription: "api.success.client.install"
+                            };
+                            logging_1.createLog(log);
+                        }
+                        else {
+                            const log = {
+                                message: responseString,
+                                logType: types_1.LogType.Client,
+                                status: types_1.MessageType.error,
+                                eventDescription: "api.error.client.install"
+                            };
+                            logging_1.createLog(log);
+                        }
                         index_1.io.of("/api/").emit("finishedInstall", responseString, "Windows");
                     });
                 }
@@ -72,7 +91,6 @@ exports.router.post("/clientInstall", function (request, response) {
             }, function (err) {
                 if (err) {
                     if (!called) {
-                        console.log(err.message);
                         called = true;
                         if (err.message.indexOf("All configured authentication methods failed") !== -1) {
                             index_1.io.of("/api/").emit("finishedInstall", "Error: Please check your credentials (ip, name, password)", "Linux");
@@ -101,6 +119,24 @@ exports.router.post("/clientInstall", function (request, response) {
                             throw err;
                         stream
                             .on("close", function (code, signal) {
+                            if (responseString.indexOf("Operation finished") >= 0) {
+                                const log = {
+                                    message: responseString,
+                                    logType: types_1.LogType.Client,
+                                    status: types_1.MessageType.success,
+                                    eventDescription: "api.success.client.install"
+                                };
+                                logging_1.createLog(log);
+                            }
+                            else {
+                                const log = {
+                                    message: responseString,
+                                    logType: types_1.LogType.Client,
+                                    status: types_1.MessageType.error,
+                                    eventDescription: "api.error.client.install"
+                                };
+                                logging_1.createLog(log);
+                            }
                             index_1.io.of("/api/").emit("finishedInstall", responseString, "Linux");
                             client.end();
                         })
@@ -133,7 +169,6 @@ exports.router.post("/clientInstall", function (request, response) {
             }, function (err) {
                 if (err) {
                     if (!called) {
-                        console.log(err.message);
                         called = true;
                         if (err.message.indexOf("All configured authentication methods failed") !== -1) {
                             index_1.io.of("/api/").emit("finishedInstall", "Error: Please check your credentials (ip, name, password)", "MacOS");
@@ -167,6 +202,24 @@ exports.router.post("/clientInstall", function (request, response) {
                             throw err;
                         stream
                             .on("close", function (code, signal) {
+                            if (responseString.indexOf("Operation finished") >= 0) {
+                                const log = {
+                                    message: responseString,
+                                    logType: types_1.LogType.Client,
+                                    status: types_1.MessageType.success,
+                                    eventDescription: "api.success.client.install"
+                                };
+                                logging_1.createLog(log);
+                            }
+                            else {
+                                const log = {
+                                    message: responseString,
+                                    logType: types_1.LogType.Client,
+                                    status: types_1.MessageType.error,
+                                    eventDescription: "api.error.client.install"
+                                };
+                                logging_1.createLog(log);
+                            }
                             index_1.io.of("/api/").emit("finishedInstall", responseString, "MacOS");
                             client.end();
                         })

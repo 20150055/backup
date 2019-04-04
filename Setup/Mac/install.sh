@@ -42,10 +42,9 @@ then
       <string>/usr/local/bin/node</string>
       <string>index.js</string>
     </array>
-</dict></plist>" >> com.backup.daemon.plist && sudo mv "com.backup.daemon.plist" /Library/LaunchAgents  && cd $installPath && mv /Users/$USER/Documents/temp_backup380/* $installPath && launchctl load /Library/LaunchAgents/com.backup.daemon.plist && mv ./Repository.db ./service/Repository.db 2> /dev/null; 
+</dict></plist>" >> com.backup.daemon.plist && sudo mv "com.backup.daemon.plist" /Library/LaunchAgents  && cd $installPath && mv /Users/$USER/Documents/temp_backup380/* $installPath && launchctl load /Library/LaunchAgents/com.backup.daemon.plist && mv ./Repository.db ./service/Repository.db 2> /dev/null && echo "Operation finished";; 
 open "http://localhost:8380";
 rm -rf /Users/$USER/Documents/temp_backup380;
-echo "Installation of Backup380 finished";
 
 fi;
 if [ "$1" = "-download" ] || [ "$1" = "-d" ];
@@ -54,7 +53,7 @@ then
   mkdir -p /Users/$USER/Documents/temp_backup380 && cd /Users/$USER/Documents/temp_backup380 && curl -LO 'https://github.com/20150055/backup/archive/gh-pages.zip' && unzip gh-pages.zip && rm gh-pages.zip && mv backup-gh-pages/* "." && rm -r backup-gh-pages;
   versionNode=$(curl https://nodejs.org/dist/latest/ | grep -o '>node.*pkg'|awk '{print substr($1,2); }');
   version=$(curl -s "https://api.github.com/repos/restic/restic/releases/latest"| python -c 'import sys, json; print json.load(sys.stdin)["tag_name"]' | cut -d 'v' -f 2) &&  curl -L "https://github.com/restic/restic/releases/download/v$version/restic_${version}_darwin_386.bz2" -o "restic.bz2" && bzip2 -d restic.bz2 && chmod +x restic && rm -rf restic.bz2 && mv restic ./service/build;
-  curl -LO https://nodejs.org/dist/latest/$versionNode && sudo installer -pkg $versionNode -target / && cd service && npm install node-bin-setup && npm install --production && cd ../installService && npm install --production;
+  curl -LO https://nodejs.org/dist/latest/$versionNode && sudo installer -pkg $versionNode -target / && cd service && npm install node-bin-setup && npm install --production && cd ../installService && npm install --production && echo "Operation finished";;
   
 fi;
 if [ "$1" = "-u" ] || [ "$1" = "-update" ];
@@ -95,7 +94,7 @@ then
         <string>/usr/local/bin/node</string>
         <string>index.js</string>
       </array>
-      </dict></plist>" >> com.backup.daemon.plist && sudo mv "com.backup.daemon.plist" /Library/LaunchAgents && launchctl load /Library/LaunchAgents/com.backup.daemon.plist;
+      </dict></plist>" >> com.backup.daemon.plist && sudo mv "com.backup.daemon.plist" /Library/LaunchAgents && launchctl load /Library/LaunchAgents/com.backup.daemon.plist && echo "Operation finished";;
       rm -rf /Users/$USER/Documents/temp_backup380;
     fi;
 fi;
