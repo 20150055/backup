@@ -19,7 +19,9 @@ exports.router.get("/:userId/backupJob", checkAuth_1.checkAuth, function (reques
         const jobs = yield sqliteConnection_1.database.loadAllBackupJobById(request.params.userId);
         const responseObjects = [];
         jobs.forEach((job) => {
-            responseObjects.push((job));
+            if (!job.archived) {
+                responseObjects.push((job));
+            }
         });
         ApiResponse_1.sendResponse(response, 200, {
             messages: [

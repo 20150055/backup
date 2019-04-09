@@ -1,6 +1,6 @@
 {
    "type": "sqlite",
-   "database": "../Repository.db",
+   "database": "../../Backup380.db",
    "synchronize": true,
    "logging": false,
    "entities": [

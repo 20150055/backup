@@ -16,12 +16,18 @@ const checkAuth_1 = require("../../checkAuth");
 exports.router = express.Router();
 exports.router.get("/:userId/repository", checkAuth_1.checkAuth, function (request, response) {
     return __awaiter(this, void 0, void 0, function* () {
-        const repo = yield sqliteConnection_1.database.loadAllLocalS3BackupRepositoryById(request.params.userId);
+        const repos = yield sqliteConnection_1.database.loadAllLocalS3BackupRepositoryById(request.params.userId);
+        const responseObjects = [];
+        repos.forEach((repo) => {
+            if (!repo.archived) {
+                responseObjects.push((repo));
+            }
+        });
         ApiResponse_1.sendResponse(response, 200, {
             messages: [
                 { name: "api.success.backuprepository.getAll", type: types_1.MessageType.success }
             ],
-            payload: { repo: repo }
+            payload: { repo: responseObjects }
         });
     });
 });

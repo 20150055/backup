@@ -46,7 +46,39 @@ exports.router.get("/log/:logId", function (request, response) {
 });
 exports.router.get("/log", function (request, response) {
     return __awaiter(this, void 0, void 0, function* () {
-        const logs = yield sqliteConnection_1.database.getLogs();
+        const body = request.body;
+        let logs;
+        if (body.type) {
+            logs = yield sqliteConnection_1.database.getLogsByType(body.type);
+            if (body.type !== types_1.LogType.other) {
+                if (body) {
+                    // Why dont get the id for specific type?
+                }
+            }
+        }
+        else {
+            logs = yield sqliteConnection_1.database.getLogs();
+        }
+        // Filter by offset & limit
+        let start;
+        let stop;
+        if (body.offset != undefined && body.offset < logs.length - 1) {
+            start = body.offset;
+        }
+        else {
+            start = logs.length - 1;
+        }
+        if (body.limit > start) {
+            stop = 0;
+        }
+        else {
+            stop = (start + 1) - body.limit;
+        }
+        let filteredLogs = [];
+        var i;
+        for (i = start; i >= stop; i--) {
+            filteredLogs.push(logs[i]);
+        }
         ApiResponse_1.sendResponse(response, 200, {
             messages: [
                 {
@@ -55,7 +87,7 @@ exports.router.get("/log", function (request, response) {
                 }
             ],
             payload: {
-                logs: logs
+                logs: filteredLogs
             }
         });
     });

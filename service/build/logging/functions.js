@@ -23,7 +23,7 @@ function createLog(logArgs) {
         let log = setValues(logArgs); // create log-object for database
         log = yield sqliteConnection_1.database.createLog(log); // write log to database
         // Generate logging pattern
-        let output = `ID: ${log.id}\t---\t\t${new Date(log.date).toLocaleDateString()} / ${new Date(log.date).toLocaleTimeString()}\t\t---\t\t Status: ${log.status}\n`
+        let output = `ID: ${log.id}\t---\t\t${new Date(log.date).toLocaleDateString()} / ${new Date(log.date).toLocaleTimeString()}\t\t---\t\t Status: ${log.logLevel}\n`
             + `\t\t\t\tDescription: ${log.eventDescription}\n`;
         if (log.repository) {
             output += `\t\t\t\tRepositoryId: ${log.repository}\n`;
@@ -39,7 +39,7 @@ function createLog(logArgs) {
             output += `\n\t\t\t\t}\n\n\n`;
         }
         // path to log folder
-        let dir = path.join(path.dirname(path.dirname(__dirname)), "logs");
+        let dir = path.join(path.dirname(path.dirname(path.dirname(__dirname))), "logs");
         if (!fsextra.existsSync(dir)) { // create "logs" folder (if not existion)
             fsextra.mkdirSync(dir);
         }
@@ -101,7 +101,7 @@ exports.checkError = checkError;
 function setValues(log) {
     let dbLog = new entity_1.Log();
     dbLog.logType = log.logType;
-    dbLog.status = log.status;
+    dbLog.logLevel = log.status;
     dbLog.date = new Date().getTime();
     dbLog.eventDescription = log.eventDescription;
     if (log.backupJob && log.repository) {

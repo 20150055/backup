@@ -69,12 +69,22 @@ class Database {
     }
     createGlobalSettings(globalSettings) {
         return __awaiter(this, void 0, void 0, function* () {
+            const oldSettings = yield this.loadGlobalSettingsById(globalSettings.id);
+            if (oldSettings) {
+                if (globalSettings.logfileSize < oldSettings.logfileSize) {
+                    yield this.reduceLogTable(globalSettings.logfileSize);
+                }
+            }
             return yield this.connection.manager.save(globalSettings);
         });
     }
     createLog(log) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield this.connection.manager.save(log);
+            const settings = yield this.loadGlobalSettingsById(1);
+            log = yield this.connection.manager.save(log);
+            const deleteId = log.id - settings.logfileSize;
+            this.deleteLogById(deleteId);
+            return log;
         });
     }
     createClient(client) {
@@ -190,7 +200,18 @@ class Database {
     // Delete
     deleteLocalS3BackupRepositoryById(repoId) {
         return __awaiter(this, void 0, void 0, function* () {
-            yield this.connection.manager.getRepository(LocalS3BackupRepository_1.LocalS3BackupRepository).delete({ id: repoId });
+            const repo = yield this.loadLocalS3BackupRepositoryById(repoId);
+            repo.archived = true;
+            repo.repoName += "-archived";
+            if (repo.repoType === enumTypes_1.RepoType.Local) {
+                yield this.createLocalBackupRepository(repo);
+            }
+            else {
+                yield this.createS3BackupRepository(repo);
+            }
+            repo.backupjob.forEach((job) => __awaiter(this, void 0, void 0, function* () {
+                yield this.deleteBackupJobById(job.id);
+            }));
         });
     }
     deleteClientById(clientId) {
@@ -200,7 +221,17 @@ class Database {
     }
     deleteBackupJobById(jobId) {
         return __awaiter(this, void 0, void 0, function* () {
-            yield this.connection.manager.getRepository(BackupJob_1.BackupJob).delete({ id: jobId });
+            const job = yield this.loadBackupJobById(jobId);
+            job.archived = true;
+            job.name += "-archived";
+            job.emailNotification = enumTypes_1.EmailNotification.never;
+            // TODO: stop scheduling
+            yield this.createBackupjob(job);
+        });
+    }
+    deleteLogById(logId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.connection.manager.getRepository(Log_1.Log).delete({ id: logId });
         });
     }
     // Others
@@ -222,6 +253,12 @@ class Database {
             return logs;
         });
     }
+    getLogsByType(logType) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const logs = (yield this.connection.manager.getRepository(Log_1.Log).find()).filter(log => { log.logType = logType; });
+            return logs;
+        });
+    }
     createDefaultGlobalSettingsById() {
         return __awaiter(this, void 0, void 0, function* () {
             const settings = new GlobalSettings_1.GlobalSettings;
@@ -232,6 +269,19 @@ class Database {
             settings.port = 8380;
             settings.logfileSize = 500;
             yield this.connection.manager.save(settings);
+        });
+    }
+    reduceLogTable(size) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let logs = yield this.getLogs();
+            if (logs.length <= size) {
+                return;
+            }
+            let count = 0;
+            while (logs.length - count > size) {
+                yield this.deleteLogById(logs[count].id);
+                count++;
+            }
         });
     }
     hash(word) {

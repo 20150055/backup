@@ -43,9 +43,16 @@ var UpdateResponse;
 // Logging
 var LogType;
 (function (LogType) {
-    LogType["General"] = "general";
-    LogType["Client"] = "client";
-    LogType["BackupJob"] = "backupjob";
-    LogType["Repository"] = "repository";
+    LogType["other"] = "other";
+    LogType["client"] = "client";
+    LogType["repository"] = "repository";
+    LogType["backupJob"] = "backupjob";
 })(LogType = exports.LogType || (exports.LogType = {}));
+var LogStatus;
+(function (LogStatus) {
+    LogStatus["info"] = "info";
+    LogStatus["warning"] = "warning";
+    LogStatus["error"] = "error";
+    LogStatus["success"] = "success";
+})(LogStatus = exports.LogStatus || (exports.LogStatus = {}));
 //# sourceMappingURL=enumTypes.js.map

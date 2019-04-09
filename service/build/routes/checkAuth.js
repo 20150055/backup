@@ -11,7 +11,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const sqliteConnection_1 = require("../sqliteConnection");
 exports.checkAuth = ((req, res, next) => __awaiter(this, void 0, void 0, function* () {
     const dev = false;
-    const token = req.headers.authorization;
+    const token = req.headers.authorization.replace("Bearer ", "");
     const userId = req.params.userId;
     if (token && userId) {
         const user = yield sqliteConnection_1.database.loadUserById(userId);

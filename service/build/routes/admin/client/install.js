@@ -56,8 +56,8 @@ exports.router.post("/clientInstall", function (request, response) {
                         if (responseString.indexOf("Operation finished") >= 0) {
                             const log = {
                                 message: responseString,
-                                logType: types_1.LogType.Client,
-                                status: types_1.MessageType.success,
+                                logType: types_1.LogType.client,
+                                status: types_1.LogStatus.success,
                                 eventDescription: "api.success.client.install"
                             };
                             logging_1.createLog(log);
@@ -65,8 +65,8 @@ exports.router.post("/clientInstall", function (request, response) {
                         else {
                             const log = {
                                 message: responseString,
-                                logType: types_1.LogType.Client,
-                                status: types_1.MessageType.error,
+                                logType: types_1.LogType.client,
+                                status: types_1.LogStatus.error,
                                 eventDescription: "api.error.client.install"
                             };
                             logging_1.createLog(log);
@@ -122,8 +122,8 @@ exports.router.post("/clientInstall", function (request, response) {
                             if (responseString.indexOf("Operation finished") >= 0) {
                                 const log = {
                                     message: responseString,
-                                    logType: types_1.LogType.Client,
-                                    status: types_1.MessageType.success,
+                                    logType: types_1.LogType.client,
+                                    status: types_1.LogStatus.success,
                                     eventDescription: "api.success.client.install"
                                 };
                                 logging_1.createLog(log);
@@ -131,8 +131,8 @@ exports.router.post("/clientInstall", function (request, response) {
                             else {
                                 const log = {
                                     message: responseString,
-                                    logType: types_1.LogType.Client,
-                                    status: types_1.MessageType.error,
+                                    logType: types_1.LogType.client,
+                                    status: types_1.LogStatus.error,
                                     eventDescription: "api.error.client.install"
                                 };
                                 logging_1.createLog(log);
@@ -205,8 +205,8 @@ exports.router.post("/clientInstall", function (request, response) {
                             if (responseString.indexOf("Operation finished") >= 0) {
                                 const log = {
                                     message: responseString,
-                                    logType: types_1.LogType.Client,
-                                    status: types_1.MessageType.success,
+                                    logType: types_1.LogType.client,
+                                    status: types_1.LogStatus.success,
                                     eventDescription: "api.success.client.install"
                                 };
                                 logging_1.createLog(log);
@@ -214,8 +214,8 @@ exports.router.post("/clientInstall", function (request, response) {
                             else {
                                 const log = {
                                     message: responseString,
-                                    logType: types_1.LogType.Client,
-                                    status: types_1.MessageType.error,
+                                    logType: types_1.LogType.client,
+                                    status: types_1.LogStatus.error,
                                     eventDescription: "api.error.client.install"
                                 };
                                 logging_1.createLog(log);

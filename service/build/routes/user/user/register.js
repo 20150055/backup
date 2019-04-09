@@ -13,7 +13,6 @@ const types_1 = require("../../../shared/types");
 const sqliteConnection_1 = require("../../../sqliteConnection");
 const ApiResponse_1 = require("../../../ApiResponse");
 const functions_1 = require("./functions");
-const UserSettings_1 = require("../../../entity/UserSettings");
 const uuidv4 = require("uuid/v4");
 exports.router = express.Router();
 exports.router.post("/register", function (request, response) {
@@ -23,9 +22,6 @@ exports.router.post("/register", function (request, response) {
         if (errormessages.length === 0) {
             let user = functions_1.setValues(body);
             user = yield sqliteConnection_1.database.createUser(user);
-            let settings = new UserSettings_1.UserSettings;
-            settings.user = user.id;
-            settings = yield sqliteConnection_1.database.createUserSettings(settings);
             const token = uuidv4();
             yield sqliteConnection_1.database.setUserToken(user.id, token);
             const responseObject = user;

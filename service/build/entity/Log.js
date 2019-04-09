@@ -25,7 +25,7 @@ __decorate([
 __decorate([
     typeorm_1.Column(),
     __metadata("design:type", String)
-], Log.prototype, "status", void 0);
+], Log.prototype, "logLevel", void 0);
 __decorate([
     typeorm_1.Column(),
     __metadata("design:type", Number)
