@@ -268,6 +268,7 @@ class Database {
             settings.updateCheckInterval = enumTypes_1.UpdateCheckInterval.daily;
             settings.port = 8380;
             settings.logfileSize = 500;
+            settings.lastUpdateCheck = 0; // TODO check if correct
             yield this.connection.manager.save(settings);
         });
     }

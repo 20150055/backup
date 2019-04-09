@@ -7,8 +7,10 @@ function checkError(body) {
     let errormessages = [];
     try {
         if (!(body.port &&
-            body.automaticUpdates &&
-            body.enableRegister &&
+            body.automaticUpdates != null &&
+            body.automaticUpdates != undefined &&
+            body.enableRegister != null &&
+            body.enableRegister != undefined &&
             body.updateCheckInterval &&
             body.logfileSize)) {
             if (!body.port) {
