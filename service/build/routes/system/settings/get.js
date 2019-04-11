@@ -28,7 +28,10 @@ exports.router.get("/:userId/globalsettings/:settingsId", checkAuth_1.checkAuth,
         else {
             ApiResponse_1.sendResponse(response, 400, {
                 messages: [
-                    { name: "api.error.globalsettings.get.not-existing", type: types_1.MessageType.error }
+                    {
+                        name: "api.error.globalsettings.get.not-existing",
+                        type: types_1.MessageType.error
+                    }
                 ]
             });
         }

@@ -48,11 +48,11 @@ var LogType;
     LogType["repository"] = "repository";
     LogType["backupJob"] = "backupjob";
 })(LogType = exports.LogType || (exports.LogType = {}));
-var LogStatus;
-(function (LogStatus) {
-    LogStatus["info"] = "info";
-    LogStatus["warning"] = "warning";
-    LogStatus["error"] = "error";
-    LogStatus["success"] = "success";
-})(LogStatus = exports.LogStatus || (exports.LogStatus = {}));
+var LogLevel;
+(function (LogLevel) {
+    LogLevel["info"] = "info";
+    LogLevel["warning"] = "warning";
+    LogLevel["error"] = "error";
+    LogLevel["success"] = "success";
+})(LogLevel = exports.LogLevel || (exports.LogLevel = {}));
 //# sourceMappingURL=enumTypes.js.map

@@ -20,18 +20,23 @@ exports.router.delete("/:userId/repository/:repoId", checkAuth_1.checkAuth, func
             yield sqliteConnection_1.database.deleteLocalS3BackupRepositoryById(request.params.repoId);
             ApiResponse_1.sendResponse(response, 200, {
                 messages: [
-                    { name: "api.success.backuprepository.delete", type: types_1.MessageType.success }
+                    {
+                        name: "api.success.backuprepository.delete",
+                        type: types_1.MessageType.success
+                    }
                 ]
             });
         }
         catch (error) {
             let errorstring = error.toString();
             ApiResponse_1.sendResponse(response, 400, {
-                messages: [{
+                messages: [
+                    {
                         name: "api.error.backuprepository.delete.other",
                         type: types_1.MessageType.error,
                         args: { error: errorstring }
-                    }]
+                    }
+                ]
             });
         }
     });

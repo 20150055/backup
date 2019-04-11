@@ -57,7 +57,9 @@ __decorate([
     __metadata("design:type", Number)
 ], BackupJob.prototype, "startDate", void 0);
 __decorate([
-    typeorm_1.ManyToOne(type => LocalS3BackupRepository_1.LocalS3BackupRepository, repo => repo.id, { nullable: false }),
+    typeorm_1.ManyToOne(type => LocalS3BackupRepository_1.LocalS3BackupRepository, repo => repo.id, {
+        nullable: false
+    }),
     __metadata("design:type", Number)
 ], BackupJob.prototype, "repoId", void 0);
 __decorate([

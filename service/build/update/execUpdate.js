@@ -34,8 +34,20 @@ function execUpdate() {
                 dirScript += "\\Windows\\install.ps1";
                 dirTemp += "\\install.ps1";
                 let setPolicy = "Set-ExecutionPolicy Bypass -Scope Process -Force;";
-                argsDownload = [setPolicy, dirTemp, "-d", "-path", os.tmpdir() + "/Backup380"];
-                argsUpdate = [setPolicy, dirTemp, "-u", "-path", os.tmpdir() + "/Backup380"];
+                argsDownload = [
+                    setPolicy,
+                    dirTemp,
+                    "-d",
+                    "-path",
+                    os.tmpdir() + "/Backup380"
+                ];
+                argsUpdate = [
+                    setPolicy,
+                    dirTemp,
+                    "-u",
+                    "-path",
+                    os.tmpdir() + "/Backup380"
+                ];
             }
             else if (process.platform.toString() === "darwin") {
                 dirScript += "/Mac/install.sh";

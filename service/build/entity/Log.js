@@ -12,6 +12,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const typeorm_1 = require("typeorm");
 const LocalS3BackupRepository_1 = require("./LocalS3BackupRepository");
 const BackupJob_1 = require("./BackupJob");
+const types_1 = require("../shared/types");
+const Client_1 = require("./Client");
 let Log = class Log {
 };
 __decorate([
@@ -39,9 +41,15 @@ __decorate([
     __metadata("design:type", Number)
 ], Log.prototype, "backupJob", void 0);
 __decorate([
-    typeorm_1.ManyToOne(type => LocalS3BackupRepository_1.LocalS3BackupRepository, repository => repository.id, { nullable: true }),
+    typeorm_1.ManyToOne(type => LocalS3BackupRepository_1.LocalS3BackupRepository, repository => repository.id, {
+        nullable: true
+    }),
     __metadata("design:type", Number)
 ], Log.prototype, "repository", void 0);
+__decorate([
+    typeorm_1.ManyToOne(type => Client_1.Client, client => client.id, { nullable: true }),
+    __metadata("design:type", Number)
+], Log.prototype, "client", void 0);
 Log = __decorate([
     typeorm_1.Entity()
 ], Log);

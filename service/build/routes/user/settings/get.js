@@ -28,7 +28,10 @@ exports.router.get("/:userId/usersettings", checkAuth_1.checkAuth, function (req
         else {
             ApiResponse_1.sendResponse(response, 400, {
                 messages: [
-                    { name: "api.error.usersettings.get.not-existing", type: types_1.MessageType.error }
+                    {
+                        name: "api.error.usersettings.get.not-existing",
+                        type: types_1.MessageType.error
+                    }
                 ]
             });
         }

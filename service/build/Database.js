@@ -19,7 +19,9 @@ const Log_1 = require("./entity/Log");
 const Client_1 = require("./entity/Client");
 const Admin_1 = require("./entity/Admin");
 class Database {
-    constructor(conn) { this.connection = conn; }
+    constructor(conn) {
+        this.connection = conn;
+    }
     // Create
     createLocalBackupRepository(repository) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -57,7 +59,9 @@ class Database {
     }
     setUserToken(userId, token) {
         return __awaiter(this, void 0, void 0, function* () {
-            const user = yield this.connection.manager.getRepository(User_1.User).findOne({ id: userId });
+            const user = yield this.connection.manager
+                .getRepository(User_1.User)
+                .findOne({ id: userId });
             user.token = token;
             yield this.connection.manager.save(user);
         });
@@ -103,97 +107,129 @@ class Database {
     // Load
     loadClientById(clientId) {
         return __awaiter(this, void 0, void 0, function* () {
-            const client = yield this.connection.manager.getRepository(Client_1.Client).findOne({ id: clientId });
+            const client = yield this.connection.manager
+                .getRepository(Client_1.Client)
+                .findOne({ id: clientId });
             return client;
         });
     }
     loadAllClients() {
         return __awaiter(this, void 0, void 0, function* () {
-            const clients = yield this.connection.manager.getRepository(Client_1.Client).find();
+            const clients = yield this.connection.manager
+                .getRepository(Client_1.Client)
+                .find();
             return clients;
         });
     }
     loadUserByUsername(searchUsername) {
         return __awaiter(this, void 0, void 0, function* () {
-            const user = yield this.connection.manager.getRepository(User_1.User).findOne({ username: searchUsername });
+            const user = yield this.connection.manager
+                .getRepository(User_1.User)
+                .findOne({ username: searchUsername });
             return user;
         });
     }
     loadUserByEmail(email) {
         return __awaiter(this, void 0, void 0, function* () {
-            const user = yield this.connection.manager.getRepository(User_1.User).findOne({ email: email });
+            const user = yield this.connection.manager
+                .getRepository(User_1.User)
+                .findOne({ email: email });
             return user;
         });
     }
     loadUserById(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            const user = yield this.connection.manager.getRepository(User_1.User).findOne({ id: id });
+            const user = yield this.connection.manager
+                .getRepository(User_1.User)
+                .findOne({ id: id });
             return user;
         });
     }
     loadAdminById(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            const admin = yield this.connection.manager.getRepository(Admin_1.Admin).findOne({ id: id });
+            const admin = yield this.connection.manager
+                .getRepository(Admin_1.Admin)
+                .findOne({ id: id });
             return admin;
         });
     }
     loadBackupJobByName(name) {
         return __awaiter(this, void 0, void 0, function* () {
-            const job = yield this.connection.manager.getRepository(BackupJob_1.BackupJob).findOne({ name: name });
+            const job = yield this.connection.manager
+                .getRepository(BackupJob_1.BackupJob)
+                .findOne({ name: name });
             return job;
         });
     }
     loadBackupJobById(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            const job = yield this.connection.manager.getRepository(BackupJob_1.BackupJob).findOne({ id: id });
+            const job = yield this.connection.manager
+                .getRepository(BackupJob_1.BackupJob)
+                .findOne({ id: id });
             return job;
         });
     }
     loadSettingsByUserId(userId) {
         return __awaiter(this, void 0, void 0, function* () {
-            const settings = yield this.connection.manager.getRepository(UserSettings_1.UserSettings).findOne({ user: userId });
+            const settings = yield this.connection.manager
+                .getRepository(UserSettings_1.UserSettings)
+                .findOne({ user: userId });
             return settings;
         });
     }
     loadUserSettingsByUserId(userId) {
         return __awaiter(this, void 0, void 0, function* () {
-            const usersetting = yield this.connection.manager.getRepository(UserSettings_1.UserSettings).findOne({ user: userId });
+            const usersetting = yield this.connection.manager
+                .getRepository(UserSettings_1.UserSettings)
+                .findOne({ user: userId });
             return usersetting;
         });
     }
     loadLocalS3BackupRepositoryById(repoId) {
         return __awaiter(this, void 0, void 0, function* () {
-            const repo = yield this.connection.manager.getRepository(LocalS3BackupRepository_1.LocalS3BackupRepository).findOne({ id: repoId });
+            const repo = yield this.connection.manager
+                .getRepository(LocalS3BackupRepository_1.LocalS3BackupRepository)
+                .findOne({ id: repoId });
             return repo;
         });
     }
     loadLocalS3BackupRepositoryByName(repoName) {
         return __awaiter(this, void 0, void 0, function* () {
-            const repo = yield this.connection.manager.getRepository(LocalS3BackupRepository_1.LocalS3BackupRepository).findOne({ repoName: repoName });
+            const repo = yield this.connection.manager
+                .getRepository(LocalS3BackupRepository_1.LocalS3BackupRepository)
+                .findOne({ repoName: repoName });
             return repo;
         });
     }
     loadAllLocalS3BackupRepositoryById(userId) {
         return __awaiter(this, void 0, void 0, function* () {
-            const repo = yield this.connection.manager.getRepository(LocalS3BackupRepository_1.LocalS3BackupRepository).find({ user: userId });
+            const repo = yield this.connection.manager
+                .getRepository(LocalS3BackupRepository_1.LocalS3BackupRepository)
+                .find({ user: userId });
             return repo;
         });
     }
     loadAllBackupJobById(userId) {
         return __awaiter(this, void 0, void 0, function* () {
-            const jobs = yield this.connection.manager.getRepository(BackupJob_1.BackupJob).find({ user: userId });
+            const jobs = yield this.connection.manager
+                .getRepository(BackupJob_1.BackupJob)
+                .find({ user: userId });
             return jobs;
         });
     }
     loadGlobalSettingsById(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            const settings = yield this.connection.manager.getRepository(GlobalSettings_1.GlobalSettings).findOne({ id: id });
+            const settings = yield this.connection.manager
+                .getRepository(GlobalSettings_1.GlobalSettings)
+                .findOne({ id: id });
             return settings;
         });
     }
     loadLogById(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            const log = yield this.connection.manager.getRepository(Log_1.Log).findOne({ id: id });
+            const log = yield this.connection.manager
+                .getRepository(Log_1.Log)
+                .findOne({ id: id });
             return log;
         });
     }
@@ -216,7 +252,9 @@ class Database {
     }
     deleteClientById(clientId) {
         return __awaiter(this, void 0, void 0, function* () {
-            yield this.connection.manager.getRepository(Client_1.Client).delete({ id: clientId });
+            yield this.connection.manager
+                .getRepository(Client_1.Client)
+                .delete({ id: clientId });
         });
     }
     deleteBackupJobById(jobId) {
@@ -237,13 +275,17 @@ class Database {
     // Others
     countUsers() {
         return __awaiter(this, void 0, void 0, function* () {
-            const count = yield this.connection.manager.getRepository(User_1.User).count();
+            const count = yield this.connection.manager
+                .getRepository(User_1.User)
+                .count();
             return count;
         });
     }
     countLogs() {
         return __awaiter(this, void 0, void 0, function* () {
-            const count = yield this.connection.manager.getRepository(Log_1.Log).count();
+            const count = yield this.connection.manager
+                .getRepository(Log_1.Log)
+                .count();
             return count;
         });
     }
@@ -253,15 +295,9 @@ class Database {
             return logs;
         });
     }
-    getLogsByType(logType) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const logs = (yield this.connection.manager.getRepository(Log_1.Log).find()).filter(log => { log.logType = logType; });
-            return logs;
-        });
-    }
     createDefaultGlobalSettingsById() {
         return __awaiter(this, void 0, void 0, function* () {
-            const settings = new GlobalSettings_1.GlobalSettings;
+            const settings = new GlobalSettings_1.GlobalSettings();
             settings.id = 1;
             settings.enableRegister = true;
             settings.automaticUpdates = true;
@@ -286,7 +322,10 @@ class Database {
         });
     }
     hash(word) {
-        const hash = crypto.createHmac("sha512", "dsfpoldkqp").update(word).digest("hex");
+        const hash = crypto
+            .createHmac("sha512", "dsfpoldkqp")
+            .update(word)
+            .digest("hex");
         return hash;
     }
 }

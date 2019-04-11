@@ -18,7 +18,7 @@ exports.router.get("/:userId/repository/:repoId", checkAuth_1.checkAuth, functio
     return __awaiter(this, void 0, void 0, function* () {
         const repoId = request.params.repoId;
         const repo = yield sqliteConnection_1.database.loadLocalS3BackupRepositoryById(repoId);
-        if (repo && (!repo.archived)) {
+        if (repo && !repo.archived) {
             ApiResponse_1.sendResponse(response, 200, {
                 messages: [
                     { name: "api.success.backuprepository.get", type: types_1.MessageType.success }
@@ -29,7 +29,10 @@ exports.router.get("/:userId/repository/:repoId", checkAuth_1.checkAuth, functio
         else {
             ApiResponse_1.sendResponse(response, 400, {
                 messages: [
-                    { name: "api.error.backuprepository.get.not-existing", type: types_1.MessageType.error }
+                    {
+                        name: "api.error.backuprepository.get.not-existing",
+                        type: types_1.MessageType.error
+                    }
                 ]
             });
         }

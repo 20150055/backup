@@ -31,7 +31,7 @@ exports.router.post("/clientDelete", function (request, response) {
                 adminClient.username +
                 " -s -p " +
                 adminClient.password +
-                ' /accepteula cmd /c "powershell.exe -Command \"Start-Process powershell.exe -ArgumentList \'-executionpolicy bypass -noninteractive -File C:\\Windows\\uninstall.ps1\' -Verb RunAs\""', function (err, stdout, stderr) {
+                ' /accepteula cmd /c "powershell.exe -Command "Start-Process powershell.exe -ArgumentList \'-executionpolicy bypass -noninteractive -File C:\\Windows\\uninstall.ps1\' -Verb RunAs""', function (err, stdout, stderr) {
                 if (!err) {
                     /*fs.readFile(
                       "\\\\" +
@@ -73,7 +73,8 @@ exports.router.post("/clientDelete", function (request, response) {
                         if (err.message.indexOf("All configured authentication methods failed") !== -1) {
                             index_1.io.of("/api/").emit("finishedUninstall", "Error: Please check your credentials (ip, name, password)", "Linux");
                         }
-                        else if (err.message.indexOf("Timed out while waiting for handshake") !== -1) {
+                        else if (err.message.indexOf("Timed out while waiting for handshake") !==
+                            -1) {
                             index_1.io.of("/api/").emit("finishedUninstall", "Error: conection to Client failed, check your ip", "Linux");
                         }
                         else {
@@ -90,7 +91,7 @@ exports.router.post("/clientDelete", function (request, response) {
                         adminClient.username +
                         "/uninstall.sh && /home/" +
                         adminClient.username +
-                        '/uninstall.sh', { pty: true }, function (err, stream) {
+                        "/uninstall.sh", { pty: true }, function (err, stream) {
                         stream.write("" + adminClient.password + "\n");
                         if (err)
                             throw err;
@@ -134,7 +135,8 @@ exports.router.post("/clientDelete", function (request, response) {
                         if (err.message.indexOf("All configured authentication methods failed") !== -1) {
                             index_1.io.of("/api/").emit("finishedUninstall", "Error: Please check your credentials (ip, name, password)", "MacOS");
                         }
-                        else if (err.message.indexOf("Timed out while waiting for handshake") !== -1) {
+                        else if (err.message.indexOf("Timed out while waiting for handshake") !==
+                            -1) {
                             index_1.io.of("/api/").emit("finishedUninstall", "Error: conection to Client failed, check your ip", "MacOS");
                         }
                         else {
@@ -186,7 +188,10 @@ exports.router.post("/clientDelete", function (request, response) {
         }
         ApiResponse_1.sendResponse(response, 200, {
             messages: [
-                { name: "api.success.client.uninstall.started", type: types_1.MessageType.success }
+                {
+                    name: "api.success.client.uninstall.started",
+                    type: types_1.MessageType.success
+                }
             ],
             payload: {}
         });

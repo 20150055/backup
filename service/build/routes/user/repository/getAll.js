@@ -18,9 +18,9 @@ exports.router.get("/:userId/repository", checkAuth_1.checkAuth, function (reque
     return __awaiter(this, void 0, void 0, function* () {
         const repos = yield sqliteConnection_1.database.loadAllLocalS3BackupRepositoryById(request.params.userId);
         const responseObjects = [];
-        repos.forEach((repo) => {
+        repos.forEach(repo => {
             if (!repo.archived) {
-                responseObjects.push((repo));
+                responseObjects.push(repo);
             }
         });
         ApiResponse_1.sendResponse(response, 200, {

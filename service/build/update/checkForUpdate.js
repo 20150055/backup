@@ -31,15 +31,22 @@ function checkForUpdate() {
             case types_1.UpdateCheckInterval.weekly:
                 interval = "0 0 0 */7 * ?";
                 break; // Every 7 days at midnight
-            default: interval = interval = "";
+            default:
+                interval = interval = "";
             // TODO Error-Log by default
         }
-        const prevCheck = parser.parseExpression(interval).prev().getTime();
-        const nextCheck = parser.parseExpression(interval).next().getTime();
+        const prevCheck = parser
+            .parseExpression(interval)
+            .prev()
+            .getTime();
+        const nextCheck = parser
+            .parseExpression(interval)
+            .next()
+            .getTime();
         if (prevCheck != globalSettings.lastUpdateCheck) {
             doCheckNow(prevCheck);
         }
-        setTimeout(() => doCheckNow(nextCheck), nextCheck - (new Date()).getTime());
+        setTimeout(() => doCheckNow(nextCheck), nextCheck - new Date().getTime());
     });
 }
 exports.checkForUpdate = checkForUpdate;
@@ -60,7 +67,6 @@ function doCheckNow(currentCheck) {
         checkForUpdate();
     });
 }
-;
 function versionUpToDate() {
     return __awaiter(this, void 0, void 0, function* () {
         const url = "https://raw.githubusercontent.com/20150055/backup/gh-pages/version";

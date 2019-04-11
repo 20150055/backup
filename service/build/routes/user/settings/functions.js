@@ -129,7 +129,7 @@ function checkError(body, userId, insert) {
 }
 exports.checkError = checkError;
 function setValues(body, userId) {
-    let settings = new UserSettings_1.UserSettings;
+    let settings = new UserSettings_1.UserSettings();
     settings.user = userId;
     settings.sendEmails = body.sendEmails;
     settings.reportLanguage = body.reportLanguage;

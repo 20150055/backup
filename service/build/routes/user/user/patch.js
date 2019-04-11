@@ -47,9 +47,7 @@ exports.router.patch("/:userId", checkAuth_1.checkAuth, function (request, respo
             }
             const responseObject = newUser;
             ApiResponse_1.sendResponse(response, 200, {
-                messages: [
-                    { name: "api.success.user.patch", type: types_1.MessageType.success }
-                ],
+                messages: [{ name: "api.success.user.patch", type: types_1.MessageType.success }],
                 payload: { user: responseObject }
             });
         }

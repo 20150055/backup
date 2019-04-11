@@ -19,9 +19,7 @@ exports.router.get("/:userId", checkAuth_1.checkAuth, function (request, respons
         const responseObject = yield sqliteConnection_1.database.loadUserById(request.params.userId);
         if (responseObject) {
             ApiResponse_1.sendResponse(response, 200, {
-                messages: [
-                    { name: "api.success.user.get", type: types_1.MessageType.success }
-                ],
+                messages: [{ name: "api.success.user.get", type: types_1.MessageType.success }],
                 payload: { user: responseObject }
             });
         }

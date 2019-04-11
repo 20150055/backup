@@ -57,7 +57,7 @@ exports.router.post("/clientInstall", function (request, response) {
                             const log = {
                                 message: responseString,
                                 logType: types_1.LogType.client,
-                                status: types_1.LogStatus.success,
+                                status: types_1.LogLevel.success,
                                 eventDescription: "api.success.client.install"
                             };
                             logging_1.createLog(log);
@@ -66,7 +66,7 @@ exports.router.post("/clientInstall", function (request, response) {
                             const log = {
                                 message: responseString,
                                 logType: types_1.LogType.client,
-                                status: types_1.LogStatus.error,
+                                status: types_1.LogLevel.error,
                                 eventDescription: "api.error.client.install"
                             };
                             logging_1.createLog(log);
@@ -123,7 +123,7 @@ exports.router.post("/clientInstall", function (request, response) {
                                 const log = {
                                     message: responseString,
                                     logType: types_1.LogType.client,
-                                    status: types_1.LogStatus.success,
+                                    status: types_1.LogLevel.success,
                                     eventDescription: "api.success.client.install"
                                 };
                                 logging_1.createLog(log);
@@ -132,7 +132,7 @@ exports.router.post("/clientInstall", function (request, response) {
                                 const log = {
                                     message: responseString,
                                     logType: types_1.LogType.client,
-                                    status: types_1.LogStatus.error,
+                                    status: types_1.LogLevel.error,
                                     eventDescription: "api.error.client.install"
                                 };
                                 logging_1.createLog(log);
@@ -206,7 +206,7 @@ exports.router.post("/clientInstall", function (request, response) {
                                 const log = {
                                     message: responseString,
                                     logType: types_1.LogType.client,
-                                    status: types_1.LogStatus.success,
+                                    status: types_1.LogLevel.success,
                                     eventDescription: "api.success.client.install"
                                 };
                                 logging_1.createLog(log);
@@ -215,7 +215,7 @@ exports.router.post("/clientInstall", function (request, response) {
                                 const log = {
                                     message: responseString,
                                     logType: types_1.LogType.client,
-                                    status: types_1.LogStatus.error,
+                                    status: types_1.LogLevel.error,
                                     eventDescription: "api.error.client.install"
                                 };
                                 logging_1.createLog(log);

@@ -171,7 +171,12 @@ function setValues(body, userId) {
     job.emailNotification = body.emailNotification;
     job.backupLocations = body.backupLocations;
     job.cronInterval = body.cronInterval;
-    job.prevScheduledDate = parser.parseExpression(body.cronInterval).prev().getTime() + (body.startDate - new Date().getTime());
+    job.prevScheduledDate =
+        parser
+            .parseExpression(body.cronInterval)
+            .prev()
+            .getTime() +
+            (body.startDate - new Date().getTime());
     job.startDate = body.startDate;
     job.active = body.active;
     return job;

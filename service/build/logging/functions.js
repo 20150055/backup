@@ -23,8 +23,8 @@ function createLog(logArgs) {
         let log = setValues(logArgs); // create log-object for database
         log = yield sqliteConnection_1.database.createLog(log); // write log to database
         // Generate logging pattern
-        let output = `ID: ${log.id}\t---\t\t${new Date(log.date).toLocaleDateString()} / ${new Date(log.date).toLocaleTimeString()}\t\t---\t\t Status: ${log.logLevel}\n`
-            + `\t\t\t\tDescription: ${log.eventDescription}\n`;
+        let output = `ID: ${log.id}\t---\t\t${new Date(log.date).toLocaleDateString()} / ${new Date(log.date).toLocaleTimeString()}\t\t---\t\t Status: ${log.logLevel}\n` +
+            `\t\t\t\tDescription: ${log.eventDescription}\n`;
         if (log.repository) {
             output += `\t\t\t\tRepositoryId: ${log.repository}\n`;
         }
@@ -32,7 +32,7 @@ function createLog(logArgs) {
             output += `\t\t\t\tBackupJobId: ${log.backupJob}\n`;
         }
         if (logArgs.message) {
-            logArgs.message = logArgs.message.replace(new RegExp("\n", 'g'), "\n\t\t\t\t\t\t\t");
+            logArgs.message = logArgs.message.replace(new RegExp("\n", "g"), "\n\t\t\t\t\t\t\t");
             output += `\t\t\t\tMessage: { \t${logArgs.message}`;
         }
         if (logArgs.message) {
@@ -40,24 +40,29 @@ function createLog(logArgs) {
         }
         // path to log folder
         let dir = path.join(path.dirname(path.dirname(path.dirname(__dirname))), "logs");
-        if (!fsextra.existsSync(dir)) { // create "logs" folder (if not existion)
+        if (!fsextra.existsSync(dir)) {
+            // create "logs" folder (if not existion)
             fsextra.mkdirSync(dir);
         }
         dir = path.join(dir, logArgs.logType);
-        if (!fsextra.existsSync(dir)) { // create folder for specified logType (if not existion)
+        if (!fsextra.existsSync(dir)) {
+            // create folder for specified logType (if not existion)
             fsextra.mkdirSync(dir);
         }
         const configDir = path.join(dir, logArgs.logType + ".config");
         let config;
-        if (!fsextra.existsSync(configDir)) { // create config file for managing the folder (if not existion)
+        if (!fsextra.existsSync(configDir)) {
+            // create config file for managing the folder (if not existion)
             fsextra.createFileSync(configDir);
             config = { logCount: 1, lastModification: new Date() };
         }
         else {
             config = yield fsextra.readJSON(configDir);
-            if (config.logCount >= globalSettings.logfileSize) { // check filesize
+            if (config.logCount >= globalSettings.logfileSize) {
+                // check filesize
                 const archivePath = path.join(dir, "archived");
-                if (!fsextra.existsSync(archivePath)) { // create log archive folder (if not existion)
+                if (!fsextra.existsSync(archivePath)) {
+                    // create log archive folder (if not existion)
                     fsextra.mkdirSync(archivePath);
                 }
                 const curDate = new Date();
@@ -81,7 +86,7 @@ function createLog(logArgs) {
 exports.createLog = createLog;
 function checkError(logArgs) {
     let errormessages = [];
-    if ((!logArgs.eventDescription) || (!logArgs.status)) {
+    if (!logArgs.eventDescription || !logArgs.status) {
         if (!logArgs.eventDescription) {
             errormessages.push({
                 name: "api.error.system.log.missing-arguments-eventDescription",

@@ -20,38 +20,46 @@ exports.router.post("/update", function (request, response) {
             case types_1.UpdateResponse.done:
             case types_1.UpdateResponse.doneDummy:
                 ApiResponse_1.sendResponse(response, 200, {
-                    messages: [{
+                    messages: [
+                        {
                             name: "api.success.system.update." + res,
                             type: types_1.MessageType.success
-                        }]
+                        }
+                    ]
                 });
                 break;
             case types_1.UpdateResponse.downloadFailed:
             case types_1.UpdateResponse.updateFailed:
                 ApiResponse_1.sendResponse(response, 400, {
-                    messages: [{
+                    messages: [
+                        {
                             name: "api.error.system.update." + res,
                             type: types_1.MessageType.error
-                        }]
+                        }
+                    ]
                 });
                 break;
             case types_1.UpdateResponse.upToDate:
                 ApiResponse_1.sendResponse(response, 200, {
-                    messages: [{
+                    messages: [
+                        {
                             name: "api.info.system.update." + res,
                             type: types_1.MessageType.info
-                        }]
+                        }
+                    ]
                 });
                 break;
             default:
                 ApiResponse_1.sendResponse(response, 400, {
-                    messages: [{
+                    messages: [
+                        {
                             name: "api.error.system.update.other",
                             type: types_1.MessageType.info,
                             args: {
                                 message: res
                             }
-                        }]
+                        }
+                    ]
                 });
                 break;
         }

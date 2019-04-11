@@ -13,6 +13,7 @@ const types_1 = require("../../../shared/types");
 const ApiResponse_1 = require("../../../ApiResponse");
 const path = require("path");
 const sqliteConnection_1 = require("../../../sqliteConnection");
+const functions_1 = require("./functions");
 exports.router = express.Router();
 exports.router.get("/log/:logId", function (request, response) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -48,37 +49,8 @@ exports.router.get("/log", function (request, response) {
     return __awaiter(this, void 0, void 0, function* () {
         const body = request.body;
         let logs;
-        if (body.type) {
-            logs = yield sqliteConnection_1.database.getLogsByType(body.type);
-            if (body.type !== types_1.LogType.other) {
-                if (body) {
-                    // Why dont get the id for specific type?
-                }
-            }
-        }
-        else {
-            logs = yield sqliteConnection_1.database.getLogs();
-        }
-        // Filter by offset & limit
-        let start;
-        let stop;
-        if (body.offset != undefined && body.offset < logs.length - 1) {
-            start = body.offset;
-        }
-        else {
-            start = logs.length - 1;
-        }
-        if (body.limit > start) {
-            stop = 0;
-        }
-        else {
-            stop = (start + 1) - body.limit;
-        }
-        let filteredLogs = [];
-        var i;
-        for (i = start; i >= stop; i--) {
-            filteredLogs.push(logs[i]);
-        }
+        logs = functions_1.parseDBLogs(yield sqliteConnection_1.database.getLogs(), body.type);
+        logs = functions_1.filterOffsetLimit(body, logs);
         ApiResponse_1.sendResponse(response, 200, {
             messages: [
                 {
@@ -87,7 +59,7 @@ exports.router.get("/log", function (request, response) {
                 }
             ],
             payload: {
-                logs: filteredLogs
+                logs: logs
             }
         });
     });

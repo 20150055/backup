@@ -17,9 +17,7 @@ exports.router.get("/client", function (request, response) {
     return __awaiter(this, void 0, void 0, function* () {
         const clients = yield sqliteConnection_1.database.loadAllClients();
         ApiResponse_1.sendResponse(response, 200, {
-            messages: [
-                { name: "api.success.client.get", type: types_1.MessageType.success }
-            ],
+            messages: [{ name: "api.success.client.get", type: types_1.MessageType.success }],
             payload: { clients: clients }
         });
     });

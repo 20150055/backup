@@ -19,30 +19,38 @@ const databaseReady = new Promise(resolve => {
 });
 exports.databaseReady = databaseReady;
 typeorm_1.createConnection({
-    "type": "sqlite",
-    "database": "../Repository.db",
-    "synchronize": true,
-    "logging": false,
-    "entities": [
-        "src/entity/**/*.ts", __dirname + "/entity/**/*.ts",
-        "src/entity/**/*.js", __dirname + "/entity/**/*.js",
+    type: "sqlite",
+    database: "../Repository.db",
+    synchronize: true,
+    logging: false,
+    entities: [
+        "src/entity/**/*.ts",
+        __dirname + "/entity/**/*.ts",
+        "src/entity/**/*.js",
+        __dirname + "/entity/**/*.js"
     ],
-    "migrations": [
-        "src/migration/**/*.ts", __dirname + "/migration/**/*.ts",
-        "src/migration/**/*.js", __dirname + "/migration/**/*.js",
+    migrations: [
+        "src/migration/**/*.ts",
+        __dirname + "/migration/**/*.ts",
+        "src/migration/**/*.js",
+        __dirname + "/migration/**/*.js"
     ],
-    "subscribers": [
-        "src/subscriber/**/*.ts", __dirname + "/subscriber/**/*.ts",
-        "src/subscriber/**/*.js", __dirname + "/subscriber/**/*.js",
+    subscribers: [
+        "src/subscriber/**/*.ts",
+        __dirname + "/subscriber/**/*.ts",
+        "src/subscriber/**/*.js",
+        __dirname + "/subscriber/**/*.js"
     ],
-    "cli": {
-        "entitiesDir": "src/entity",
-        "migrationsDir": "src/migration",
-        "subscribersDir": "src/subscriber"
+    cli: {
+        entitiesDir: "src/entity",
+        migrationsDir: "src/migration",
+        subscribersDir: "src/subscriber"
     }
-}).then((conn) => __awaiter(this, void 0, void 0, function* () {
+})
+    .then((conn) => __awaiter(this, void 0, void 0, function* () {
     connection = conn;
     exports.database = database = new Database_1.Database(connection);
     databaseReadyResolve();
-})).catch(error => console.log(error));
+}))
+    .catch(error => console.log(error));
 //# sourceMappingURL=sqliteConnection.js.map

@@ -35,10 +35,12 @@ app.use("", routes.router);
 // Error handler
 app.use((err, req, res, next) => {
     let errorstring = err.message.toString();
-    let errormessage = [{
+    let errormessage = [
+        {
             name: errorstring,
             type: types_1.MessageType.error
-        }];
+        }
+    ];
     ApiResponse_1.sendResponse(res, 400, { messages: errormessage });
 });
 // start server (check which directory to use)
@@ -55,7 +57,9 @@ else {
 app.use("/", express.static(path.resolve(dir))); // resolve transforms relative paths to absolute paths
 app.use("/api", (req, res, next) => {
     if (["GET", "POST", "PUT", "PATCH", "DELETE"].indexOf(req.method) !== -1) {
-        res.status(404).json({ messages: [{ name: "api.error.endpoint-not-found" }] }); // send a 404 for every /api route instead of serving a html page
+        res
+            .status(404)
+            .json({ messages: [{ name: "api.error.endpoint-not-found" }] }); // send a 404 for every /api route instead of serving a html page
     }
     else {
         next();
@@ -66,10 +70,10 @@ app.use("*", (req, res) => {
     res.sendFile(path.resolve(dir + "/index.html"));
 });
 exports.io = sio(server);
-exports.io.of("/api/").on("connection", (socket) => {
+exports.io.of("/api/").on("connection", socket => {
     console.log("connected");
-    socket.on('disconnect', function () {
-        console.log('user disconnected');
+    socket.on("disconnect", function () {
+        console.log("user disconnected");
     });
 });
 (() => __awaiter(this, void 0, void 0, function* () {

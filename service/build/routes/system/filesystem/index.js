@@ -16,7 +16,11 @@ const pathModule = require("path");
 exports.router = express.Router();
 exports.router.get("/directory", function (request, response) {
     return __awaiter(this, void 0, void 0, function* () {
-        const body = { path: typeof request.query.path !== "string" || request.query.path === "false" ? false : request.query.path };
+        const body = {
+            path: typeof request.query.path !== "string" || request.query.path === "false"
+                ? false
+                : request.query.path
+        };
         let invalidValue = true;
         let availableFolders = [];
         let path = typeof body.path === "string" ? body.path : false;
@@ -29,7 +33,12 @@ exports.router.get("/directory", function (request, response) {
                     .map((dir) => __awaiter(this, void 0, void 0, function* () {
                     let exists = yield fsextra.pathExists(dir);
                     if (exists) {
-                        availableFolders.push({ name: dir, folder: true, writable: true, fullPath: dir });
+                        availableFolders.push({
+                            name: dir,
+                            folder: true,
+                            writable: true,
+                            fullPath: dir
+                        });
                     }
                 })));
             }
@@ -46,10 +55,20 @@ exports.router.get("/directory", function (request, response) {
                     try {
                         const stats = yield fsextra.stat(path + "/" + item);
                         const isFolder = stats.isDirectory();
-                        availableFolders.push({ name: item, folder: isFolder, writable: true /* TODO */, fullPath: pathModule.posix.normalize(`${path}/${item}`) });
+                        availableFolders.push({
+                            name: item,
+                            folder: isFolder,
+                            writable: true /* TODO */,
+                            fullPath: pathModule.posix.normalize(`${path}/${item}`)
+                        });
                     }
                     catch (error) {
-                        availableFolders.push({ name: item, folder: null, writable: false, fullPath: pathModule.posix.normalize(`${path}/${item}`) });
+                        availableFolders.push({
+                            name: item,
+                            folder: null,
+                            writable: false,
+                            fullPath: pathModule.posix.normalize(`${path}/${item}`)
+                        });
                     }
                 })));
             }
