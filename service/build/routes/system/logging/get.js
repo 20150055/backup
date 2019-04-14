@@ -17,7 +17,6 @@ const functions_1 = require("./functions");
 exports.router = express.Router();
 exports.router.get("/log/:logId", function (request, response) {
     return __awaiter(this, void 0, void 0, function* () {
-        // TODO prettify code
         const logId = request.params.logId;
         const log = yield sqliteConnection_1.database.loadLogById(logId);
         if (!log) {
@@ -29,15 +28,8 @@ exports.router.get("/log/:logId", function (request, response) {
                     }
                 ]
             });
+            return;
         }
-        let data = {
-            messages: [
-                {
-                    name: "api.success.system.log",
-                    type: types_1.MessageType.success
-                }
-            ]
-        };
         // Build path to logfile
         let logPath = path.join(path.dirname(path.dirname(path.dirname(path.dirname(__dirname)))), "logs");
         logPath = path.join(logPath, log.logType);
@@ -49,7 +41,7 @@ exports.router.get("/log", function (request, response) {
     return __awaiter(this, void 0, void 0, function* () {
         const body = request.body;
         let logs;
-        logs = functions_1.parseDBLogs(yield sqliteConnection_1.database.getLogs(), body.type);
+        logs = yield functions_1.getParsedDBLogs(body);
         logs = functions_1.filterOffsetLimit(body, logs);
         ApiResponse_1.sendResponse(response, 200, {
             messages: [

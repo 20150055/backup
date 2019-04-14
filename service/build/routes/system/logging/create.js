@@ -16,7 +16,7 @@ exports.router = express.Router();
 exports.router.post("/log", function (request, response) {
     return __awaiter(this, void 0, void 0, function* () {
         const body = request.body;
-        const success = yield logging_1.createLog(body);
+        let success = yield logging_1.createLog(body);
         if (success === true) {
             ApiResponse_1.sendResponse(response, 200, {
                 messages: [
@@ -28,10 +28,11 @@ exports.router.post("/log", function (request, response) {
             });
         }
         else {
-            if (success !== false && success.length > 0) {
+            if (success.length > 0) {
                 ApiResponse_1.sendResponse(response, 400, {
                     messages: success
                 });
+                return;
             }
             ApiResponse_1.sendResponse(response, 400, {
                 messages: [

@@ -295,6 +295,46 @@ class Database {
             return logs;
         });
     }
+    getFilteredLogsOther() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const logs = yield this.connection
+                .getRepository(Log_1.Log)
+                .createQueryBuilder("log")
+                .where("log.logType = :type", { type: enumTypes_1.LogType.other })
+                .getMany();
+            return logs;
+        });
+    }
+    getFilteredLogsClient(clientId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const logs = yield this.connection
+                .getRepository(Log_1.Log)
+                .createQueryBuilder("log")
+                .where("log.client = :id", { id: clientId })
+                .getMany();
+            return logs;
+        });
+    }
+    getFilteredLogsRepository(repoId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const logs = yield this.connection
+                .getRepository(Log_1.Log)
+                .createQueryBuilder("log")
+                .where("log.repository = :id", { id: repoId })
+                .getMany();
+            return logs;
+        });
+    }
+    getFilteredLogsBackupJob(jobId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const logs = yield this.connection
+                .getRepository(Log_1.Log)
+                .createQueryBuilder("log")
+                .where("log.backupJob = :id", { id: jobId })
+                .getMany();
+            return logs;
+        });
+    }
     createDefaultGlobalSettingsById() {
         return __awaiter(this, void 0, void 0, function* () {
             const settings = new GlobalSettings_1.GlobalSettings();

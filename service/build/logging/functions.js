@@ -15,13 +15,25 @@ const path = require("path");
 const entity_1 = require("../entity");
 function createLog(logArgs) {
     return __awaiter(this, void 0, void 0, function* () {
-        let errormessages = checkError(logArgs);
-        if (errormessages.length !== 0) {
-            return errormessages;
+        let errormessages = yield checkError(logArgs);
+        let log;
+        if (errormessages.length === 0) {
+            log = setValues(logArgs); // create log-object for database
         }
-        const globalSettings = yield sqliteConnection_1.database.loadGlobalSettingsById(1);
-        let log = setValues(logArgs); // create log-object for database
+        else {
+            log = new entity_1.Log();
+            log.logType = types_1.LogType.other;
+            log.logLevel = types_1.LogLevel.error;
+            log.date = new Date().getTime();
+            log.eventDescription = "api.error.system.log";
+            logArgs.message = "";
+            errormessages.forEach(message => {
+                logArgs.message += "\n" + message.name;
+            });
+            logArgs.logType = types_1.LogType.other;
+        }
         log = yield sqliteConnection_1.database.createLog(log); // write log to database
+        const globalSettings = yield sqliteConnection_1.database.loadGlobalSettingsById(1);
         // Generate logging pattern
         let output = `ID: ${log.id}\t---\t\t${new Date(log.date).toLocaleDateString()} / ${new Date(log.date).toLocaleTimeString()}\t\t---\t\t Status: ${log.logLevel}\n` +
             `\t\t\t\tDescription: ${log.eventDescription}\n`;
@@ -80,37 +92,68 @@ function createLog(logArgs) {
         }
         fsextra.writeJSONSync(configDir, config); // update configfile
         fsextra.appendFile(path.join(dir, "log.txt"), output); // update logfile
-        return true;
+        if (errormessages.length === 0) {
+            return true;
+        }
+        return errormessages;
     });
 }
 exports.createLog = createLog;
 function checkError(logArgs) {
-    let errormessages = [];
-    if (!logArgs.eventDescription || !logArgs.status) {
-        if (!logArgs.eventDescription) {
+    return __awaiter(this, void 0, void 0, function* () {
+        let errormessages = [];
+        if (!logArgs.eventDescription || !logArgs.status) {
+            if (!logArgs.eventDescription) {
+                errormessages.push({
+                    name: "api.error.system.log.missing-arguments-eventDescription",
+                    type: types_1.MessageType.error
+                });
+            }
+            if (!logArgs.status) {
+                errormessages.push({
+                    name: "api.error.system.log.missing-arguments-status",
+                    type: types_1.MessageType.error
+                });
+            }
+        }
+        if (!(logArgs.logType === types_1.LogType.other ||
+            logArgs.logType === types_1.LogType.client ||
+            logArgs.logType === types_1.LogType.repository ||
+            logArgs.logType === types_1.LogType.backupJob)) {
             errormessages.push({
-                name: "api.error.system.log.missing-arguments-eventDescription",
+                name: "api.error.system.log.invalid-logtype",
                 type: types_1.MessageType.error
             });
         }
-        if (!logArgs.status) {
-            errormessages.push({
-                name: "api.error.system.log.missing-arguments-status",
-                type: types_1.MessageType.error
-            });
+        if (logArgs.repository) {
+            if (!(yield sqliteConnection_1.database.loadLocalS3BackupRepositoryById(logArgs.repository))) {
+                errormessages.push({
+                    name: "api.error.system.log.repository-not-existing",
+                    type: types_1.MessageType.error
+                });
+            }
         }
-    }
-    return errormessages;
+        if (logArgs.backupJob) {
+            if (!(yield sqliteConnection_1.database.loadLocalS3BackupRepositoryById(logArgs.backupJob))) {
+                errormessages.push({
+                    name: "api.error.system.log.backupJob-not-existing",
+                    type: types_1.MessageType.error
+                });
+            }
+        }
+        return errormessages;
+    });
 }
-exports.checkError = checkError;
 function setValues(log) {
     let dbLog = new entity_1.Log();
     dbLog.logType = log.logType;
     dbLog.logLevel = log.status;
     dbLog.date = new Date().getTime();
     dbLog.eventDescription = log.eventDescription;
-    if (log.backupJob && log.repository) {
+    if (log.backupJob) {
         dbLog.backupJob = log.backupJob;
+    }
+    if (log.repository) {
         dbLog.repository = log.repository;
     }
     return dbLog;

@@ -10,7 +10,8 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const typeorm_1 = require("typeorm");
-const _1 = require(".");
+const Admin_1 = require("./Admin");
+const Log_1 = require("./Log");
 let Client = class Client {
 };
 __decorate([
@@ -30,11 +31,11 @@ __decorate([
     __metadata("design:type", String)
 ], Client.prototype, "os", void 0);
 __decorate([
-    typeorm_1.ManyToOne(type => _1.Admin, admin => admin.clients),
+    typeorm_1.ManyToOne(type => Admin_1.Admin, admin => admin.clients),
     __metadata("design:type", Number)
 ], Client.prototype, "admin", void 0);
 __decorate([
-    typeorm_1.OneToMany(type => _1.Log, log => log.id),
+    typeorm_1.OneToMany(type => Log_1.Log, log => log.id, { nullable: true }),
     __metadata("design:type", Array)
 ], Client.prototype, "log", void 0);
 Client = __decorate([

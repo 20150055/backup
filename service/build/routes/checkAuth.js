@@ -9,8 +9,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const sqliteConnection_1 = require("../sqliteConnection");
-exports.checkAuth = ((req, res, next) => __awaiter(this, void 0, void 0, function* () {
-    const dev = false;
+const constants_1 = require("../constants");
+exports.checkAuth = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
+    const dev = constants_1.getDevelopment();
     const token = req.headers.authorization.replace("Bearer ", "");
     const userId = req.params.userId;
     if (token && userId) {
@@ -25,5 +26,5 @@ exports.checkAuth = ((req, res, next) => __awaiter(this, void 0, void 0, functio
         }
     }
     return next(new Error("api.error.user.authorization-failed"));
-}));
+});
 //# sourceMappingURL=checkAuth.js.map
