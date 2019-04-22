@@ -15,6 +15,7 @@ const ApiResponse_1 = require("../../../ApiResponse");
 const enumTypes_1 = require("../../../shared/types/enumTypes");
 const checkAuth_1 = require("../../checkAuth");
 const functions_1 = require("./functions");
+const logging_1 = require("../../../logging");
 exports.router = express.Router();
 exports.router.put("/:userId/repository/:repoId", checkAuth_1.checkAuth, function (request, response) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -31,12 +32,18 @@ exports.router.put("/:userId/repository/:repoId", checkAuth_1.checkAuth, functio
             if (body.repoType === enumTypes_1.RepoType.S3) {
                 newRepo.accessKey = body.accessKey;
                 newRepo.secretAccessKey = body.secretAccessKey;
-                newRepo = yield sqliteConnection_1.database.createS3BackupRepository(newRepo);
             }
-            else {
-                newRepo = yield sqliteConnection_1.database.createLocalBackupRepository(newRepo);
-            }
+            newRepo = yield sqliteConnection_1.database.createLocalBackupRepository(newRepo);
             const responseObject = newRepo;
+            let logInfo = {
+                userId: request.params.userId,
+                logLevel: enumTypes_1.LogLevel.success,
+                eventDescription: "api.success.backuprepository.update",
+                // message: message.fullOutput, // TODO: add restic usage
+                type: enumTypes_1.LogType.repository,
+                repoId: responseObject.id
+            };
+            logging_1.createLog(logInfo);
             ApiResponse_1.sendResponse(response, 200, {
                 messages: [
                     {
@@ -48,6 +55,18 @@ exports.router.put("/:userId/repository/:repoId", checkAuth_1.checkAuth, functio
             });
         }
         else {
+            let logInfo = {
+                userId: request.params.userId,
+                logLevel: enumTypes_1.LogLevel.error,
+                eventDescription: "api.error.backuprepository.update",
+                message: "",
+                type: enumTypes_1.LogType.repository,
+                repoId: request.params.repoId
+            };
+            errormessages.forEach(message => {
+                logInfo.message += message.name + "\n";
+            });
+            logging_1.createLog(logInfo);
             ApiResponse_1.sendResponse(response, 400, { messages: errormessages });
         }
     });

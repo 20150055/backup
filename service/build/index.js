@@ -20,6 +20,7 @@ const sqliteConnection_1 = require("./sqliteConnection");
 const update_1 = require("./update");
 const http = require("http");
 const sio = require("socket.io");
+const scheduling_1 = require("./scheduling");
 const app = express();
 const server = http.createServer(app);
 // allow every origin to access the api
@@ -95,5 +96,6 @@ exports.io.of("/api/").on("connection", socket => {
         console.log(`API is listening on port ${port}`);
     });
     update_1.checkForUpdate();
+    scheduling_1.checkForBackups();
 }))();
 //# sourceMappingURL=index.js.map

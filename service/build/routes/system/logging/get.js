@@ -39,10 +39,10 @@ exports.router.get("/log/:logId", function (request, response) {
 });
 exports.router.get("/log", function (request, response) {
     return __awaiter(this, void 0, void 0, function* () {
-        const body = request.body;
+        const query = request.query;
         let logs;
-        logs = yield functions_1.getParsedDBLogs(body);
-        logs = functions_1.filterOffsetLimit(body, logs);
+        logs = yield functions_1.getParsedDBLogs(query);
+        logs = functions_1.filterOffsetLimit(query, logs);
         ApiResponse_1.sendResponse(response, 200, {
             messages: [
                 {

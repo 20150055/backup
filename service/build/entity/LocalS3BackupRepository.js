@@ -57,6 +57,7 @@ __decorate([
     __metadata("design:type", Array)
 ], LocalS3BackupRepository.prototype, "backupjob", void 0);
 __decorate([
+    typeorm_1.Column({ nullable: false }),
     typeorm_1.ManyToOne(type => User_1.User, user => user.id, { nullable: false }),
     __metadata("design:type", Number)
 ], LocalS3BackupRepository.prototype, "user", void 0);

@@ -14,6 +14,7 @@ const sqliteConnection_1 = require("../../../sqliteConnection");
 const ApiResponse_1 = require("../../../ApiResponse");
 const functions_1 = require("./functions");
 const uuidv4 = require("uuid/v4");
+const logging_1 = require("../../../logging");
 exports.router = express.Router();
 exports.router.post("/register", function (request, response) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -25,14 +26,29 @@ exports.router.post("/register", function (request, response) {
             const token = uuidv4();
             yield sqliteConnection_1.database.setUserToken(user.id, token);
             const responseObject = user;
+            let logInfo = {
+                userId: user.id,
+                logLevel: types_1.LogLevel.success,
+                eventDescription: "api.success.user.register",
+                type: types_1.LogType.other
+            };
+            logging_1.createLog(logInfo);
             ApiResponse_1.sendResponse(response, 200, {
-                messages: [
-                    { name: "api.success.user.register", type: types_1.MessageType.success }
-                ],
+                messages: [{ name: logInfo.eventDescription, type: types_1.MessageType.success }],
                 payload: { user: responseObject, token }
             });
         }
         else {
+            let logInfo = {
+                logLevel: types_1.LogLevel.error,
+                eventDescription: "api.error.user.register",
+                message: "",
+                type: types_1.LogType.other
+            };
+            errormessages.forEach(message => {
+                logInfo.message += message.name + "\n";
+            });
+            logging_1.createLog(logInfo);
             ApiResponse_1.sendResponse(response, 400, { messages: errormessages });
         }
     });

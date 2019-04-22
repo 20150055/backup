@@ -14,6 +14,7 @@ const sqliteConnection_1 = require("../../../sqliteConnection");
 const ApiResponse_1 = require("../../../ApiResponse");
 const functions_1 = require("./functions");
 const checkAuth_1 = require("../../checkAuth");
+const logging_1 = require("../../../logging");
 exports.router = express.Router();
 exports.router.patch("/:userId", checkAuth_1.checkAuth, function (request, response) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -37,21 +38,39 @@ exports.router.patch("/:userId", checkAuth_1.checkAuth, function (request, respo
             newUser.id = oldUser.id;
             newUser.job = oldUser.job;
             newUser.repo = oldUser.repo;
-            newUser.token = oldUser.token; // TODO: Sicher?
+            newUser.token = oldUser.token;
             if (!newUser.password) {
                 newUser.password = oldUser.password;
-                newUser = yield sqliteConnection_1.database.patchUser(newUser);
+                newUser = yield sqliteConnection_1.database.patchUser(newUser); // because of hashed password
             }
             else {
                 newUser = yield sqliteConnection_1.database.createUser(newUser);
             }
             const responseObject = newUser;
+            let logInfo = {
+                userId: request.params.userId,
+                logLevel: types_1.LogLevel.success,
+                eventDescription: "api.success.user.patch",
+                type: types_1.LogType.other
+            };
+            logging_1.createLog(logInfo);
             ApiResponse_1.sendResponse(response, 200, {
-                messages: [{ name: "api.success.user.patch", type: types_1.MessageType.success }],
+                messages: [{ name: logInfo.eventDescription, type: types_1.MessageType.success }],
                 payload: { user: responseObject }
             });
         }
         else {
+            let logInfo = {
+                userId: request.params.userId,
+                logLevel: types_1.LogLevel.error,
+                eventDescription: "api.error.user.patch",
+                message: "",
+                type: types_1.LogType.other
+            };
+            errormessages.forEach(message => {
+                logInfo.message += message.name + "\n";
+            });
+            logging_1.createLog(logInfo);
             ApiResponse_1.sendResponse(response, 400, { messages: errormessages });
         }
     });

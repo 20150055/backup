@@ -18,12 +18,21 @@ const checkForUpdate_1 = require("./checkForUpdate");
 const child_process_1 = require("child_process");
 const types_1 = require("../shared/types");
 const constants_1 = require("../constants");
+const logging_1 = require("../logging");
 exports.router = express.Router();
 const dummyInstall = constants_1.getDummyInstall();
 function execUpdate() {
     return __awaiter(this, void 0, void 0, function* () {
         let upToDate = yield checkForUpdate_1.versionUpToDate(); // once again check version (not necessary)
         if (upToDate === false) {
+            // Logging
+            let logInfo1 = {
+                logLevel: types_1.LogLevel.info,
+                eventDescription: "api.info.update.started",
+                message: "INFO: Starting update ...",
+                type: types_1.LogType.other
+            };
+            logging_1.createLog(logInfo1);
             let dirTemp = os.tmpdir();
             let dirScript = path.resolve(__dirname, "../../../../../Setup");
             let argsDownload = ["-d"];
@@ -58,10 +67,25 @@ function execUpdate() {
                 dirScript += "/Linux/install.sh";
                 dirTemp += "/install.sh";
             }
+            // Logging
+            let logInfo2 = {
+                logLevel: types_1.LogLevel.info,
+                eventDescription: "api.info.update-copy-files",
+                message: `INFO: copy installscript \"${dirScript}\" to \"${dirTemp}\"`,
+                type: types_1.LogType.other
+            };
+            logging_1.createLog(logInfo2);
             yield copyFiles(dirScript, dirTemp);
             if (!dummyInstall) {
                 const resultsDownload = yield executeScript("powershell", argsDownload); // dirtemp
-                // console.log(resultsDownload); // TODO LOG instead
+                // Logging
+                let logInfo3 = {
+                    logLevel: resultsDownload.status,
+                    eventDescription: `api.${resultsDownload.status}.update`,
+                    message: resultsDownload.output,
+                    type: types_1.LogType.other
+                };
+                logging_1.createLog(logInfo3);
                 if (resultsDownload.status === "success") {
                     const resultsUpdate = yield executeScript("powershell", argsUpdate);
                     if (resultsUpdate.status === "success") {
@@ -93,7 +117,9 @@ exports.execUpdate = execUpdate;
 // see https://nodejs.org/api/child_process.html#child_process_child_process_spawn_command_args_options
 function executeScript(scriptPath, args) {
     return __awaiter(this, void 0, void 0, function* () {
-        return new Promise(resolve => {
+        return new Promise(// status must be compatible with type "LogLevel"
+        // status must be compatible with type "LogLevel"
+        resolve => {
             console.debug("executing update with following args", args);
             const child = child_process_1.spawn(scriptPath, args, {
                 cwd: path.dirname(scriptPath),
@@ -138,7 +164,14 @@ function copyFiles(src, dst) {
             yield fs_extra_1.copy(src, dst);
         }
         catch (err) {
-            console.error(err);
+            // Logging
+            let logInfo = {
+                logLevel: types_1.LogLevel.error,
+                eventDescription: "api.error.update.copy-files",
+                message: `ERROR: ${err.toString()}`,
+                type: types_1.LogType.other
+            };
+            logging_1.createLog(logInfo);
         }
     });
 }

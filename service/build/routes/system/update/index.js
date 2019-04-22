@@ -68,7 +68,6 @@ exports.router.post("/update", function (request, response) {
 exports.router.get("/update", function (request, response) {
     return __awaiter(this, void 0, void 0, function* () {
         const res = yield update_1.versionUpToDate();
-        // TODO send error
         ApiResponse_1.sendResponse(response, res === true ? 200 : 400, {
             messages: []
         });

@@ -56,18 +56,20 @@ exports.router.post("/clientInstall", function (request, response) {
                         if (responseString.indexOf("Operation finished") >= 0) {
                             const log = {
                                 message: responseString,
-                                logType: types_1.LogType.client,
-                                status: types_1.LogLevel.success,
-                                eventDescription: "api.success.client.install"
+                                logLevel: types_1.LogLevel.success,
+                                eventDescription: "api.success.client.install",
+                                type: types_1.LogType.client,
+                                clientId: 1 // TODO change the hardcode-ID to real value
                             };
                             logging_1.createLog(log);
                         }
                         else {
                             const log = {
                                 message: responseString,
-                                logType: types_1.LogType.client,
-                                status: types_1.LogLevel.error,
-                                eventDescription: "api.error.client.install"
+                                logLevel: types_1.LogLevel.error,
+                                eventDescription: "api.error.client.install",
+                                type: types_1.LogType.client,
+                                clientId: 1 // TODO change the hardcode-ID to real value
                             };
                             logging_1.createLog(log);
                         }
@@ -122,18 +124,20 @@ exports.router.post("/clientInstall", function (request, response) {
                             if (responseString.indexOf("Operation finished") >= 0) {
                                 const log = {
                                     message: responseString,
-                                    logType: types_1.LogType.client,
-                                    status: types_1.LogLevel.success,
-                                    eventDescription: "api.success.client.install"
+                                    logLevel: types_1.LogLevel.success,
+                                    eventDescription: "api.success.client.install",
+                                    type: types_1.LogType.client,
+                                    clientId: 1 // TODO change the hardcode-ID to real value
                                 };
                                 logging_1.createLog(log);
                             }
                             else {
                                 const log = {
                                     message: responseString,
-                                    logType: types_1.LogType.client,
-                                    status: types_1.LogLevel.error,
-                                    eventDescription: "api.error.client.install"
+                                    logLevel: types_1.LogLevel.error,
+                                    eventDescription: "api.error.client.install",
+                                    type: types_1.LogType.client,
+                                    clientId: 1 // TODO change the hardcode-ID to real value
                                 };
                                 logging_1.createLog(log);
                             }
@@ -205,18 +209,20 @@ exports.router.post("/clientInstall", function (request, response) {
                             if (responseString.indexOf("Operation finished") >= 0) {
                                 const log = {
                                     message: responseString,
-                                    logType: types_1.LogType.client,
-                                    status: types_1.LogLevel.success,
-                                    eventDescription: "api.success.client.install"
+                                    logLevel: types_1.LogLevel.success,
+                                    eventDescription: "api.success.client.install",
+                                    type: types_1.LogType.client,
+                                    clientId: 1 // TODO change the hardcode-ID to real value
                                 };
                                 logging_1.createLog(log);
                             }
                             else {
                                 const log = {
                                     message: responseString,
-                                    logType: types_1.LogType.client,
-                                    status: types_1.LogLevel.error,
-                                    eventDescription: "api.error.client.install"
+                                    logLevel: types_1.LogLevel.error,
+                                    eventDescription: "api.error.client.install",
+                                    type: types_1.LogType.client,
+                                    clientId: 1 // TODO change the hardcode-ID to real value
                                 };
                                 logging_1.createLog(log);
                             }

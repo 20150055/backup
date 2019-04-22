@@ -14,6 +14,7 @@ const sqliteConnection_1 = require("../../../sqliteConnection");
 const ApiResponse_1 = require("../../../ApiResponse");
 const functions_1 = require("./functions");
 const checkAuth_1 = require("../../checkAuth");
+const logging_1 = require("../../../logging");
 exports.router = express.Router();
 exports.router.put("/:userId", checkAuth_1.checkAuth, function (request, response) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -28,15 +29,33 @@ exports.router.put("/:userId", checkAuth_1.checkAuth, function (request, respons
             newUser.token = oldUser.token; // TODO: Sicher?
             newUser = yield sqliteConnection_1.database.createUser(newUser);
             const responseObject = newUser;
+            let logInfo = {
+                userId: request.params.userId,
+                logLevel: types_1.LogLevel.success,
+                eventDescription: "api.success.user.update",
+                type: types_1.LogType.other
+            };
+            logging_1.createLog(logInfo);
             ApiResponse_1.sendResponse(response, 200, {
                 //TODO with ...Update...
                 messages: [
-                    { name: "api.success.user.update", type: types_1.MessageType.success }
+                    { name: logInfo.eventDescription, type: types_1.MessageType.success }
                 ],
                 payload: { user: responseObject }
             });
         }
         else {
+            let logInfo = {
+                userId: request.params.userId,
+                logLevel: types_1.LogLevel.error,
+                eventDescription: "api.error.user.update",
+                message: "",
+                type: types_1.LogType.other
+            };
+            errormessages.forEach(message => {
+                logInfo.message += message.name + "\n";
+            });
+            logging_1.createLog(logInfo);
             ApiResponse_1.sendResponse(response, 400, { messages: errormessages });
         }
     });

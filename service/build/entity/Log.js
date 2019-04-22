@@ -37,16 +37,19 @@ __decorate([
     __metadata("design:type", String)
 ], Log.prototype, "eventDescription", void 0);
 __decorate([
+    typeorm_1.Column({ nullable: true }),
     typeorm_1.ManyToOne(type => BackupJob_1.BackupJob, backupjob => backupjob.id, { nullable: true }),
     __metadata("design:type", Number)
 ], Log.prototype, "backupJob", void 0);
 __decorate([
+    typeorm_1.Column({ nullable: true }),
     typeorm_1.ManyToOne(type => LocalS3BackupRepository_1.LocalS3BackupRepository, repository => repository.id, {
         nullable: true
     }),
     __metadata("design:type", Number)
 ], Log.prototype, "repository", void 0);
 __decorate([
+    typeorm_1.Column({ nullable: true }),
     typeorm_1.ManyToOne(type => Client_1.Client, client => client.id, { nullable: true }),
     __metadata("design:type", Number)
 ], Log.prototype, "client", void 0);

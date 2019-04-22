@@ -17,6 +17,7 @@ const sqliteConnection_1 = require("../sqliteConnection");
 const index_1 = require("../index");
 const types_1 = require("../shared/types");
 const execUpdate_1 = require("./execUpdate");
+const logging_1 = require("../logging");
 function checkForUpdate() {
     return __awaiter(this, void 0, void 0, function* () {
         const globalSettings = yield sqliteConnection_1.database.loadGlobalSettingsById(1);
@@ -32,8 +33,15 @@ function checkForUpdate() {
                 interval = "0 0 0 */7 * ?";
                 break; // Every 7 days at midnight
             default:
-                interval = interval = "";
-            // TODO Error-Log by default
+                // Logging
+                let logInfo = {
+                    logLevel: types_1.LogLevel.error,
+                    eventDescription: "api.error.update.invalid-updateCheckInterval",
+                    message: `ERROR: invalid interval -> \"${globalSettings.updateCheckInterval}\"`,
+                    type: types_1.LogType.other
+                };
+                logging_1.createLog(logInfo);
+                return;
         }
         const prevCheck = parser
             .parseExpression(interval)
@@ -43,10 +51,12 @@ function checkForUpdate() {
             .parseExpression(interval)
             .next()
             .getTime();
-        if (prevCheck != globalSettings.lastUpdateCheck) {
+        if (prevCheck > globalSettings.lastUpdateCheck) {
             doCheckNow(prevCheck);
         }
-        setTimeout(() => doCheckNow(nextCheck), nextCheck - new Date().getTime());
+        else {
+            setTimeout(() => doCheckNow(nextCheck), nextCheck - new Date().getTime());
+        }
     });
 }
 exports.checkForUpdate = checkForUpdate;

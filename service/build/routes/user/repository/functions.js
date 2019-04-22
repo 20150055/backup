@@ -53,11 +53,22 @@ function checkError(body, userId, repoId) {
                 }
             }
             if (body.repoName) {
-                const repo = yield sqliteConnection_1.database.loadLocalS3BackupRepositoryByName(body.repoName);
+                let repo = yield sqliteConnection_1.database.loadLocalS3BackupRepositoryByName(body.repoName);
+                let found = false;
                 if (repo) {
                     if (repo.id != repoId) {
+                        found = true;
                         errormessages.push({
-                            name: "api.error.backuprepository.create.reponame-already-existing",
+                            name: "api.error.backuprepository.create.reponame-not-available",
+                            type: types_1.MessageType.error
+                        });
+                    }
+                }
+                repo = yield sqliteConnection_1.database.loadLocalS3BackupRepositoryByName(body.repoName + "-archived");
+                if (repo && !found) {
+                    if (repo.id != repoId) {
+                        errormessages.push({
+                            name: "api.error.backuprepository.create.reponame-not-available",
                             type: types_1.MessageType.error
                         });
                     }

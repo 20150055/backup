@@ -16,6 +16,8 @@ const ApiResponse_1 = require("../../../ApiResponse");
 const enumTypes_1 = require("../../../shared/types/enumTypes");
 const checkAuth_1 = require("../../checkAuth");
 const functions_1 = require("./functions");
+const logging_1 = require("../../../logging");
+const constants_1 = require("../../../constants");
 exports.router = express.Router();
 exports.router.post("/:userId/repository", checkAuth_1.checkAuth, function (request, response) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -24,6 +26,7 @@ exports.router.post("/:userId/repository", checkAuth_1.checkAuth, function (requ
         if (errormessages.length === 0) {
             let repo = functions_1.setValues(body, request.params.userId);
             let args;
+            let message;
             if (body.repoType === enumTypes_1.RepoType.S3) {
                 repo.accessKey = body.accessKey;
                 repo.secretAccessKey = body.secretAccessKey;
@@ -34,8 +37,6 @@ exports.router.post("/:userId/repository", checkAuth_1.checkAuth, function (requ
                     s3AccessKey: repo.accessKey,
                     s3SecretKey: repo.secretAccessKey
                 };
-                console.log(yield restic.createRepository(args));
-                repo = yield sqliteConnection_1.database.createS3BackupRepository(repo);
             }
             else {
                 args = {
@@ -43,14 +44,48 @@ exports.router.post("/:userId/repository", checkAuth_1.checkAuth, function (requ
                     location: repo.repoLocation,
                     type: enumTypes_1.RepoType.Local
                 };
-                console.log(yield restic.createRepository(args)); // TODO remove console.log
-                repo = yield sqliteConnection_1.database.createLocalBackupRepository(repo);
             }
+            if (constants_1.getDevelopment()) {
+                message = { success: true, fullOutput: "Dummy create Repository while developing" };
+            }
+            else {
+                message = yield restic.createRepository(args);
+            }
+            if (!message.success) {
+                let logInfo = {
+                    userId: request.params.userId,
+                    logLevel: enumTypes_1.LogLevel.error,
+                    eventDescription: "api.error.backuprepository.create",
+                    message: message.fullOutput,
+                    type: enumTypes_1.LogType.repository,
+                    repoId: "Not existing"
+                };
+                logging_1.createLog(logInfo);
+                ApiResponse_1.sendResponse(response, 200, {
+                    messages: [
+                        {
+                            name: logInfo.eventDescription,
+                            type: types_1.MessageType.error
+                        }
+                    ]
+                });
+                return;
+            }
+            repo = yield sqliteConnection_1.database.createS3BackupRepository(repo);
             const responseObject = repo;
+            let logInfo = {
+                userId: request.params.userId,
+                logLevel: enumTypes_1.LogLevel.success,
+                eventDescription: "api.success.backuprepository.create",
+                message: message.fullOutput,
+                type: enumTypes_1.LogType.repository,
+                repoId: responseObject.id
+            };
+            logging_1.createLog(logInfo);
             ApiResponse_1.sendResponse(response, 200, {
                 messages: [
                     {
-                        name: "api.success.backuprepository.create",
+                        name: logInfo.eventDescription,
                         type: types_1.MessageType.success
                     }
                 ],
@@ -58,6 +93,18 @@ exports.router.post("/:userId/repository", checkAuth_1.checkAuth, function (requ
             });
         }
         else {
+            let logInfo = {
+                userId: request.params.userId,
+                logLevel: enumTypes_1.LogLevel.error,
+                eventDescription: "api.error.backuprepository.create",
+                message: "",
+                type: enumTypes_1.LogType.repository,
+                repoId: request.params.repoId
+            };
+            errormessages.forEach(message => {
+                logInfo.message += message.name + "\n";
+            });
+            logging_1.createLog(logInfo);
             ApiResponse_1.sendResponse(response, 400, { messages: errormessages });
         }
     });

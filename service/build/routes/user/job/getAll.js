@@ -16,7 +16,7 @@ const checkAuth_1 = require("../../checkAuth");
 exports.router = express.Router();
 exports.router.get("/:userId/backupJob", checkAuth_1.checkAuth, function (request, response) {
     return __awaiter(this, void 0, void 0, function* () {
-        const jobs = yield sqliteConnection_1.database.loadAllBackupJobById(request.params.userId);
+        const jobs = yield sqliteConnection_1.database.loadAllBackupJobsByUserId(request.params.userId);
         const responseObjects = [];
         jobs.forEach(job => {
             if (!job.archived) {

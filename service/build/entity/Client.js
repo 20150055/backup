@@ -31,6 +31,7 @@ __decorate([
     __metadata("design:type", String)
 ], Client.prototype, "os", void 0);
 __decorate([
+    typeorm_1.Column({ nullable: false }),
     typeorm_1.ManyToOne(type => Admin_1.Admin, admin => admin.clients),
     __metadata("design:type", Number)
 ], Client.prototype, "admin", void 0);

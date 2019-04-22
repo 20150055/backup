@@ -13,6 +13,7 @@ const uuidv4 = require("uuid/v4");
 const types_1 = require("../../../shared/types");
 const sqliteConnection_1 = require("../../../sqliteConnection");
 const ApiResponse_1 = require("../../../ApiResponse");
+const logging_1 = require("../../../logging");
 exports.router = express.Router();
 exports.router.post("/login", function (request, response) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -59,24 +60,53 @@ exports.router.post("/login", function (request, response) {
             if (!errorOccured) {
                 const token = uuidv4();
                 yield sqliteConnection_1.database.setUserToken(user.id, token);
+                let logInfo = {
+                    userId: user.id,
+                    logLevel: types_1.LogLevel.success,
+                    eventDescription: "api.success.user.login",
+                    type: types_1.LogType.other
+                };
+                logging_1.createLog(logInfo);
                 ApiResponse_1.sendResponse(response, 200, {
                     messages: [
-                        { name: "api.success.user.login", type: types_1.MessageType.success }
+                        { name: logInfo.eventDescription, type: types_1.MessageType.success }
                     ],
                     payload: { token: token, userId: user.id }
                 });
             }
             else {
+                let logInfo = {
+                    userId: user.id,
+                    logLevel: types_1.LogLevel.error,
+                    eventDescription: "api.error.user.login",
+                    message: "",
+                    type: types_1.LogType.other
+                };
+                errormessages.forEach(message => {
+                    logInfo.message += message.name + "\n";
+                });
+                logging_1.createLog(logInfo);
                 ApiResponse_1.sendResponse(response, 400, { messages: errormessages });
             }
         }
         catch (error) {
             let errorstring = error.toString();
+            let logInfo = {
+                userId: user.id,
+                logLevel: types_1.LogLevel.error,
+                eventDescription: "api.error.user.login",
+                message: "",
+                type: types_1.LogType.other
+            };
             errormessages.push({
                 name: "api.error.user.login.other",
                 type: types_1.MessageType.error,
                 args: { error: errorstring }
             });
+            errormessages.forEach(message => {
+                logInfo.message += message.name + "\n";
+            });
+            logging_1.createLog(logInfo);
             ApiResponse_1.sendResponse(response, 400, { messages: errormessages });
         }
     });

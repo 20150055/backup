@@ -25,24 +25,21 @@ class Database {
     // Create
     createLocalBackupRepository(repository) {
         return __awaiter(this, void 0, void 0, function* () {
-            repository.repoPassword = this.hash(repository.repoPassword);
+            repository.repoPassword = repository.repoPassword;
+            // repository.repoPassword = this.hash(repository.repoPassword);
             return yield this.connection.manager.save(repository);
         });
     }
     createS3BackupRepository(repository) {
         return __awaiter(this, void 0, void 0, function* () {
-            repository.repoPassword = this.hash(repository.repoPassword);
+            repository.repoPassword = repository.repoPassword;
+            // repository.repoPassword = this.hash(repository.repoPassword);
             return yield this.connection.manager.save(repository);
         });
     }
     createBackupjob(backupJob) {
         return __awaiter(this, void 0, void 0, function* () {
             return yield this.connection.manager.save(backupJob);
-        });
-    }
-    createScheduledBackup(scheduledBackup) {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield this.connection.manager.save(scheduledBackup);
         });
     }
     createUser(user) {
@@ -209,11 +206,19 @@ class Database {
             return repo;
         });
     }
-    loadAllBackupJobById(userId) {
+    loadAllBackupJobsByUserId(userId) {
         return __awaiter(this, void 0, void 0, function* () {
             const jobs = yield this.connection.manager
                 .getRepository(BackupJob_1.BackupJob)
                 .find({ user: userId });
+            return jobs;
+        });
+    }
+    loadAllActiveBackupJobs() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const jobs = yield this.connection.manager
+                .getRepository(BackupJob_1.BackupJob)
+                .find({ active: true, archived: false });
             return jobs;
         });
     }
@@ -237,17 +242,22 @@ class Database {
     deleteLocalS3BackupRepositoryById(repoId) {
         return __awaiter(this, void 0, void 0, function* () {
             const repo = yield this.loadLocalS3BackupRepositoryById(repoId);
-            repo.archived = true;
-            repo.repoName += "-archived";
-            if (repo.repoType === enumTypes_1.RepoType.Local) {
-                yield this.createLocalBackupRepository(repo);
+            if (repo) {
+                repo.archived = true;
+                repo.repoName += "-archived";
+                if (repo.repoType === enumTypes_1.RepoType.Local) {
+                    yield this.createLocalBackupRepository(repo);
+                }
+                else {
+                    yield this.createS3BackupRepository(repo);
+                }
+                if (repo.backupjob && repo.backupjob.length > 0) {
+                    repo.backupjob.forEach((job) => __awaiter(this, void 0, void 0, function* () {
+                        yield this.deleteBackupJobById(job.id);
+                    }));
+                }
             }
-            else {
-                yield this.createS3BackupRepository(repo);
-            }
-            repo.backupjob.forEach((job) => __awaiter(this, void 0, void 0, function* () {
-                yield this.deleteBackupJobById(job.id);
-            }));
+            return repo;
         });
     }
     deleteClientById(clientId) {
@@ -259,12 +269,14 @@ class Database {
     }
     deleteBackupJobById(jobId) {
         return __awaiter(this, void 0, void 0, function* () {
-            const job = yield this.loadBackupJobById(jobId);
-            job.archived = true;
-            job.name += "-archived";
-            job.emailNotification = enumTypes_1.EmailNotification.never;
-            // TODO: stop scheduling
-            yield this.createBackupjob(job);
+            let job = yield this.loadBackupJobById(jobId);
+            if (job) {
+                job.archived = true;
+                job.name += "-archived";
+                job.emailNotification = enumTypes_1.EmailNotification.never;
+                return yield this.createBackupjob(job);
+            }
+            return job;
         });
     }
     deleteLogById(logId) {
@@ -344,7 +356,7 @@ class Database {
             settings.updateCheckInterval = enumTypes_1.UpdateCheckInterval.daily;
             settings.port = 8380;
             settings.logfileSize = 500;
-            settings.lastUpdateCheck = 0; // TODO check if correct
+            settings.lastUpdateCheck = 0;
             yield this.connection.manager.save(settings);
         });
     }

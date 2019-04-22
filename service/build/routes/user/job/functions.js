@@ -56,7 +56,7 @@ function checkError(body, userId, jobId) {
                         type: types_1.MessageType.error
                     });
                 }
-                if (!body.active) {
+                if (body.active === undefined || body.active === null) {
                     errormessages.push({
                         name: "api.error.backupjob.create.missing-data.active",
                         type: types_1.MessageType.error
@@ -77,10 +77,21 @@ function checkError(body, userId, jobId) {
             }
             if (body.name) {
                 let job = yield sqliteConnection_1.database.loadBackupJobByName(body.name);
+                let found = false;
                 if (job) {
                     if (job.id != jobId) {
+                        found = true;
                         errormessages.push({
-                            name: "api.error.backupjob.create.job-already-existing",
+                            name: "api.error.backupjob.create.jobname-not-available",
+                            type: types_1.MessageType.error
+                        });
+                    }
+                }
+                job = yield sqliteConnection_1.database.loadBackupJobByName(body.name + "-archived");
+                if (job && (!found)) {
+                    if (job.id != jobId) {
+                        errormessages.push({
+                            name: "api.error.backupjob.create.jobname-not-available",
                             type: types_1.MessageType.error
                         });
                     }

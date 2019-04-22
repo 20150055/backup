@@ -14,6 +14,8 @@ const sqliteConnection_1 = require("../../../sqliteConnection");
 const ApiResponse_1 = require("../../../ApiResponse");
 const checkAuth_1 = require("../../checkAuth");
 const functions_1 = require("./functions");
+const logging_1 = require("../../../logging");
+const backupScheduling_1 = require("../../../scheduling/backupScheduling");
 exports.router = express.Router();
 exports.router.put("/:userId/backupJob/:jobId", checkAuth_1.checkAuth, function (request, response) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -29,10 +31,22 @@ exports.router.put("/:userId/backupJob/:jobId", checkAuth_1.checkAuth, function 
             newJob.log = oldJob.log;
             newJob = yield sqliteConnection_1.database.createBackupjob(newJob);
             const responseObject = newJob;
+            let logInfo = {
+                userId: request.params.userId,
+                logLevel: types_1.LogLevel.success,
+                eventDescription: "api.success.backupjob.update",
+                type: types_1.LogType.backupJob,
+                jobId: responseObject.id,
+                repoId: responseObject.repoId
+            };
+            logging_1.createLog(logInfo);
+            if (!oldJob.active && !newJob.active) {
+                backupScheduling_1.scheduleBackup(newJob.id);
+            }
             ApiResponse_1.sendResponse(response, 200, {
                 messages: [
                     {
-                        name: "api.success.backupjob.update",
+                        name: logInfo.eventDescription,
                         type: types_1.MessageType.success
                     }
                 ],
@@ -40,6 +54,19 @@ exports.router.put("/:userId/backupJob/:jobId", checkAuth_1.checkAuth, function 
             });
         }
         else {
+            let logInfo = {
+                userId: request.params.userId,
+                logLevel: types_1.LogLevel.error,
+                eventDescription: "api.error.backupjob.update",
+                message: "",
+                type: types_1.LogType.backupJob,
+                jobId: request.params.jobId,
+                repoId: body.repoId
+            };
+            errormessages.forEach(message => {
+                logInfo.message += message.name + "\n";
+            });
+            logging_1.createLog(logInfo);
             ApiResponse_1.sendResponse(response, 400, { messages: errormessages });
         }
     });

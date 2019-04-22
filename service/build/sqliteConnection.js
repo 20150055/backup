@@ -20,7 +20,7 @@ const databaseReady = new Promise(resolve => {
 exports.databaseReady = databaseReady;
 typeorm_1.createConnection({
     type: "sqlite",
-    database: "../Repository.db",
+    database: "../data/Backup380.db",
     synchronize: true,
     logging: false,
     entities: [
