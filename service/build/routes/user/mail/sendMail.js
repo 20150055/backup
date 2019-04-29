@@ -36,7 +36,8 @@ exports.router.post("/:userId/mail", checkAuth_1.checkAuth, function (request, r
                 sender: settings.smtpFrom,
                 to: settings.smtpTo,
                 subject: body.subject,
-                text: body.text // plain text body
+                text: body.text,
+                html: ""
             };
             yield transporter.sendMail(mailOptions); //retValue.messageId
         }
