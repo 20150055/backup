@@ -27,16 +27,28 @@ exports.router.delete("/client/:clientId", function (request, response) {
         }
         else {
             let client = yield sqliteConnection_1.database.loadClientById(request.params.clientId);
-            yield sqliteConnection_1.database.deleteClientById(request.params.clientId);
-            ApiResponse_1.sendResponse(response, 200, {
-                messages: [
-                    {
-                        name: "api.success.client.delete",
-                        type: types_1.MessageType.success
-                    }
-                ],
-                payload: { client: client }
-            });
+            if (client) {
+                yield sqliteConnection_1.database.deleteClientById(request.params.clientId);
+                ApiResponse_1.sendResponse(response, 200, {
+                    messages: [
+                        {
+                            name: "api.success.client.delete",
+                            type: types_1.MessageType.success
+                        }
+                    ],
+                    payload: { client: client }
+                });
+            }
+            else {
+                ApiResponse_1.sendResponse(response, 200, {
+                    messages: [
+                        {
+                            name: "api.error.client.delete",
+                            type: types_1.MessageType.success
+                        }
+                    ]
+                });
+            }
         }
     });
 });

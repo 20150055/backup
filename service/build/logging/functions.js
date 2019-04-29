@@ -77,7 +77,7 @@ function createLog(logArgs) {
         }
         else {
             config = yield fsextra.readJSON(configDir);
-            if (config.logCount >= globalSettings.logfileSize) {
+            if (globalSettings && config.logCount >= globalSettings.logfileSize) {
                 // check filesize
                 const archivePath = path.join(dir, "archived");
                 if (!fsextra.existsSync(archivePath)) {

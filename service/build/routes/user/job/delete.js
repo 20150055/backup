@@ -20,6 +20,9 @@ exports.router.delete("/:userId/backupJob/:jobId", checkAuth_1.checkAuth, functi
         const jobId = request.params.jobId;
         try {
             const job = yield sqliteConnection_1.database.deleteBackupJobById(jobId);
+            if (!job) {
+                throw Error("Job not found!");
+            }
             let logInfo = {
                 userId: request.params.userId,
                 logLevel: types_1.LogLevel.success,

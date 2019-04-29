@@ -21,7 +21,7 @@ __decorate([
     __metadata("design:type", Number)
 ], BackupJob.prototype, "id", void 0);
 __decorate([
-    typeorm_1.Column({ nullable: true }),
+    typeorm_1.Column({ default: false }),
     __metadata("design:type", Boolean)
 ], BackupJob.prototype, "archived", void 0);
 __decorate([
@@ -37,23 +37,23 @@ __decorate([
     __metadata("design:type", String)
 ], BackupJob.prototype, "emailNotification", void 0);
 __decorate([
-    typeorm_1.Column({ nullable: true }),
+    typeorm_1.Column(),
     __metadata("design:type", String)
 ], BackupJob.prototype, "backupLocations", void 0);
 __decorate([
-    typeorm_1.Column({ nullable: true }),
+    typeorm_1.Column(),
     __metadata("design:type", Number)
 ], BackupJob.prototype, "prevScheduledDate", void 0);
 __decorate([
-    typeorm_1.Column({ nullable: true }),
+    typeorm_1.Column(),
     __metadata("design:type", Boolean)
 ], BackupJob.prototype, "active", void 0);
 __decorate([
-    typeorm_1.Column({ nullable: true }),
+    typeorm_1.Column(),
     __metadata("design:type", String)
 ], BackupJob.prototype, "cronInterval", void 0);
 __decorate([
-    typeorm_1.Column({ nullable: true }),
+    typeorm_1.Column(),
     __metadata("design:type", Number)
 ], BackupJob.prototype, "startDate", void 0);
 __decorate([

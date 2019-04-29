@@ -21,6 +21,14 @@ exports.router.put("/:userId/globalsettings/:settingsId", checkAuth_1.checkAuth,
         let errormessages = yield functions_1.checkError(body);
         if (errormessages.length === 0) {
             const oldSettings = yield sqliteConnection_1.database.loadGlobalSettingsById(request.params.settingsId);
+            if (!oldSettings) {
+                ApiResponse_1.sendResponse(response, 400, {
+                    messages: [
+                        { name: "api.error.usersettings.update.settings-not-existing", type: types_1.MessageType.error }
+                    ]
+                });
+                return;
+            }
             let newSettings = functions_1.setValues(body);
             newSettings.id = oldSettings.id;
             yield sqliteConnection_1.database.createGlobalSettings(newSettings);
@@ -31,10 +39,9 @@ exports.router.put("/:userId/globalsettings/:settingsId", checkAuth_1.checkAuth,
                 ],
                 payload: { settings: responseObject }
             });
+            return;
         }
-        else {
-            ApiResponse_1.sendResponse(response, 400, { messages: errormessages });
-        }
+        ApiResponse_1.sendResponse(response, 400, { messages: errormessages });
     });
 });
 //# sourceMappingURL=update.js.map

@@ -14,9 +14,11 @@ function getParsedDBLogs(body) {
     return __awaiter(this, void 0, void 0, function* () {
         const dbLogs = yield loadLogsFromDatabase(body);
         let newLogs = [];
-        dbLogs.forEach(log => {
-            newLogs.push(parseDBLog(log));
-        });
+        if (dbLogs) {
+            dbLogs.forEach(log => {
+                newLogs.push(parseDBLog(log));
+            });
+        }
         return newLogs;
     });
 }
@@ -28,9 +30,9 @@ function parseDBLog(log) {
         date: log.date,
         eventDescription: log.eventDescription,
         type: log.logType,
-        repoId: undefined,
-        jobId: undefined,
-        clientId: undefined
+        repoId: -1,
+        jobId: -1,
+        clientId: -1
     };
     switch (log.logType) {
         case types_1.LogType.backupJob:

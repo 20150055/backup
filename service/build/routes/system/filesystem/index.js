@@ -65,7 +65,7 @@ exports.router.get("/directory", function (request, response) {
                     catch (error) {
                         availableFolders.push({
                             name: item,
-                            folder: null,
+                            folder: false,
                             writable: false,
                             fullPath: pathModule.posix.normalize(`${path}/${item}`)
                         });

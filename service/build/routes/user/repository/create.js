@@ -22,7 +22,7 @@ exports.router = express.Router();
 exports.router.post("/:userId/repository", checkAuth_1.checkAuth, function (request, response) {
     return __awaiter(this, void 0, void 0, function* () {
         const body = request.body;
-        let errormessages = yield functions_1.checkError(body, request.params.userId, null);
+        let errormessages = yield functions_1.checkError(body, request.params.userId, undefined);
         if (errormessages.length === 0) {
             let repo = functions_1.setValues(body, request.params.userId);
             let args;
@@ -46,7 +46,10 @@ exports.router.post("/:userId/repository", checkAuth_1.checkAuth, function (requ
                 };
             }
             if (constants_1.getDevelopment()) {
-                message = { success: true, fullOutput: "Dummy create Repository while developing" };
+                message = {
+                    success: true,
+                    fullOutput: "Dummy create Repository while developing"
+                };
             }
             else {
                 message = yield restic.createRepository(args);

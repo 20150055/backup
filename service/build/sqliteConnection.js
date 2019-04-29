@@ -10,9 +10,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const typeorm_1 = require("typeorm");
 const Database_1 = require("./Database");
-let database = null;
+let database;
 exports.database = database;
-let connection = null;
+let connection;
 let databaseReadyResolve;
 const databaseReady = new Promise(resolve => {
     databaseReadyResolve = resolve;

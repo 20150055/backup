@@ -20,7 +20,7 @@ exports.router = express.Router();
 exports.router.post("/:userId/backupJob", checkAuth_1.checkAuth, function (request, response) {
     return __awaiter(this, void 0, void 0, function* () {
         const body = request.body;
-        let errormessages = yield functions_1.checkError(body, request.params.userId, null);
+        let errormessages = yield functions_1.checkError(body, request.params.userId, undefined);
         if (errormessages.length === 0) {
             let job = functions_1.setValues(body, request.params.userId);
             job = yield sqliteConnection_1.database.createBackupjob(job);

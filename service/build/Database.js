@@ -56,11 +56,15 @@ class Database {
     }
     setUserToken(userId, token) {
         return __awaiter(this, void 0, void 0, function* () {
-            const user = yield this.connection.manager
+            let user = yield this.connection.manager
                 .getRepository(User_1.User)
                 .findOne({ id: userId });
-            user.token = token;
-            yield this.connection.manager.save(user);
+            if (user) {
+                user.token = token;
+                yield this.connection.manager.save(user);
+                return true;
+            }
+            return false;
         });
     }
     createUserSettings(userSettings) {
@@ -83,14 +87,16 @@ class Database {
         return __awaiter(this, void 0, void 0, function* () {
             const settings = yield this.loadGlobalSettingsById(1);
             log = yield this.connection.manager.save(log);
-            const deleteId = log.id - settings.logfileSize;
-            this.deleteLogById(deleteId);
+            if (settings) {
+                const deleteId = log.id - settings.logfileSize;
+                this.deleteLogById(deleteId);
+            }
             return log;
         });
     }
     createClient(client) {
         return __awaiter(this, void 0, void 0, function* () {
-            yield this.connection.manager.save(client);
+            return yield this.connection.manager.save(client);
         });
     }
     createAdmin() {
@@ -112,9 +118,7 @@ class Database {
     }
     loadAllClients() {
         return __awaiter(this, void 0, void 0, function* () {
-            const clients = yield this.connection.manager
-                .getRepository(Client_1.Client)
-                .find();
+            const clients = yield this.connection.manager.getRepository(Client_1.Client).find();
             return clients;
         });
     }
@@ -287,17 +291,13 @@ class Database {
     // Others
     countUsers() {
         return __awaiter(this, void 0, void 0, function* () {
-            const count = yield this.connection.manager
-                .getRepository(User_1.User)
-                .count();
+            const count = yield this.connection.manager.getRepository(User_1.User).count();
             return count;
         });
     }
     countLogs() {
         return __awaiter(this, void 0, void 0, function* () {
-            const count = yield this.connection.manager
-                .getRepository(Log_1.Log)
-                .count();
+            const count = yield this.connection.manager.getRepository(Log_1.Log).count();
             return count;
         });
     }

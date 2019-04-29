@@ -18,7 +18,7 @@ exports.checkAuth = (req, res, next) => __awaiter(this, void 0, void 0, function
     const userId = req.params.userId;
     if (token && userId) {
         const user = yield sqliteConnection_1.database.loadUserById(userId);
-        if (user && user.token === token) {
+        if (user && user.token && user.token != "" && user.token === token) {
             return next();
         }
         else {

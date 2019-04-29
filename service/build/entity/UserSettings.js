@@ -24,35 +24,35 @@ __decorate([
     __metadata("design:type", Number)
 ], UserSettings.prototype, "user", void 0);
 __decorate([
-    typeorm_1.Column({ default: true, nullable: true }),
+    typeorm_1.Column({ default: true }),
     __metadata("design:type", Boolean)
 ], UserSettings.prototype, "sendEmails", void 0);
 __decorate([
-    typeorm_1.Column({ default: enumTypes_1.ReportLanguage.gui, nullable: true }),
+    typeorm_1.Column({ default: enumTypes_1.ReportLanguage.gui }),
     __metadata("design:type", String)
 ], UserSettings.prototype, "reportLanguage", void 0);
 __decorate([
-    typeorm_1.Column({ nullable: true }),
+    typeorm_1.Column(),
     __metadata("design:type", String)
 ], UserSettings.prototype, "smtpHostname", void 0);
 __decorate([
-    typeorm_1.Column({ nullable: true }),
+    typeorm_1.Column(),
     __metadata("design:type", Number)
 ], UserSettings.prototype, "smtpPort", void 0);
 __decorate([
-    typeorm_1.Column({ nullable: true }),
+    typeorm_1.Column(),
     __metadata("design:type", String)
 ], UserSettings.prototype, "smtpUsername", void 0);
 __decorate([
-    typeorm_1.Column({ nullable: true }),
+    typeorm_1.Column(),
     __metadata("design:type", String)
 ], UserSettings.prototype, "smtpPassword", void 0);
 __decorate([
-    typeorm_1.Column({ nullable: true }),
+    typeorm_1.Column(),
     __metadata("design:type", String)
 ], UserSettings.prototype, "smtpFrom", void 0);
 __decorate([
-    typeorm_1.Column({ nullable: true }),
+    typeorm_1.Column(),
     __metadata("design:type", String)
 ], UserSettings.prototype, "smtpTo", void 0);
 __decorate([
@@ -60,35 +60,35 @@ __decorate([
     __metadata("design:type", String)
 ], UserSettings.prototype, "language", void 0);
 __decorate([
-    typeorm_1.Column({ default: true, nullable: true }),
+    typeorm_1.Column({ default: true }),
     __metadata("design:type", Boolean)
 ], UserSettings.prototype, "showSnackbar", void 0);
 __decorate([
-    typeorm_1.Column({ nullable: true }),
+    typeorm_1.Column(),
     __metadata("design:type", String)
 ], UserSettings.prototype, "themePrimary", void 0);
 __decorate([
-    typeorm_1.Column({ nullable: true }),
+    typeorm_1.Column(),
     __metadata("design:type", String)
 ], UserSettings.prototype, "themeSecondary", void 0);
 __decorate([
-    typeorm_1.Column({ nullable: true }),
+    typeorm_1.Column(),
     __metadata("design:type", String)
 ], UserSettings.prototype, "themeAccent", void 0);
 __decorate([
-    typeorm_1.Column({ default: true, nullable: true }),
+    typeorm_1.Column({ default: true }),
     __metadata("design:type", Boolean)
 ], UserSettings.prototype, "darktheme", void 0);
 __decorate([
-    typeorm_1.Column({ nullable: true }),
+    typeorm_1.Column(),
     __metadata("design:type", String)
 ], UserSettings.prototype, "defaultEmailNotification", void 0);
 __decorate([
-    typeorm_1.Column({ nullable: true }),
+    typeorm_1.Column(),
     __metadata("design:type", Number)
 ], UserSettings.prototype, "defaultMaxBackupsPerRepo", void 0);
 __decorate([
-    typeorm_1.Column({ nullable: true }),
+    typeorm_1.Column(),
     __metadata("design:type", Number)
 ], UserSettings.prototype, "defaultUnlockTime", void 0);
 UserSettings = __decorate([

@@ -20,6 +20,17 @@ exports.router.patch("/:userId", checkAuth_1.checkAuth, function (request, respo
     return __awaiter(this, void 0, void 0, function* () {
         const body = request.body;
         const oldUser = yield sqliteConnection_1.database.loadUserById(request.params.userId);
+        if (!oldUser) {
+            ApiResponse_1.sendResponse(response, 400, {
+                messages: [
+                    {
+                        name: "api.error.user.patch.user-not-existing",
+                        type: types_1.MessageType.success
+                    }
+                ]
+            });
+            return;
+        }
         let errormessages = yield functions_1.checkError(body, request.params.userId, true);
         if (errormessages.length === 0) {
             let newUser = functions_1.setValues(body);

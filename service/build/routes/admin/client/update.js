@@ -32,6 +32,12 @@ exports.router.put("/client/:clientId", function (request, response) {
         }
         if (errormessages.length === 0) {
             const oldClient = yield sqliteConnection_1.database.loadClientById(request.params.clientId);
+            if (!oldClient) {
+                ApiResponse_1.sendResponse(response, 400, {
+                    messages: [{ name: "api.error.client.update", type: types_1.MessageType.error }]
+                });
+                return;
+            }
             let newClient = new Client_1.Client();
             newClient.id = oldClient.id;
             newClient.name = body.name;

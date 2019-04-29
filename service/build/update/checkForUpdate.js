@@ -21,41 +21,43 @@ const logging_1 = require("../logging");
 function checkForUpdate() {
     return __awaiter(this, void 0, void 0, function* () {
         const globalSettings = yield sqliteConnection_1.database.loadGlobalSettingsById(1);
-        let interval;
-        switch (globalSettings.updateCheckInterval) {
-            case types_1.UpdateCheckInterval.hourly:
-                interval = "0 0 * ? * *";
-                break; // Every hour
-            case types_1.UpdateCheckInterval.daily:
-                interval = "0 0 0 * * ?";
-                break; // Every day at midnight - 12am
-            case types_1.UpdateCheckInterval.weekly:
-                interval = "0 0 0 */7 * ?";
-                break; // Every 7 days at midnight
-            default:
-                // Logging
-                let logInfo = {
-                    logLevel: types_1.LogLevel.error,
-                    eventDescription: "api.error.update.invalid-updateCheckInterval",
-                    message: `ERROR: invalid interval -> \"${globalSettings.updateCheckInterval}\"`,
-                    type: types_1.LogType.other
-                };
-                logging_1.createLog(logInfo);
-                return;
-        }
-        const prevCheck = parser
-            .parseExpression(interval)
-            .prev()
-            .getTime();
-        const nextCheck = parser
-            .parseExpression(interval)
-            .next()
-            .getTime();
-        if (prevCheck > globalSettings.lastUpdateCheck) {
-            doCheckNow(prevCheck);
-        }
-        else {
-            setTimeout(() => doCheckNow(nextCheck), nextCheck - new Date().getTime());
+        if (globalSettings) {
+            let interval;
+            switch (globalSettings.updateCheckInterval) {
+                case types_1.UpdateCheckInterval.hourly:
+                    interval = "0 0 * ? * *";
+                    break; // Every hour
+                case types_1.UpdateCheckInterval.daily:
+                    interval = "0 0 0 * * ?";
+                    break; // Every day at midnight - 12am
+                case types_1.UpdateCheckInterval.weekly:
+                    interval = "0 0 0 */7 * ?";
+                    break; // Every 7 days at midnight
+                default:
+                    // Logging
+                    let logInfo = {
+                        logLevel: types_1.LogLevel.error,
+                        eventDescription: "api.error.update.invalid-updateCheckInterval",
+                        message: `ERROR: invalid interval -> \"${globalSettings.updateCheckInterval}\"`,
+                        type: types_1.LogType.other
+                    };
+                    logging_1.createLog(logInfo);
+                    return;
+            }
+            const prevCheck = parser
+                .parseExpression(interval)
+                .prev()
+                .getTime();
+            const nextCheck = parser
+                .parseExpression(interval)
+                .next()
+                .getTime();
+            if (prevCheck > globalSettings.lastUpdateCheck) {
+                doCheckNow(prevCheck);
+            }
+            else {
+                setTimeout(() => doCheckNow(nextCheck), nextCheck - new Date().getTime());
+            }
         }
     });
 }
@@ -63,18 +65,20 @@ exports.checkForUpdate = checkForUpdate;
 function doCheckNow(currentCheck) {
     return __awaiter(this, void 0, void 0, function* () {
         const globalSettings = yield sqliteConnection_1.database.loadGlobalSettingsById(1);
-        globalSettings.lastUpdateCheck = currentCheck;
-        yield sqliteConnection_1.database.createGlobalSettings(globalSettings);
-        if (!((yield versionUpToDate()) === true)) {
-            if (globalSettings.automaticUpdates === true) {
-                execUpdate_1.execUpdate();
+        if (globalSettings) {
+            globalSettings.lastUpdateCheck = currentCheck;
+            yield sqliteConnection_1.database.createGlobalSettings(globalSettings);
+            if (!((yield versionUpToDate()) === true)) {
+                if (globalSettings.automaticUpdates === true) {
+                    execUpdate_1.execUpdate();
+                }
+                else {
+                    notifyUpdateAvailable(); // TODO node-notifier
+                }
+                return;
             }
-            else {
-                notifyUpdateAvailable(); // TODO node-notifier
-            }
-            return;
+            checkForUpdate();
         }
-        checkForUpdate();
     });
 }
 function versionUpToDate() {

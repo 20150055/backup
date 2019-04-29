@@ -13,6 +13,7 @@ const sqliteConnection_1 = require("../sqliteConnection");
 const resticCallFunctions_1 = require("./resticCallFunctions");
 const types_1 = require("../shared/types");
 const logging_1 = require("../logging");
+const __1 = require("..");
 function checkForBackups() {
     return __awaiter(this, void 0, void 0, function* () {
         const scheduledJobs = yield sqliteConnection_1.database.loadAllActiveBackupJobs();
@@ -24,7 +25,7 @@ function scheduleBackup(jobId) {
     return __awaiter(this, void 0, void 0, function* () {
         const job = yield sqliteConnection_1.database.loadBackupJobById(jobId);
         // This function is also called by REST endpoints
-        if (job.active && !job.archived) {
+        if (job && job.active && !job.archived) {
             const prevBackup = parser
                 .parseExpression(job.cronInterval)
                 .prev()
@@ -57,27 +58,29 @@ exports.scheduleBackup = scheduleBackup;
 function checkActiveState(jobId, currentBackup) {
     return __awaiter(this, void 0, void 0, function* () {
         let job = yield sqliteConnection_1.database.loadBackupJobById(jobId);
-        const prevBackup = parser
-            .parseExpression(job.cronInterval)
-            .prev()
-            .getTime();
-        if (job.active && !job.archived && prevBackup === currentBackup) {
-            job.prevScheduledDate = currentBackup;
-            yield sqliteConnection_1.database.createBackupjob(job);
-            callBackupExecution(job.id, job.repoId, job.backupLocations);
-            scheduleBackup(job.id);
-        }
-        else {
-            // Logging
-            let logInfo = {
-                logLevel: types_1.LogLevel.info,
-                eventDescription: "api.info.backup.cancelled",
-                message: `Backup with jobId \"${job.id}\" cancelled\nJob inactive, deleted or interval changed`,
-                type: types_1.LogType.backupJob,
-                jobId: job.id,
-                repoId: job.repoId
-            };
-            logging_1.createLog(logInfo);
+        if (job) {
+            const prevBackup = parser
+                .parseExpression(job.cronInterval)
+                .prev()
+                .getTime();
+            if (job.active && !job.archived && prevBackup === currentBackup) {
+                job.prevScheduledDate = currentBackup;
+                yield sqliteConnection_1.database.createBackupjob(job);
+                callBackupExecution(job.id, job.repoId, job.backupLocations);
+                scheduleBackup(job.id);
+            }
+            else {
+                // Logging
+                let logInfo = {
+                    logLevel: types_1.LogLevel.info,
+                    eventDescription: "api.info.backup.cancelled",
+                    message: `Backup with jobId \"${job.id}\" cancelled\nJob inactive, deleted or interval changed`,
+                    type: types_1.LogType.backupJob,
+                    jobId: job.id,
+                    repoId: job.repoId
+                };
+                logging_1.createLog(logInfo);
+            }
         }
     });
 }
@@ -122,6 +125,7 @@ function callBackupExecution(jobId, repoId, backupLocations) {
                 repoId: repoId
             };
             logging_1.createLog(logInfo2);
+            notifyWithSocketIo(jobId, output.success);
         }
         else {
             // Logging
@@ -134,10 +138,12 @@ function callBackupExecution(jobId, repoId, backupLocations) {
                 repoId: repoId
             };
             logging_1.createLog(logInfo3);
+            notifyWithSocketIo(jobId, false);
         }
     });
 }
-function notifyWithSocketIo() {
-    //   io.of("/api/").emit("eventname");
+exports.callBackupExecution = callBackupExecution;
+function notifyWithSocketIo(jobId, success) {
+    __1.io.of("/api/").emit("jobExecution", { jobId: jobId, success: success });
 }
 //# sourceMappingURL=backupScheduling.js.map

@@ -21,6 +21,9 @@ exports.router.post("/:userId/mail", checkAuth_1.checkAuth, function (request, r
         const settings = yield sqliteConnection_1.database.loadUserSettingsByUserId(request.params.userId);
         const body = request.body;
         try {
+            if (!settings) {
+                throw Error("Unable to find UserSettings!");
+            }
             // create reusable transporter object using the default SMTP transport
             let transporter = nodemailer.createTransport({
                 host: settings.smtpHostname,

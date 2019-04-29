@@ -57,7 +57,7 @@ exports.router.post("/login", function (request, response) {
                     }
                 }
             }
-            if (!errorOccured) {
+            if (!errorOccured && user) {
                 const token = uuidv4();
                 yield sqliteConnection_1.database.setUserToken(user.id, token);
                 let logInfo = {
@@ -76,7 +76,7 @@ exports.router.post("/login", function (request, response) {
             }
             else {
                 let logInfo = {
-                    userId: user.id,
+                    userId: (user) ? user.id : undefined,
                     logLevel: types_1.LogLevel.error,
                     eventDescription: "api.error.user.login",
                     message: "",
@@ -92,7 +92,7 @@ exports.router.post("/login", function (request, response) {
         catch (error) {
             let errorstring = error.toString();
             let logInfo = {
-                userId: user.id,
+                userId: (user) ? user.id : undefined,
                 logLevel: types_1.LogLevel.error,
                 eventDescription: "api.error.user.login",
                 message: "",

@@ -97,6 +97,7 @@ function setValues(body) {
     user.username = body.username;
     user.email = body.email;
     user.password = body.password;
+    user.token = "";
     return user;
 }
 exports.setValues = setValues;

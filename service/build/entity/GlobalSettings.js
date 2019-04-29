@@ -29,7 +29,7 @@ __decorate([
     __metadata("design:type", Boolean)
 ], GlobalSettings.prototype, "automaticUpdates", void 0);
 __decorate([
-    typeorm_1.Column({ nullable: true }),
+    typeorm_1.Column(),
     __metadata("design:type", String)
 ], GlobalSettings.prototype, "updateCheckInterval", void 0);
 __decorate([
@@ -41,7 +41,7 @@ __decorate([
     __metadata("design:type", Number)
 ], GlobalSettings.prototype, "port", void 0);
 __decorate([
-    typeorm_1.Column({ default: 8380 }),
+    typeorm_1.Column({ default: 1000 }),
     __metadata("design:type", Number)
 ], GlobalSettings.prototype, "logfileSize", void 0);
 GlobalSettings = __decorate([

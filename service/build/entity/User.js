@@ -23,7 +23,7 @@ __decorate([
     __metadata("design:type", Boolean)
 ], User.prototype, "archived", void 0);
 __decorate([
-    typeorm_1.Column({ nullable: true }),
+    typeorm_1.Column(),
     __metadata("design:type", String)
 ], User.prototype, "token", void 0);
 __decorate([

@@ -88,7 +88,7 @@ function checkError(body, userId, jobId) {
                     }
                 }
                 job = yield sqliteConnection_1.database.loadBackupJobByName(body.name + "-archived");
-                if (job && (!found)) {
+                if (job && !found) {
                     if (job.id != jobId) {
                         errormessages.push({
                             name: "api.error.backupjob.create.jobname-not-available",
@@ -182,22 +182,11 @@ function setValues(body, userId) {
     job.emailNotification = body.emailNotification;
     job.backupLocations = body.backupLocations;
     job.cronInterval = body.cronInterval;
-    job.prevScheduledDate =
-        parser
-            .parseExpression(body.cronInterval)
-            .prev()
-            .getTime() +
-            (body.startDate - new Date().getTime());
+    job.prevScheduledDate = 10; // Any value near 0 but >0 !
     job.startDate = body.startDate;
     job.active = body.active;
+    job.archived = false;
     return job;
 }
 exports.setValues = setValues;
-function executeJob(job, repo) {
-    return __awaiter(this, void 0, void 0, function* () {
-        // executeBackup();
-        return true;
-    });
-}
-exports.executeJob = executeJob;
 //# sourceMappingURL=functions.js.map

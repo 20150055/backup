@@ -24,6 +24,17 @@ exports.router.put("/:userId/backupJob/:jobId", checkAuth_1.checkAuth, function 
         let errormessages = yield functions_1.checkError(body, request.params.userId, jobId);
         if (errormessages.length === 0) {
             const oldJob = yield sqliteConnection_1.database.loadBackupJobById(jobId);
+            if (!oldJob) {
+                ApiResponse_1.sendResponse(response, 400, {
+                    messages: [
+                        {
+                            name: "api.error.backupjob.update.job-not-existing",
+                            type: types_1.MessageType.error
+                        }
+                    ]
+                });
+                return;
+            }
             let newJob = functions_1.setValues(body, request.params.userId);
             newJob.id = oldJob.id;
             newJob.user = oldJob.user;

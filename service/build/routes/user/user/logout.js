@@ -12,45 +12,36 @@ const express = require("express");
 const types_1 = require("../../../shared/types");
 const sqliteConnection_1 = require("../../../sqliteConnection");
 const ApiResponse_1 = require("../../../ApiResponse");
-const functions_1 = require("./functions");
-const uuidv4 = require("uuid/v4");
 const logging_1 = require("../../../logging");
 exports.router = express.Router();
-exports.router.post("/register", function (request, response) {
+exports.router.delete("/login/:userId", function (request, response) {
     return __awaiter(this, void 0, void 0, function* () {
-        const body = request.body;
-        let errormessages = yield functions_1.checkError(body, undefined, false);
-        if (errormessages.length === 0) {
-            let user = functions_1.setValues(body);
-            user = yield sqliteConnection_1.database.createUser(user);
-            const token = uuidv4();
-            yield sqliteConnection_1.database.setUserToken(user.id, token);
-            const responseObject = user;
+        const userId = request.params.userId;
+        let user = yield sqliteConnection_1.database.loadUserById(userId);
+        if (user) {
+            user.token = "";
             let logInfo = {
                 userId: user.id,
                 logLevel: types_1.LogLevel.success,
-                eventDescription: "api.success.user.register",
+                eventDescription: "api.success.user.logout",
                 type: types_1.LogType.other
             };
             logging_1.createLog(logInfo);
             ApiResponse_1.sendResponse(response, 200, {
-                messages: [{ name: logInfo.eventDescription, type: types_1.MessageType.success }],
-                payload: { user: responseObject, token }
+                messages: [{ name: logInfo.eventDescription, type: types_1.MessageType.success }]
             });
+            return;
         }
-        else {
-            let logInfo = {
-                logLevel: types_1.LogLevel.error,
-                eventDescription: "api.error.user.register",
-                message: "",
-                type: types_1.LogType.other
-            };
-            errormessages.forEach(message => {
-                logInfo.message += message.name + "\n";
-            });
-            logging_1.createLog(logInfo);
-            ApiResponse_1.sendResponse(response, 400, { messages: errormessages });
-        }
+        let logInfo = {
+            userId: userId,
+            logLevel: types_1.LogLevel.error,
+            eventDescription: "api.error.user.logout",
+            type: types_1.LogType.other
+        };
+        logging_1.createLog(logInfo);
+        ApiResponse_1.sendResponse(response, 400, {
+            messages: [{ name: logInfo.eventDescription, type: types_1.MessageType.error }]
+        });
     });
 });
-//# sourceMappingURL=register.js.map
+//# sourceMappingURL=logout.js.map

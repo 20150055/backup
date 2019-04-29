@@ -133,21 +133,21 @@ function setValues(body, userId) {
     settings.user = userId;
     settings.sendEmails = body.sendEmails;
     settings.reportLanguage = body.reportLanguage;
-    settings.smtpHostname = body.smtpHostname;
-    settings.smtpPort = body.smtpPort;
-    settings.smtpUsername = body.smtpUsername;
-    settings.smtpPassword = body.smtpPassword;
-    settings.smtpFrom = body.smtpFrom;
-    settings.smtpTo = body.smtpTo;
+    settings.smtpHostname = body.smtpHostname || "";
+    settings.smtpPort = body.smtpPort || 0;
+    settings.smtpUsername = body.smtpUsername || "";
+    settings.smtpPassword = body.smtpPassword || "";
+    settings.smtpFrom = body.smtpFrom || "";
+    settings.smtpTo = body.smtpTo || "";
     settings.language = body.language;
     settings.showSnackbar = body.showSnackbar;
     settings.themePrimary = body.themePrimary;
     settings.themeSecondary = body.themeSecondary;
     settings.themeAccent = body.themeAccent;
     settings.darktheme = body.darktheme;
-    settings.defaultEmailNotification = body.defaultEmailNotification;
-    settings.defaultMaxBackupsPerRepo = body.defaultMaxBackupsPerRepo;
-    settings.defaultUnlockTime = body.defaultUnlockTime;
+    settings.defaultEmailNotification = body.defaultEmailNotification || enumTypes.EmailNotification.onerror;
+    settings.defaultMaxBackupsPerRepo = body.defaultMaxBackupsPerRepo || 100; // TODO create defaults file
+    settings.defaultUnlockTime = body.defaultUnlockTime || 60;
     return settings;
 }
 exports.setValues = setValues;

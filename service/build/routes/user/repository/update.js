@@ -24,6 +24,17 @@ exports.router.put("/:userId/repository/:repoId", checkAuth_1.checkAuth, functio
         let errormessages = yield functions_1.checkError(body, request.params.userId, repoId);
         if (errormessages.length === 0) {
             const oldRepo = yield sqliteConnection_1.database.loadLocalS3BackupRepositoryById(repoId);
+            if (!oldRepo) {
+                ApiResponse_1.sendResponse(response, 400, {
+                    messages: [
+                        {
+                            name: "api.error.backuprepository.update.repo-not-existing",
+                            type: types_1.MessageType.error
+                        }
+                    ]
+                });
+                return;
+            }
             let newRepo = functions_1.setValues(body, request.params.userId);
             newRepo.id = oldRepo.id;
             newRepo.user = oldRepo.user;
@@ -47,7 +58,7 @@ exports.router.put("/:userId/repository/:repoId", checkAuth_1.checkAuth, functio
             ApiResponse_1.sendResponse(response, 200, {
                 messages: [
                     {
-                        name: "api.success.backuprepository.create",
+                        name: "api.success.backuprepository.update",
                         type: types_1.MessageType.success
                     }
                 ],
