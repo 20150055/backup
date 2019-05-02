@@ -10,6 +10,19 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const restic_1 = require("./restic");
 const helpers_1 = require("./helpers");
+function getResticVersion() {
+    return __awaiter(this, void 0, void 0, function* () {
+        const result = yield restic_1.spawnRestic({
+            args: ["version"],
+            env: {}
+        });
+        if (result.success) {
+            return Object.assign({}, result, { version: (result.fullOutput.match(/restic\s+([\d\.]+)\s/i) || [])[1] });
+        }
+        return result;
+    });
+}
+exports.getResticVersion = getResticVersion;
 function createRepository(commonArgs) {
     return __awaiter(this, void 0, void 0, function* () {
         const environmentVariables = helpers_1.createEnv(commonArgs);

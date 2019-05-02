@@ -2,13 +2,21 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const path = require("path");
 const child_process_1 = require("child_process");
-const resticPath = path.join(__dirname, "../restic.exe");
+const constants_1 = require("../constants");
 function spawnRestic({ args = [], env = {} }, onProgress) {
     return new Promise(resolve => {
-        console.debug("executing restic with following args", args);
-        // see https://nodejs.org/api/child_process.html#child_process_child_process_spawn_command_args_options
-        const child = child_process_1.spawn(resticPath, args, {
-            cwd: path.dirname(resticPath),
+        if (constants_1.curEnv === constants_1.Env.test) {
+            console.debug("executing restic with following args", args);
+            // see https://nodejs.org/api/child_process.html#child_process_child_process_spawn_command_args_options
+            console.debug("spawn", {
+                resticPath: constants_1.resticPath,
+                args,
+                cwd: path.dirname(constants_1.resticPath),
+                env
+            });
+        }
+        const child = child_process_1.spawn(constants_1.resticPath, args, {
+            cwd: path.dirname(constants_1.resticPath),
             env,
             // pipe stdin, stderr and stdout
             stdio: ["pipe", "pipe", "pipe"],
@@ -30,6 +38,9 @@ function spawnRestic({ args = [], env = {} }, onProgress) {
         });
         child.on("close", code => {
             const output = buffer.join("");
+            if (constants_1.curEnv === constants_1.Env.test) {
+                console.debug({ output, code });
+            }
             if (code) {
                 return resolve({
                     success: false,

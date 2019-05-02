@@ -14,7 +14,7 @@ const parser = require("cron-parser");
 const fs = require("fs");
 const fs_extra_1 = require("fs-extra");
 const sqliteConnection_1 = require("../sqliteConnection");
-const index_1 = require("../index");
+const app_1 = require("../app");
 const types_1 = require("../shared/types");
 const execUpdate_1 = require("./execUpdate");
 const logging_1 = require("../logging");
@@ -106,6 +106,6 @@ function versionUpToDate() {
 }
 exports.versionUpToDate = versionUpToDate;
 function notifyUpdateAvailable() {
-    index_1.io.of("/api/").emit("updateAvailable");
+    app_1.io.of("/api/").emit("updateAvailable");
 }
 //# sourceMappingURL=checkForUpdate.js.map

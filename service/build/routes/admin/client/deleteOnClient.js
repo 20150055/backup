@@ -13,7 +13,7 @@ const types_1 = require("../../../shared/types");
 const ApiResponse_1 = require("../../../ApiResponse");
 const ssh = require("ssh2");
 const scp = require("scp2");
-const index_1 = require("../../../index");
+const app_1 = require("../../../app");
 const cp = require("child_process");
 exports.router = express.Router();
 exports.router.post("/clientDelete", function (request, response) {
@@ -47,12 +47,12 @@ exports.router.post("/clientDelete", function (request, response) {
                             "Uninstallation finished successfully, a log can be found in the installation folder (C:\\Program Files\\Backup380)\n";
                           responseString += data;
                         }*/
-                    index_1.io.of("/api/").emit("finishedUninstall", responseString, "Windows");
+                    app_1.io.of("/api/").emit("finishedUninstall", responseString, "Windows");
                     //}
                     //);
                 }
                 else {
-                    index_1.io.of("/api/").emit("finishedUninstall", "there was an error while executing the install script check your connection to the client and your credentials", "Windows");
+                    app_1.io.of("/api/").emit("finishedUninstall", "there was an error while executing the install script check your connection to the client and your credentials", "Windows");
                 }
             });
         }
@@ -71,14 +71,14 @@ exports.router.post("/clientDelete", function (request, response) {
                         console.log(err.message);
                         called = true;
                         if (err.message.indexOf("All configured authentication methods failed") !== -1) {
-                            index_1.io.of("/api/").emit("finishedUninstall", "Error: Please check your credentials (ip, name, password)", "Linux");
+                            app_1.io.of("/api/").emit("finishedUninstall", "Error: Please check your credentials (ip, name, password)", "Linux");
                         }
                         else if (err.message.indexOf("Timed out while waiting for handshake") !==
                             -1) {
-                            index_1.io.of("/api/").emit("finishedUninstall", "Error: conection to Client failed, check your ip", "Linux");
+                            app_1.io.of("/api/").emit("finishedUninstall", "Error: conection to Client failed, check your ip", "Linux");
                         }
                         else {
-                            index_1.io.of("/api/").emit("finishedUninstall", err, "Linux");
+                            app_1.io.of("/api/").emit("finishedUninstall", err, "Linux");
                         }
                     }
                     return;
@@ -97,7 +97,7 @@ exports.router.post("/clientDelete", function (request, response) {
                             throw err;
                         stream
                             .on("close", function (code, signal) {
-                            index_1.io.of("/api/").emit("finishedUninstall", responseString, "Linux");
+                            app_1.io.of("/api/").emit("finishedUninstall", responseString, "Linux");
                             client.end();
                         })
                             .on("data", function (data) {
@@ -133,14 +133,14 @@ exports.router.post("/clientDelete", function (request, response) {
                         console.log(err.message);
                         called = true;
                         if (err.message.indexOf("All configured authentication methods failed") !== -1) {
-                            index_1.io.of("/api/").emit("finishedUninstall", "Error: Please check your credentials (ip, name, password)", "MacOS");
+                            app_1.io.of("/api/").emit("finishedUninstall", "Error: Please check your credentials (ip, name, password)", "MacOS");
                         }
                         else if (err.message.indexOf("Timed out while waiting for handshake") !==
                             -1) {
-                            index_1.io.of("/api/").emit("finishedUninstall", "Error: conection to Client failed, check your ip", "MacOS");
+                            app_1.io.of("/api/").emit("finishedUninstall", "Error: conection to Client failed, check your ip", "MacOS");
                         }
                         else {
-                            index_1.io.of("/api/").emit("finishedUninstall", err, "MacOS");
+                            app_1.io.of("/api/").emit("finishedUninstall", err, "MacOS");
                         }
                     }
                     return;
@@ -165,7 +165,7 @@ exports.router.post("/clientDelete", function (request, response) {
                             throw err;
                         stream
                             .on("close", function (code, signal) {
-                            index_1.io.emit("finishedUninstall", responseString, "MacOS");
+                            app_1.io.emit("finishedUninstall", responseString, "MacOS");
                             client.end();
                         })
                             .on("data", function (data) {

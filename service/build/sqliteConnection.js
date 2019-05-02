@@ -10,6 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const typeorm_1 = require("typeorm");
 const Database_1 = require("./Database");
+const entities = require("./entity");
 let database;
 exports.database = database;
 let connection;
@@ -24,22 +25,19 @@ typeorm_1.createConnection({
     synchronize: true,
     logging: false,
     entities: [
-        "src/entity/**/*.ts",
-        __dirname + "/entity/**/*.ts",
-        "src/entity/**/*.js",
-        __dirname + "/entity/**/*.js"
+        ...Object.keys(entities).map(key => entities[key]),
     ],
     migrations: [
-        "src/migration/**/*.ts",
-        __dirname + "/migration/**/*.ts",
-        "src/migration/**/*.js",
-        __dirname + "/migration/**/*.js"
+    // "src/migration/**/*.ts",
+    // __dirname + "/migration/**/*.ts",
+    // "src/migration/**/*.js",
+    // __dirname + "/migration/**/*.js"
     ],
     subscribers: [
-        "src/subscriber/**/*.ts",
-        __dirname + "/subscriber/**/*.ts",
-        "src/subscriber/**/*.js",
-        __dirname + "/subscriber/**/*.js"
+    // "src/subscriber/**/*.ts",
+    // __dirname + "/subscriber/**/*.ts",
+    // "src/subscriber/**/*.js",
+    // __dirname + "/subscriber/**/*.js"
     ],
     cli: {
         entitiesDir: "src/entity",

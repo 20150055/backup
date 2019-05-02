@@ -12,7 +12,7 @@ const express = require("express");
 const path = require("path");
 const os = require("os");
 const fs = require("fs");
-const index_1 = require("../index");
+const app_1 = require("../app");
 const fs_extra_1 = require("fs-extra");
 const checkForUpdate_1 = require("./checkForUpdate");
 const child_process_1 = require("child_process");
@@ -156,7 +156,7 @@ function executeScript(scriptPath, args) {
     });
 }
 function notifyUpdateComplete() {
-    index_1.io.of("/api/").emit("updateComplete");
+    app_1.io.of("/api/").emit("updateComplete");
 }
 function copyFiles(src, dst) {
     return __awaiter(this, void 0, void 0, function* () {

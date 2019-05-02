@@ -13,7 +13,7 @@ const sqliteConnection_1 = require("../sqliteConnection");
 const resticCallFunctions_1 = require("./resticCallFunctions");
 const types_1 = require("../shared/types");
 const logging_1 = require("../logging");
-const __1 = require("..");
+const app_1 = require("../app");
 function checkForBackups() {
     return __awaiter(this, void 0, void 0, function* () {
         const scheduledJobs = yield sqliteConnection_1.database.loadAllActiveBackupJobs();
@@ -144,6 +144,6 @@ function callBackupExecution(jobId, repoId, backupLocations) {
 }
 exports.callBackupExecution = callBackupExecution;
 function notifyWithSocketIo(jobId, success) {
-    __1.io.of("/api/").emit("jobExecution", { jobId: jobId, success: success });
+    app_1.io.of("/api/").emit("jobExecution", { jobId: jobId, success: success });
 }
 //# sourceMappingURL=backupScheduling.js.map

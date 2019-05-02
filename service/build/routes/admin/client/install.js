@@ -16,7 +16,7 @@ const ApiResponse_1 = require("../../../ApiResponse");
 const path = require("path");
 const ssh = require("ssh2");
 const scp = require("scp2");
-const index_1 = require("../../../index");
+const app_1 = require("../../../app");
 const logging_1 = require("../../../logging");
 const resticPath = path.join(__dirname, "../../../../../scripts/PsExec.exe");
 exports.router = express.Router();
@@ -73,11 +73,11 @@ exports.router.post("/clientInstall", function (request, response) {
                             };
                             logging_1.createLog(log);
                         }
-                        index_1.io.of("/api/").emit("finishedInstall", responseString, "Windows");
+                        app_1.io.of("/api/").emit("finishedInstall", responseString, "Windows");
                     });
                 }
                 else {
-                    index_1.io.of("/api/").emit("finishedInstall", "there was an error while executing the install script check your connection to the client and your credentials", "Windows");
+                    app_1.io.of("/api/").emit("finishedInstall", "there was an error while executing the install script check your connection to the client and your credentials", "Windows");
                 }
             });
         }
@@ -95,14 +95,14 @@ exports.router.post("/clientInstall", function (request, response) {
                     if (!called) {
                         called = true;
                         if (err.message.indexOf("All configured authentication methods failed") !== -1) {
-                            index_1.io.of("/api/").emit("finishedInstall", "Error: Please check your credentials (ip, name, password)", "Linux");
+                            app_1.io.of("/api/").emit("finishedInstall", "Error: Please check your credentials (ip, name, password)", "Linux");
                         }
                         else if (err.message.indexOf("Timed out while waiting for handshake") !==
                             -1) {
-                            index_1.io.of("/api/").emit("finishedInstall", "Error: conection to Client failed, check your ip", "Linux");
+                            app_1.io.of("/api/").emit("finishedInstall", "Error: conection to Client failed, check your ip", "Linux");
                         }
                         else {
-                            index_1.io.of("/api/").emit("finishedInstall", err, "Linux");
+                            app_1.io.of("/api/").emit("finishedInstall", err, "Linux");
                         }
                     }
                     return;
@@ -141,7 +141,7 @@ exports.router.post("/clientInstall", function (request, response) {
                                 };
                                 logging_1.createLog(log);
                             }
-                            index_1.io.of("/api/").emit("finishedInstall", responseString, "Linux");
+                            app_1.io.of("/api/").emit("finishedInstall", responseString, "Linux");
                             client.end();
                         })
                             .on("data", function (data) {
@@ -175,14 +175,14 @@ exports.router.post("/clientInstall", function (request, response) {
                     if (!called) {
                         called = true;
                         if (err.message.indexOf("All configured authentication methods failed") !== -1) {
-                            index_1.io.of("/api/").emit("finishedInstall", "Error: Please check your credentials (ip, name, password)", "MacOS");
+                            app_1.io.of("/api/").emit("finishedInstall", "Error: Please check your credentials (ip, name, password)", "MacOS");
                         }
                         else if (err.message.indexOf("Timed out while waiting for handshake") !==
                             -1) {
-                            index_1.io.of("/api/").emit("finishedInstall", "Error: conection to Client failed, check your ip", "MacOS");
+                            app_1.io.of("/api/").emit("finishedInstall", "Error: conection to Client failed, check your ip", "MacOS");
                         }
                         else {
-                            index_1.io.of("/api/").emit("finishedInstall", err, "MacOS");
+                            app_1.io.of("/api/").emit("finishedInstall", err, "MacOS");
                         }
                     }
                     return;
@@ -226,7 +226,7 @@ exports.router.post("/clientInstall", function (request, response) {
                                 };
                                 logging_1.createLog(log);
                             }
-                            index_1.io.of("/api/").emit("finishedInstall", responseString, "MacOS");
+                            app_1.io.of("/api/").emit("finishedInstall", responseString, "MacOS");
                             client.end();
                         })
                             .on("data", function (data) {
