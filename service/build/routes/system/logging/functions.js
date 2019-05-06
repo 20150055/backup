@@ -10,9 +10,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const types_1 = require("../../../shared/types");
 const sqliteConnection_1 = require("../../../sqliteConnection");
-function getParsedDBLogs(body) {
+function getParsedDBLogs(query) {
     return __awaiter(this, void 0, void 0, function* () {
-        const dbLogs = yield loadLogsFromDatabase(body);
+        const dbLogs = yield loadLogsFromDatabase(query);
         let newLogs = [];
         if (dbLogs) {
             dbLogs.forEach(log => {
@@ -61,6 +61,8 @@ function loadLogsFromDatabase(body) {
                     return yield sqliteConnection_1.database.getFilteredLogsRepository(body.repoId);
                 case types_1.LogType.backupJob:
                     return yield sqliteConnection_1.database.getFilteredLogsBackupJob(body.jobId);
+                default:
+                    return yield sqliteConnection_1.database.getLogs();
             }
         }
         else {

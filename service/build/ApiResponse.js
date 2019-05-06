@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 function sendResponse(res, code, data) {
+    res.set;
     res.status(code).json(data);
 }
 exports.sendResponse = sendResponse;

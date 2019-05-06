@@ -373,6 +373,50 @@ class Database {
             }
         });
     }
+    wipeOutDatabase() {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.connection.manager
+                .createQueryBuilder()
+                .delete()
+                .from(Log_1.Log)
+                .execute();
+            yield this.connection.manager
+                .createQueryBuilder()
+                .delete()
+                .from(UserSettings_1.UserSettings)
+                .execute();
+            yield this.connection.manager
+                .createQueryBuilder()
+                .delete()
+                .from(BackupJob_1.BackupJob)
+                .execute();
+            yield this.connection.manager
+                .createQueryBuilder()
+                .delete()
+                .from(LocalS3BackupRepository_1.LocalS3BackupRepository)
+                .execute();
+            yield this.connection.manager
+                .createQueryBuilder()
+                .delete()
+                .from(GlobalSettings_1.GlobalSettings)
+                .execute();
+            yield this.connection.manager
+                .createQueryBuilder()
+                .delete()
+                .from(Client_1.Client)
+                .execute();
+            yield this.connection.manager
+                .createQueryBuilder()
+                .delete()
+                .from(Admin_1.Admin)
+                .execute();
+            yield this.connection.manager
+                .createQueryBuilder()
+                .delete()
+                .from(User_1.User)
+                .execute();
+        });
+    }
     hash(word) {
         const hash = crypto
             .createHmac("sha512", "dsfpoldkqp")
