@@ -39,6 +39,9 @@ onProgress) {
     return __awaiter(this, void 0, void 0, function* () {
         const environmentVariables = helpers_1.createEnv(commonArgs);
         let highestPercentage = 0;
+        if (onProgress) {
+            onProgress(); // ensure onProgress is called at least once
+        }
         const result = yield restic_1.spawnRestic({
             args: ["backup", ...paths, "--verbose", "--tag", `b380job${backupJobId}`],
             env: environmentVariables

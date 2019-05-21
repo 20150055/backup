@@ -36,6 +36,8 @@ exports.curEnv = process.env.NODE_ENV === "test"
         : Env.prod;
 exports.resticPath = path.resolve("path/to/restic", // TODO
 `restic${exports.currentOs === OsType.windows ? ".exe" : ""}`);
+exports.serverLogPath = path.resolve("path/to/server/log/file", // TODO
+"log.txt");
 /**
  * Resolves path to absolute folder relative to the res folder
  * @param relPath

@@ -23,6 +23,7 @@ const sio = require("socket.io");
 const constants_1 = require("./constants");
 const downloadRestic_1 = require("./util/downloadRestic");
 const scheduling_1 = require("./scheduling");
+const log_1 = require("./util/log");
 const app = express();
 exports.app = app;
 const server = http.createServer(app);
@@ -98,7 +99,7 @@ exports.bootstrap = () => __awaiter(this, void 0, void 0, function* () {
         scheduling_1.checkForBackups();
     }
     else {
-        console.debug("not in production, skipping update checks and backup scheduling");
+        log_1.log.devOnly("not in production, skipping update checks and backup scheduling");
     }
 });
 exports.start = () => __awaiter(this, void 0, void 0, function* () {
