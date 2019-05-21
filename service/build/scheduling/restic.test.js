@@ -14,6 +14,7 @@ const rmdir = require("rimraf");
 const os_1 = require("os");
 const path = require("path");
 const types_1 = require("../shared/types");
+const log_1 = require("../util/log");
 // import * as Minio from "minio";
 const testRepoFolder = path.join(os_1.tmpdir(), "backup380test", "createRepository");
 // const minioHost = process.env.TEST_MINIO_HOST || "localhost";
@@ -99,7 +100,7 @@ describe("repository functions", () => {
     const location = path.join(testRepoFolder, "repoFuncsTest");
     const password = "anotherSecretPassword";
     const type = types_1.RepoType.Local;
-    const toBackUp = [path.resolve(__dirname, "../__testData__/")];
+    const toBackUp = path.resolve(__dirname, "../__testData__/");
     beforeEach(() => __awaiter(this, void 0, void 0, function* () {
         yield resticCallFunctions_1.createRepository({
             location,
@@ -116,7 +117,21 @@ describe("repository functions", () => {
             location,
             password,
             type
-        }, 1, toBackUp, onProgress);
+        }, 1, [toBackUp], onProgress);
+        expect(response.success).toBeTruthy();
+        expect(onProgress).toHaveBeenCalled();
+        expect(onProgress.mock.calls.length).toBeGreaterThan(0);
+    }));
+    it("backs up data to the repository when supplying path with spaces", () => __awaiter(this, void 0, void 0, function* () {
+        const onProgress = jest.fn();
+        const response = yield resticCallFunctions_1.executeBackup({
+            location,
+            password,
+            type
+        }, 1, [path.join(toBackUp, "folder 3")], onProgress);
+        if (!response.success) {
+            log_1.log.testOnly(response);
+        }
         expect(response.success).toBeTruthy();
         expect(onProgress).toHaveBeenCalled();
         expect(onProgress.mock.calls.length).toBeGreaterThan(0);

@@ -20,6 +20,7 @@ const notify_1 = require("./notify");
 const constants_1 = require("../constants");
 const path = require("path");
 const resticCallFunctions_1 = require("../scheduling/resticCallFunctions");
+const log_1 = require("./log");
 const getCurrentVersion = () => {
     return axios_1.default
         .get("https://api.github.com/repos/restic/restic/releases/latest")
@@ -102,14 +103,19 @@ exports.updateRestic = () => __awaiter(this, void 0, void 0, function* () {
         }
         const isAlreadyDownloaded = yield fsextra.pathExists(constants_1.resticPath); // todo: check if executable matches hash (tamper protection, version update)
         if (isAlreadyDownloaded) {
-            const installedVersion = yield resticCallFunctions_1.getResticVersion();
-            if (constants_1.curEnv === constants_1.Env.test) {
-                console.log(`Restic version output: ${installedVersion.fullOutput}`);
+            try {
+                const installedVersion = yield resticCallFunctions_1.getResticVersion();
+                if (constants_1.curEnv === constants_1.Env.test) {
+                    console.log(`Restic version output: ${installedVersion.fullOutput}`);
+                }
+                if ("version" in installedVersion &&
+                    installedVersion.version >= constants_1.fallbackResticVersion) {
+                    console.log("restic is already downloaded, skipping download");
+                    return;
+                }
             }
-            if ("version" in installedVersion &&
-                installedVersion.version >= constants_1.fallbackResticVersion) {
-                console.log("restic is already downloaded, skipping download");
-                return;
+            catch (err) {
+                console.log(`Error while getting restic version: ${err.message || err}`);
             }
         }
         let currentVersion = constants_1.fallbackResticVersion;
@@ -123,7 +129,7 @@ exports.updateRestic = () => __awaiter(this, void 0, void 0, function* () {
     }
     catch (error) {
         notify_1.notifyUser({ message: `Error while downloading restic: ${error.message}` });
-        console.error(error);
+        log_1.log.error(error);
     }
 });
 //# sourceMappingURL=downloadRestic.js.map

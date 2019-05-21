@@ -34,7 +34,7 @@ exports.curEnv = process.env.NODE_ENV === "test"
     : process.env.NODE_ENV === "development"
         ? Env.dev
         : Env.prod;
-exports.resticPath = path.resolve("path/to/restic", // TODO
+exports.resticPath = path.resolve("path/to/restic/with/sp ace", // TODO
 `restic${exports.currentOs === OsType.windows ? ".exe" : ""}`);
 exports.serverLogPath = path.resolve("path/to/server/log/file", // TODO
 "log.txt");
