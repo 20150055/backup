@@ -11,6 +11,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const typeorm_1 = require("typeorm");
 const Database_1 = require("./Database");
 const entities = require("./entity");
+const constants_1 = require("./constants");
 let database;
 exports.database = database;
 let connection;
@@ -21,11 +22,15 @@ const databaseReady = new Promise(resolve => {
 exports.databaseReady = databaseReady;
 typeorm_1.createConnection({
     type: "sqlite",
-    database: "../data/Backup380.db",
+    database: constants_1.getDatabaseFilePath(),
     synchronize: true,
     logging: false,
     entities: [
-        ...Object.keys(entities).map(key => entities[key]),
+        ...Object.keys(entities).map(key => entities[key])
+        // "src/entity/**/*.ts",
+        // __dirname + "/entity/**/*.ts",
+        // "src/entity/**/*.js",
+        // __dirname + "/entity/**/*.js"
     ],
     migrations: [
     // "src/migration/**/*.ts",

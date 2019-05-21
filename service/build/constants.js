@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const path = require("path");
+const fsextra = require("fs-extra");
 const retValForDevelopment = false;
 const authForDevelopment = false; // Authentication
 function getDummyInstall() {
@@ -34,10 +35,15 @@ exports.curEnv = process.env.NODE_ENV === "test"
     : process.env.NODE_ENV === "development"
         ? Env.dev
         : Env.prod;
-exports.resticPath = path.resolve("path/to/restic/with/sp ace", // TODO
-`restic${exports.currentOs === OsType.windows ? ".exe" : ""}`);
-exports.serverLogPath = path.resolve("path/to/server/log/file", // TODO
-"log.txt");
+exports.resticPath = path.resolve(getResticFolder(), `restic${exports.currentOs === OsType.windows ? ".exe" : ""}`);
+function getServerLogfilePath() {
+    let dir = path.join(getLogFolder(), "server");
+    if (!fsextra.existsSync(dir))
+        fsextra.mkdirSync(dir);
+    dir = path.join(dir, "log.txt");
+    return dir;
+}
+exports.getServerLogfilePath = getServerLogfilePath;
 /**
  * Resolves path to absolute folder relative to the res folder
  * @param relPath
@@ -47,4 +53,45 @@ function getAuth() {
     return authForDevelopment;
 }
 exports.getAuth = getAuth;
+function getProjectDataPath() {
+    let dir;
+    if (exports.curEnv === Env.dev) {
+        dir = path.join(path.dirname(path.dirname(__dirname)), "Data");
+    }
+    else {
+        // dir = "C:/ProgramData/Backup380";   // TODO: Dynamic for Win, Linux, Mac
+        // if (!fsextra.existsSync(dir)) fsextra.mkdirSync(dir);
+        // dir = path.join(dir, "Data");
+        dir = path.join(path.dirname(path.dirname(__dirname)), "Data"); // Temporary Path until NODE_ENV is fixed
+    }
+    if (!fsextra.existsSync(dir))
+        fsextra.mkdirSync(dir);
+    return dir;
+}
+exports.getProjectDataPath = getProjectDataPath;
+function getResticFolder() {
+    const dir = path.join(getProjectDataPath(), "restic");
+    if (!fsextra.existsSync(dir))
+        fsextra.mkdirSync(dir);
+    return dir;
+}
+exports.getResticFolder = getResticFolder;
+function getDataFolder() {
+    const dir = path.join(getProjectDataPath(), "data");
+    if (!fsextra.existsSync(dir))
+        fsextra.mkdirSync(dir);
+    return dir;
+}
+exports.getDataFolder = getDataFolder;
+function getLogFolder() {
+    const dir = path.join(getDataFolder(), "logs");
+    if (!fsextra.existsSync(dir))
+        fsextra.mkdirSync(dir);
+    return dir;
+}
+exports.getLogFolder = getLogFolder;
+function getDatabaseFilePath() {
+    return path.join(getProjectDataPath(), "Backup380.db");
+}
+exports.getDatabaseFilePath = getDatabaseFilePath;
 //# sourceMappingURL=constants.js.map

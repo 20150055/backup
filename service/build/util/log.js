@@ -5,8 +5,8 @@ const fsextra = require("fs-extra");
 const path = require("path");
 let resolve;
 const fileStream = new Promise(r => (resolve = r));
-fsextra.ensureDir(path.dirname(constants_1.serverLogPath)).then(() => {
-    resolve(fsextra.createWriteStream(constants_1.serverLogPath, { flags: "a" }));
+fsextra.ensureDir(path.dirname(constants_1.getServerLogfilePath())).then(() => {
+    resolve(fsextra.createWriteStream(constants_1.getServerLogfilePath(), { flags: "a" }));
 });
 const writeLog = (...args) => {
     if (constants_1.curEnv === constants_1.Env.prod) {

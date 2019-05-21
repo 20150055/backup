@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const express = require("express");
-const pingRoute = require("./ping");
+const pingRoute = require("./others");
 const settingsRoute = require("./settings");
 const filesystemRoute = require("./filesystem");
 const updateRoute = require("./update");

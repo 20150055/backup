@@ -24,29 +24,48 @@ function getParsedDBLogs(query) {
 }
 exports.getParsedDBLogs = getParsedDBLogs;
 function parseDBLog(log) {
-    let tmpLog = {
-        id: log.id,
-        logLevel: log.logLevel,
-        date: log.date,
-        eventDescription: log.eventDescription,
-        type: log.logType,
-        repoId: -1,
-        jobId: -1,
-        clientId: -1
-    };
+    let newLog;
     switch (log.logType) {
         case types_1.LogType.backupJob:
-            tmpLog.repoId = log.repository;
-            tmpLog.jobId = log.backupJob;
+            newLog = {
+                id: log.id,
+                logLevel: log.logLevel,
+                date: log.date,
+                eventDescription: log.eventDescription,
+                type: log.logType,
+                repoId: log.repository,
+                jobId: log.backupJob
+            };
             break;
         case types_1.LogType.repository:
-            tmpLog.repoId = log.repository;
+            newLog = {
+                id: log.id,
+                logLevel: log.logLevel,
+                date: log.date,
+                eventDescription: log.eventDescription,
+                type: log.logType,
+                repoId: log.repository
+            };
             break;
         case types_1.LogType.client:
-            tmpLog.clientId = log.client;
+            newLog = {
+                id: log.id,
+                logLevel: log.logLevel,
+                date: log.date,
+                eventDescription: log.eventDescription,
+                type: log.logType,
+                clientId: log.client
+            };
             break;
+        default:
+            newLog = {
+                id: log.id,
+                logLevel: log.logLevel,
+                date: log.date,
+                eventDescription: log.eventDescription,
+                type: log.logType
+            };
     }
-    const newLog = tmpLog;
     return newLog;
 }
 function loadLogsFromDatabase(body) {
@@ -74,8 +93,8 @@ function filterOffsetLimit(body, logs) {
     // Filter by offset & limit
     let start;
     let stop;
-    if (body.offset != undefined && body.offset < logs.length - 1) {
-        start = body.offset;
+    if (body.offset != undefined && body.offset < logs.length) {
+        start = body.offset - 1;
     }
     else {
         start = logs.length - 1;

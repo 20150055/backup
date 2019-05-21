@@ -13,6 +13,7 @@ const sqliteConnection_1 = require("../sqliteConnection");
 const fsextra = require("fs-extra");
 const path = require("path");
 const entity_1 = require("../entity");
+const constants_1 = require("../constants");
 function createLog(logArgs) {
     return __awaiter(this, void 0, void 0, function* () {
         let errormessages = yield checkError(logArgs);
@@ -58,12 +59,7 @@ function createLog(logArgs) {
         }
         output += `\n`;
         // path to log folder
-        let dir = path.join(path.join(path.dirname(path.dirname(path.dirname(__dirname))), "data"), "logs");
-        if (!fsextra.existsSync(dir)) {
-            // create "logs" folder (if not existing)
-            fsextra.mkdirSync(dir);
-        }
-        dir = path.join(dir, logArgs.type);
+        let dir = path.join(constants_1.getLogFolder(), logArgs.type);
         if (!fsextra.existsSync(dir)) {
             // create folder for specified logType (if not existing)
             fsextra.mkdirSync(dir);
