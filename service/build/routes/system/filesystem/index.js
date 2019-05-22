@@ -89,12 +89,7 @@ exports.router.get("/directory", function (request, response) {
         if (availableFolders.length > 0) {
             availableFolders.sort((a, b) => a.name.localeCompare(b.name));
             ApiResponse_1.sendResponse(response, 200, {
-                messages: [
-                    {
-                        name: "api.success.system.directory",
-                        type: types_1.MessageType.success
-                    }
-                ],
+                messages: [],
                 payload: { folder: availableFolders }
             });
         }
