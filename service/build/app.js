@@ -82,7 +82,8 @@ exports.io.of("/api/").on("connection", socket => {
     });
 });
 exports.bootstrap = () => __awaiter(this, void 0, void 0, function* () {
-    yield sqliteConnection_1.databaseReady;
+    yield sqliteConnection_1.externCreateConnection();
+    yield constants_1.getServerLogfilePath(); // creates initial logfile
     const settings = yield sqliteConnection_1.database.loadGlobalSettingsById(1);
     const admin = yield sqliteConnection_1.database.loadAdminById(1);
     if (!settings) {

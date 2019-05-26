@@ -20,40 +20,43 @@ const databaseReady = new Promise(resolve => {
     databaseReadyResolve = resolve;
 });
 exports.databaseReady = databaseReady;
-typeorm_1.createConnection({
-    type: "sqlite",
-    database: constants_1.getDatabaseFilePath(),
-    synchronize: true,
-    logging: false,
-    entities: [
-        ...Object.keys(entities).map(key => entities[key])
-        // "src/entity/**/*.ts",
-        // __dirname + "/entity/**/*.ts",
-        // "src/entity/**/*.js",
-        // __dirname + "/entity/**/*.js"
-    ],
-    migrations: [
-    // "src/migration/**/*.ts",
-    // __dirname + "/migration/**/*.ts",
-    // "src/migration/**/*.js",
-    // __dirname + "/migration/**/*.js"
-    ],
-    subscribers: [
-    // "src/subscriber/**/*.ts",
-    // __dirname + "/subscriber/**/*.ts",
-    // "src/subscriber/**/*.js",
-    // __dirname + "/subscriber/**/*.js"
-    ],
-    cli: {
-        entitiesDir: "src/entity",
-        migrationsDir: "src/migration",
-        subscribersDir: "src/subscriber"
-    }
-})
-    .then((conn) => __awaiter(this, void 0, void 0, function* () {
-    connection = conn;
-    exports.database = database = new Database_1.Database(connection);
-    databaseReadyResolve();
-}))
-    .catch(error => console.log(error));
+function externCreateConnection() {
+    return typeorm_1.createConnection({
+        type: "sqlite",
+        database: constants_1.getDatabaseFilePath(),
+        synchronize: true,
+        logging: false,
+        entities: [
+            ...Object.keys(entities).map(key => entities[key])
+            // "src/entity/**/*.ts",
+            // __dirname + "/entity/**/*.ts",
+            // "src/entity/**/*.js",
+            // __dirname + "/entity/**/*.js"
+        ],
+        migrations: [
+        // "src/migration/**/*.ts",
+        // __dirname + "/migration/**/*.ts",
+        // "src/migration/**/*.js",
+        // __dirname + "/migration/**/*.js"
+        ],
+        subscribers: [
+        // "src/subscriber/**/*.ts",
+        // __dirname + "/subscriber/**/*.ts",
+        // "src/subscriber/**/*.js",
+        // __dirname + "/subscriber/**/*.js"
+        ],
+        cli: {
+            entitiesDir: "src/entity",
+            migrationsDir: "src/migration",
+            subscribersDir: "src/subscriber"
+        }
+    })
+        .then((conn) => __awaiter(this, void 0, void 0, function* () {
+        connection = conn;
+        exports.database = database = new Database_1.Database(connection);
+        databaseReadyResolve();
+    }))
+        .catch(error => console.log(error));
+}
+exports.externCreateConnection = externCreateConnection;
 //# sourceMappingURL=sqliteConnection.js.map

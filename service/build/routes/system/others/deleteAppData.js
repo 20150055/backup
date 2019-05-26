@@ -13,22 +13,37 @@ const ApiResponse_1 = require("../../../ApiResponse");
 const sqliteConnection_1 = require("../../../sqliteConnection");
 const constants_1 = require("../../../constants");
 const fsextra = require("fs-extra");
+const app_1 = require("../../../app");
+const path = require("path");
+const types_1 = require("../../../shared/types");
+const log_1 = require("../../../util/log");
 exports.router = express.Router();
 exports.router.delete("/AppData", function (request, response) {
     return __awaiter(this, void 0, void 0, function* () {
-        // if (curEnv != Env.dev) {
-        yield sqliteConnection_1.database.wipeOutDatabase(); // TODO: uncomment when ENV variable works
-        yield sqliteConnection_1.database.connection.close();
-        yield fsextra.removeSync(constants_1.getProjectDataPath()); // only deletes files, no folders
-        ApiResponse_1.sendResponse(response, 200, {
-            messages: []
-        });
-        return;
-        // } else {
-        //   sendResponse(response, 400, {
-        //     messages: []
-        //   });
-        // }
+        if (constants_1.curEnv === constants_1.Env.dev || constants_1.curEnv === constants_1.Env.test) {
+            // TODO: uncomment when Env variable works
+            yield sqliteConnection_1.database.connection.close();
+            log_1.log.info("close database instance");
+            // only deletes files, no folders
+            yield fsextra.removeSync(constants_1.getDatabaseFilePath());
+            log_1.log.info("delete database");
+            yield fsextra.removeSync(path.join(constants_1.getLogFolder(), types_1.LogType.backupJob));
+            yield fsextra.removeSync(path.join(constants_1.getLogFolder(), types_1.LogType.repository));
+            yield fsextra.removeSync(path.join(constants_1.getLogFolder(), types_1.LogType.client));
+            yield fsextra.removeSync(path.join(constants_1.getLogFolder(), types_1.LogType.other));
+            log_1.log.info("delete database-logfiles");
+            yield app_1.bootstrap();
+            log_1.log.info("create new database instance");
+            ApiResponse_1.sendResponse(response, 200, {
+                messages: []
+            });
+            return;
+        }
+        else {
+            ApiResponse_1.sendResponse(response, 400, {
+                messages: []
+            });
+        }
     });
 });
 //# sourceMappingURL=deleteAppData.js.map

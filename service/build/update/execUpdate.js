@@ -33,6 +33,7 @@ function execUpdate() {
                 type: types_1.LogType.other
             };
             logging_1.createLog(logInfo1);
+            // TODO: fix paths with constants
             let dirTemp = os.tmpdir();
             let dirScript = path.resolve(__dirname, "../../../../../Setup");
             let argsDownload = ["-d"];
@@ -59,7 +60,8 @@ function execUpdate() {
                     os.tmpdir() + "/Backup380"
                 ];
             }
-            else if (process.platform.toString() === "darwin") {
+            else if (process.platform.toString() === "darwin" ||
+                process.platform.toString() === "linux") {
                 dirScript += "/Mac/install.sh";
                 dirTemp += "/install.sh";
             }

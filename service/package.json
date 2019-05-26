@@ -7,7 +7,7 @@
     "test": "cross-env NODE_ENV=test jest --env=node --runInBand",
     "test:watch": "cross-env NODE_ENV=test jest --watch --env=node --runInBand",
     "build": "npx tsc",
-    "start": "cross-env NODE_ENV=development tsc && node build",
+    "start": "cross-env NODE_ENV=development tsc && cross-env NODE_ENV=development node build",
     "dev": "cross-env NODE_ENV=development concurrently \"tsc --watch\" \"nodemon ./build/index.js --delay 500ms\""
   },
   "author": "",

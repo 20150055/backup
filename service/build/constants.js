@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const path = require("path");
 const fsextra = require("fs-extra");
+const os = require("os");
 const retValForDevelopment = false;
 const authForDevelopment = false; // Authentication
 function getDummyInstall() {
@@ -41,6 +42,8 @@ function getServerLogfilePath() {
     if (!fsextra.existsSync(dir))
         fsextra.mkdirSync(dir);
     dir = path.join(dir, "log.txt");
+    if (!fsextra.existsSync(dir))
+        fsextra.createFileSync(dir);
     return dir;
 }
 exports.getServerLogfilePath = getServerLogfilePath;
@@ -59,10 +62,19 @@ function getProjectDataPath() {
         dir = path.join(path.dirname(path.dirname(__dirname)), "Data");
     }
     else {
-        // dir = "C:/ProgramData/Backup380";   // TODO: Dynamic for Win, Linux, Mac
-        // if (!fsextra.existsSync(dir)) fsextra.mkdirSync(dir);
-        // dir = path.join(dir, "Data");
-        dir = path.join(path.dirname(path.dirname(__dirname)), "Data"); // Temporary Path until NODE_ENV is fixed
+        if (process.platform.startsWith("win")) {
+            dir = "C:/ProgramData/Backup380";
+            if (!fsextra.existsSync(dir))
+                fsextra.mkdirSync(dir);
+            dir = path.join(dir, "Data");
+        }
+        else if (process.platform.toString() === "darwin" ||
+            process.platform.toString() === "linux") {
+            dir = path.join(os.homedir(), ".Backup380");
+        }
+        else {
+            dir = path.join(path.join(path.join(os.homedir(), "Library"), "Application Support"), "Backup380");
+        }
     }
     if (!fsextra.existsSync(dir))
         fsextra.mkdirSync(dir);
