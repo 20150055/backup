@@ -111,7 +111,7 @@ describe("repository functions", () => {
     afterEach(done => {
         rmdir(location, done);
     });
-    it("backs up data to the repository", () => __awaiter(this, void 0, void 0, function* () {
+    it("backs up data to the repository and calls onProgress", () => __awaiter(this, void 0, void 0, function* () {
         const onProgress = jest.fn();
         const response = yield resticCallFunctions_1.executeBackup({
             location,
@@ -123,18 +123,39 @@ describe("repository functions", () => {
         expect(onProgress.mock.calls.length).toBeGreaterThan(0);
     }));
     it("backs up data to the repository when supplying path with spaces", () => __awaiter(this, void 0, void 0, function* () {
-        const onProgress = jest.fn();
         const response = yield resticCallFunctions_1.executeBackup({
             location,
             password,
             type
-        }, 1, [path.join(toBackUp, "folder 3")], onProgress);
+        }, 1, [path.join(toBackUp, "folder 3")]);
         if (!response.success) {
             log_1.log.testOnly(response);
         }
         expect(response.success).toBeTruthy();
-        expect(onProgress).toHaveBeenCalled();
-        expect(onProgress.mock.calls.length).toBeGreaterThan(0);
+    }));
+    it("fails when directory doesn't exist", () => __awaiter(this, void 0, void 0, function* () {
+        const response = yield resticCallFunctions_1.executeBackup({
+            location,
+            password,
+            type
+        }, 1, [path.join(toBackUp, "thisFolderDoesntExist")]);
+        expect(response.success).toBeFalsy();
+        expect(response.fullOutput).toMatch(/does not exist/i);
+        expect(response.fullOutput).toMatch(/all target .* do not exist/i);
+    }));
+    it("backs up data to the repository when some folders don't exist", () => __awaiter(this, void 0, void 0, function* () {
+        const response = yield resticCallFunctions_1.executeBackup({
+            location,
+            password,
+            type
+        }, 1, [
+            path.join(toBackUp, "thisFolderDoesntExist"),
+            path.join(toBackUp, "folder1", "file1.txt")
+        ]);
+        expect(response.success).toBeTruthy();
+        expect(response.fullOutput).toMatch(/does not exist/i);
+        expect(response.fullOutput).toMatch(/skipping/i);
+        expect(response.fullOutput).toMatch(/processed 1 files?/i);
     }));
 });
 //# sourceMappingURL=restic.test.js.map

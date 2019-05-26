@@ -26,6 +26,7 @@ const getCurrentVersion = () => {
         .get("https://api.github.com/repos/restic/restic/releases/latest")
         .then(res => res.data.tag_name.replace(/v/gi, ""));
 };
+exports.getCurrentVersion = getCurrentVersion;
 const getDownloadUrl = (version, os) => `https://github.com/restic/restic/releases/download/v${version}/restic_${version}_${os === constants_1.OsType.darwin
     ? "darwin_386.bz2"
     : os === constants_1.OsType.linux
@@ -40,63 +41,66 @@ const downloadRestic = (version, destination, currentOs) => __awaiter(this, void
     const response = yield axios_1.default.get(url, {
         responseType: "stream"
     });
-    yield fsextra.ensureDir(path.dirname(constants_1.resticPath));
+    yield fsextra.ensureDir(path.dirname(destination));
     return new Promise((resolve, reject) => {
         const stream = response.data;
         const fileStream = fs.createWriteStream(destination, {
             mode: 0o770,
             autoClose: true
         });
-        const contentLength = Number(response.headers["content-length"]);
-        const bar = new ProgressBar(`  restic${currentOs === constants_1.OsType.windows ? ".exe" : ""} [:bar] :token1 / :token2    :percent    :etas`, {
-            complete: "=",
-            incomplete: " ",
-            width: 20,
-            total: contentLength
-        });
-        let bytesRead = 0;
-        stream.on("data", function (chunk) {
-            bytesRead += chunk.length;
-            bar.tick(chunk.length, {
-                token1: pad(10, prettyBytes(bytesRead)),
-                token2: prettyBytes(contentLength)
+        fileStream.on("open", () => {
+            const contentLength = Number(response.headers["content-length"]);
+            const bar = new ProgressBar(`  restic${currentOs === constants_1.OsType.windows ? ".exe" : ""} [:bar] :token1 / :token2    :percent    :etas`, {
+                complete: "=",
+                incomplete: " ",
+                width: 20,
+                total: contentLength
             });
-        });
-        stream.pause();
-        const onArchiveStreamEnd = () => {
-            console.log(`\n  Downloading and extracting restic took ${(Date.now() - start) /
-                1000}s`);
-            notify_1.notifyUser({
-                message: `restic has been downloaded successfully`
+            let bytesRead = 0;
+            stream.on("data", function (chunk) {
+                bytesRead += chunk.length;
+                bar.tick(chunk.length, {
+                    token1: pad(10, prettyBytes(bytesRead)),
+                    token2: prettyBytes(contentLength)
+                });
             });
-            resolve();
-        };
-        if (currentOs === constants_1.OsType.windows) {
-            // unzip
-            stream.pipe(unzip.Parse()).on("entry", entry => {
-                // we only expect one file in this archive
-                if (entry.type !== "File" || !entry.path.startsWith("restic")) {
-                    entry.autodrain();
-                    reject("Found wrong file in zip archive");
-                    return;
-                }
-                entry.pipe(fileStream);
-                entry.once("end", onArchiveStreamEnd);
+            stream.pause();
+            const onArchiveStreamEnd = () => {
+                console.log(`\n  Downloading and extracting restic took ${(Date.now() - start) /
+                    1000}s`);
+                notify_1.notifyUser({
+                    message: `restic has been downloaded successfully`
+                });
+                resolve();
+            };
+            if (currentOs === constants_1.OsType.windows) {
+                // unzip
+                stream.pipe(unzip.Parse()).on("entry", entry => {
+                    // we only expect one file in this archive
+                    if (entry.type !== "File" || !entry.path.startsWith("restic")) {
+                        entry.autodrain();
+                        reject("Found wrong file in zip archive");
+                        return;
+                    }
+                    entry.pipe(fileStream);
+                    entry.once("end", onArchiveStreamEnd);
+                });
+            }
+            else {
+                const archiveStream = unbzip2Stream();
+                stream.pipe(archiveStream).pipe(fileStream);
+                archiveStream.once("end", onArchiveStreamEnd);
+            }
+            stream.on("error", reject);
+            fileStream.on("close", () => {
+                fileStream.destroy();
             });
-        }
-        else {
-            const archiveStream = unbzip2Stream();
-            stream.pipe(archiveStream).pipe(fileStream);
-            archiveStream.once("end", onArchiveStreamEnd);
-        }
-        stream.on("error", reject);
-        fileStream.on("close", () => {
-            fileStream.destroy();
+            const start = Date.now();
         });
-        const start = Date.now();
     });
 });
-exports.updateRestic = () => __awaiter(this, void 0, void 0, function* () {
+exports.downloadRestic = downloadRestic;
+const updateRestic = () => __awaiter(this, void 0, void 0, function* () {
     try {
         if (constants_1.curEnv === constants_1.Env.test) {
             console.log(`Restic path: ${constants_1.resticPath}`);
@@ -132,4 +136,5 @@ exports.updateRestic = () => __awaiter(this, void 0, void 0, function* () {
         log_1.log.error(error);
     }
 });
+exports.updateRestic = updateRestic;
 //# sourceMappingURL=downloadRestic.js.map

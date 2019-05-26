@@ -15,6 +15,7 @@
   "dependencies": {
     "axios": "^0.18.0",
     "cron-parser": "^2.7.3",
+    "cross-spawn": "^6.0.5",
     "express": "^4.16.4",
     "fs-extra": "^7.0.1",
     "mustache": "^3.0.1",
@@ -37,6 +38,7 @@
     "uuid": "^3.3.2"
   },
   "devDependencies": {
+    "@types/cross-spawn": "^6.0.0",
     "@babel/preset-env": "^7.4.3",
     "@types/express": "^4.16.0",
     "@types/fs-extra": "^5.0.5",
