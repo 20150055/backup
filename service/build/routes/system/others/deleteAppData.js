@@ -21,7 +21,6 @@ exports.router = express.Router();
 exports.router.delete("/AppData", function (request, response) {
     return __awaiter(this, void 0, void 0, function* () {
         if (constants_1.curEnv === constants_1.Env.dev || constants_1.curEnv === constants_1.Env.test) {
-            // TODO: uncomment when Env variable works
             yield sqliteConnection_1.database.connection.close();
             log_1.log.info("close database instance");
             // only deletes files, no folders
