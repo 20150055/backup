@@ -15,18 +15,7 @@ const os_1 = require("os");
 const path = require("path");
 const types_1 = require("../shared/types");
 const log_1 = require("../util/log");
-// import * as Minio from "minio";
 const testRepoFolder = path.join(os_1.tmpdir(), "backup380test", "createRepository");
-// const minioHost = process.env.TEST_MINIO_HOST || "localhost";
-// const minioClient = new Minio.Client({
-//   endPoint: minioHost,
-//   port: 9000,
-//   useSSL: false,
-//   accessKey: "AKIAIOSFODNN7EXAMPLE",
-//   secretKey: "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"
-// });
-// const minioEndpoint = (bucketName: string) =>
-//   `http://${minioHost}:9000/${bucketName}`;
 beforeAll(() => {
     return fs_extra_1.mkdirp(testRepoFolder);
 });
@@ -34,10 +23,6 @@ afterAll(done => {
     rmdir(testRepoFolder, done);
 });
 describe("creating repositories", () => {
-    const remoteBucketName = "createrepotest";
-    // afterAll(() => {
-    //   return minioClient.removeBucket(remoteBucketName);
-    // });
     it("creates local repository", () => __awaiter(this, void 0, void 0, function* () {
         const result = yield resticCallFunctions_1.createRepository({
             location: path.join(testRepoFolder, "myRepo"),
@@ -49,39 +34,6 @@ describe("creating repositories", () => {
         expect(result.fullOutput).not.toMatch(/permission denied/gi);
         expect(result.success).toBe(true);
     }));
-    // it("creates remote repository", async done => {
-    //   const result = await createRepository({
-    //     location: minioEndpoint(remoteBucketName),
-    //     password: "superSecretPassword",
-    //     type: RepoType.S3,
-    //     s3AccessKey: "AKIAIOSFODNN7EXAMPLE",
-    //     s3SecretKey: "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"
-    //   });
-    //   expect(result).toHaveProperty("fullOutput");
-    //   expect(result.fullOutput).not.toMatch(/Fatal/gi);
-    //   expect(result.success).toBe(true);
-    //   expect(await minioClient.bucketExists(remoteBucketName)).toBeTruthy();
-    //   // expect(await minioClient.lis)
-    //   const stream = await minioClient.listObjectsV2(
-    //     remoteBucketName,
-    //     undefined,
-    //     true
-    //   );
-    //   stream.on("error", done);
-    //   stream.on("data", event => {
-    //     if (event.prefix) {
-    //       expect(event.prefix).toEqual("keys/");
-    //     } else {
-    //       if (/keys/gi.test(event.name)) {
-    //         expect(event.name).toMatch(/keys\/[a-z0-9]+/gi);
-    //       } else {
-    //         expect(event.name).toEqual("config");
-    //       }
-    //     }
-    //     minioClient.removeObject(remoteBucketName, event.name);
-    //     done();
-    //   });
-    // });
 });
 describe("restic info", () => {
     it("prints the version number", () => __awaiter(this, void 0, void 0, function* () {

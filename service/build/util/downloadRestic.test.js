@@ -30,17 +30,25 @@ describe("utility functions", () => {
     }), 1000 * 60);
 });
 describe("downloading restic", () => {
-    it("downloads restic to a custom directory with spaces", () => __awaiter(this, void 0, void 0, function* () {
-        const p = path.join(downloadFolder, "with space", "restic");
-        yield r.downloadRestic(yield r.getCurrentVersion(), p, constants_1.OsType.linux);
-        const exists = yield fsextra.pathExists(p);
-        expect(exists).toBeTruthy();
-    }), 1000 * 60 * 5);
-    it("downloads restic to a custom directory without spaces", () => __awaiter(this, void 0, void 0, function* () {
-        const p = path.join(downloadFolder, "withoutSpace", "restic");
-        yield r.downloadRestic(yield r.getCurrentVersion(), p, constants_1.OsType.linux);
-        const exists = yield fsextra.pathExists(p);
-        expect(exists).toBeTruthy();
-    }), 1000 * 60 * 5);
+    beforeEach(() => {
+        return fs_extra_1.mkdirp(downloadFolder);
+    });
+    afterEach(done => {
+        setTimeout(() => rmdir(downloadFolder, done), 500);
+    });
+    for (const osType of [constants_1.OsType.linux, constants_1.OsType.darwin, constants_1.OsType.windows]) {
+        it(`downloads restic to a custom directory with spaces (${osType})`, () => __awaiter(this, void 0, void 0, function* () {
+            const p = path.join(downloadFolder, "with space", "restic");
+            yield r.downloadRestic(yield r.getCurrentVersion(), p, osType);
+            const exists = yield fsextra.pathExists(p);
+            expect(exists).toBeTruthy();
+        }), 1000 * 60 * 5);
+        it(`downloads restic to a custom directory without spaces (${osType})`, () => __awaiter(this, void 0, void 0, function* () {
+            const p = path.join(downloadFolder, "withoutSpace", "restic");
+            yield r.downloadRestic(yield r.getCurrentVersion(), p, osType);
+            const exists = yield fsextra.pathExists(p);
+            expect(exists).toBeTruthy();
+        }), 1000 * 60 * 5);
+    }
 });
 //# sourceMappingURL=downloadRestic.test.js.map
