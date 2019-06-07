@@ -4,7 +4,7 @@ const path = require("path");
 const fsextra = require("fs-extra");
 const os = require("os");
 const retValForDevelopment = false;
-const authForDevelopment = false; // Authentication
+const authForDevelopment = true; // Authentication
 function getDummyInstall() {
     return retValForDevelopment;
 }
@@ -62,19 +62,22 @@ function getProjectDataPath() {
         dir = path.join(path.dirname(path.dirname(__dirname)), "Data");
     }
     else {
-        if (process.platform.startsWith("win")) {
-            dir = "C:/ProgramData/Backup380";
-            if (!fsextra.existsSync(dir))
-                fsextra.mkdirSync(dir);
-            dir = path.join(dir, "Data");
+        switch (exports.currentOs) {
+            case OsType.windows:
+                dir = "C:/ProgramData/Backup380";
+                if (!fsextra.existsSync(dir))
+                    fsextra.mkdirSync(dir);
+                break;
+            case OsType.linux:
+                dir = path.join("/etc", "Backup380");
+                break;
+            case OsType.darwin:
+                dir = path.join(path.join(path.join(os.homedir(), "Library"), "Application Support"), "Backup380");
+                break;
         }
-        else if (process.platform.toString() === "darwin" ||
-            process.platform.toString() === "linux") {
-            dir = path.join(os.homedir(), ".Backup380");
-        }
-        else {
-            dir = path.join(path.join(path.join(os.homedir(), "Library"), "Application Support"), "Backup380");
-        }
+        if (!fsextra.existsSync(dir))
+            fsextra.mkdirSync(dir);
+        dir = path.join(dir, "Data");
     }
     if (!fsextra.existsSync(dir))
         fsextra.mkdirSync(dir);
@@ -106,4 +109,13 @@ function getDatabaseFilePath() {
     return path.join(getProjectDataPath(), "Backup380.db");
 }
 exports.getDatabaseFilePath = getDatabaseFilePath;
+function getBackup380ProjectFolder() {
+    if (exports.curEnv === Env.dev) {
+        return path.dirname(path.dirname(__dirname));
+    }
+    else {
+        return __dirname;
+    }
+}
+exports.getBackup380ProjectFolder = getBackup380ProjectFolder;
 //# sourceMappingURL=constants.js.map

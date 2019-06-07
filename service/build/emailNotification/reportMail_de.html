@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <style>
+      table {
+        font-family: arial, sans-serif;
+        border-collapse: collapse;
+        width: 100%;
+      }
+      td,
+      th {
+        text-align: left;
+        padding: 5px;
+        color: black;
+        border: 1px solid;
+      }
+      .header {
+        font-weight: bold;
+        height: 35px;
+        background-color: #f3f4f4;
+        font-size: 16px;
+        vertical-align: middle;
+        padding: 2px 3px 2px 3px;
+        color: #202020;
+        border-bottom: 1px solid black;
+        border-left: 1px solid #d1d1d1;
+        border-right: 1px solid #d1d1d1;
+        border-top: 1px solid #d1d1d1;
+      }
+      .smallColumn {
+        width: 30%;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="target"></div>
+    <h1>Backup380</h1>
+    <table class="data">
+      <tr>
+        <td colspan="2" class="header">Details</td>
+      </tr>
+      <tr>
+        <td class="smallColumn">BackupJobID</td>
+        <td>{{ backupJobId }}</td>
+      </tr>
+      <tr>
+        <td class="smallColumn">Name</td>
+        <td>{{ jobName }}</td>
+      </tr>
+      <tr>
+        <td class="smallColumn">RepositoryID</td>
+        <td>{{ repositoryId }}</td>
+      </tr>
+      <tr>
+        <td class="smallColumn">Letztes Backup</td>
+        <td>{{ prevScheduledDate }}</td>
+      </tr>
+      <tr>
+        <td class="smallColumn">Aktiv</td>
+        <td>{{ isActive }}</td>
+      </tr>
+      <tr>
+        <td class="smallColumn">Startdatum</td>
+        <td>{{ startDate }}</td>
+      </tr>
+      <tr>
+        <td class="smallColumn">Fehlerausgabe</td>
+        <td>{{ errorOutput }}</td>
+      </tr>
+    </table>
+
+    <br /><br />
+    <table class="data">
+      <tr>
+        <td colspan="3" class="header">Kürzliche Logs</td>
+      </tr>
+      <tr>
+        <td style="font-weight: bold;">Zeit</td>
+        <td style="font-weight: bold;">Loglevel</td>
+        <td style="font-weight: bold;">Beschreibung</td>
+      </tr>
+      <tr>
+        <td>{{ time }}</td>
+        <td>{{ logLevel }}</td>
+        <td>{{ description }}</td>
+      </tr>
+    </table>
+  </body>
+</html>

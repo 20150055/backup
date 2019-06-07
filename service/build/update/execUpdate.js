@@ -11,7 +11,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express = require("express");
 const path = require("path");
 const os = require("os");
-const fs = require("fs");
 const app_1 = require("../app");
 const fs_extra_1 = require("fs-extra");
 const checkForUpdate_1 = require("./checkForUpdate");
@@ -35,12 +34,9 @@ function execUpdate() {
             logging_1.createLog(logInfo1);
             // TODO: fix paths with constants
             let dirTemp = os.tmpdir();
-            let dirScript = path.resolve(__dirname, "../../../../../Setup");
+            let dirScript = path.join(constants_1.getBackup380ProjectFolder(), "Setup"); // TODO: test this path if correct in test and dev
             let argsDownload = ["-d"];
             let argsUpdate = ["-u"];
-            if (fs.existsSync(path.join(path.dirname(path.dirname(path.dirname(__dirname))), "Setup"))) {
-                dirScript = path.join(path.dirname(path.dirname(path.dirname(__dirname))), "Setup");
-            }
             if (process.platform.startsWith("win")) {
                 dirScript += "\\Windows\\install.ps1";
                 dirTemp += "\\install.ps1";

@@ -14,6 +14,7 @@ const resticCallFunctions_1 = require("./resticCallFunctions");
 const types_1 = require("../shared/types");
 const logging_1 = require("../logging");
 const app_1 = require("../app");
+const emailNotification_1 = require("../emailNotification");
 function checkForBackups() {
     return __awaiter(this, void 0, void 0, function* () {
         const scheduledJobs = yield sqliteConnection_1.database.loadAllActiveBackupJobs();
@@ -126,6 +127,30 @@ function callBackupExecution(jobId, repoId, backupLocations) {
             };
             logging_1.createLog(logInfo2);
             notifyWithSocketIo(jobId, output.success);
+            let backupJob = yield sqliteConnection_1.database.loadBackupJobById(jobId);
+            if (!backupJob) {
+                return;
+            }
+            let prevScheduledDate = `${new Date(backupJob.prevScheduledDate).toLocaleDateString()}_${new Date(backupJob.prevScheduledDate).toLocaleTimeString()}`.toString();
+            let startDate = `${new Date(backupJob.startDate).toLocaleDateString()}_${new Date(backupJob.startDate).toLocaleTimeString()}`;
+            let time = `${new Date().toLocaleDateString()}_${new Date().toLocaleTimeString()}`;
+            // Email Notification
+            let template = {
+                backupJobId: jobId,
+                jobName: backupJob.name,
+                repositoryId: backupJob.repoId,
+                prevScheduledDate: prevScheduledDate,
+                isActive: backupJob.active,
+                startDate: startDate,
+                errorOutput: logInfo2.logLevel === types_1.LogLevel.error
+                    ? logInfo2.eventDescription + "<br>" + logInfo2.message
+                    : "-",
+                time: time,
+                logLevel: logInfo2.logLevel,
+                description: logInfo2.eventDescription
+            };
+            yield emailNotification_1.sendEmail(backupJob.user, backupJob.emailNotification, "Backup380 Notification", template);
+            return;
         }
         else {
             // Logging

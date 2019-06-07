@@ -1,0 +1,28 @@
+"use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const express = require("express");
+const ApiResponse_1 = require("../../../../ApiResponse");
+const checkAuth_1 = require("../../../checkAuth");
+const app_1 = require("../../../../app");
+exports.router = express.Router();
+exports.router.post("/:userId/repository/:repoId/restore", checkAuth_1.checkAuth, function (request, response) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const body = request.body;
+        app_1.io.of("/api/").emit("restore started");
+        app_1.io.of("/api/").emit("progress", 120, 300);
+        app_1.io.of("/api/").emit("restore finished");
+        ApiResponse_1.sendResponse(response, 200, {
+            messages: [],
+            payload: {}
+        });
+    });
+});
+//# sourceMappingURL=restoreSnapshot.js.map
