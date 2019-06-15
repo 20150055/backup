@@ -20,10 +20,14 @@ exports.router.get("/:userId/repository/:repoId/snapshot/:snapshotId", checkAuth
         // Temporary testdata
         const snapshotsDetails = {
             id: "3DA541559918A808C2402BBA5012F6C60B27661C".toLowerCase(),
-            date: new Date(),
+            time: new Date().toString(),
             paths: ["D/users/admin"],
             tags: ["aaaaaaaa", "bbbbb"],
-            files: testFolders_1.testFolders
+            files: testFolders_1.testFolders,
+            hostname: "",
+            short_id: "",
+            tree: "",
+            username: ""
         };
         ApiResponse_1.sendResponse(response, 200, {
             messages: [

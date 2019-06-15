@@ -15,10 +15,11 @@ const os_1 = require("os");
 const path = require("path");
 const types_1 = require("../shared/types");
 const log_1 = require("../util/log");
+const downloadRestic_1 = require("../util/downloadRestic");
 const testRepoFolder = path.join(os_1.tmpdir(), "backup380test", "createRepository");
-beforeAll(() => {
-    return fs_extra_1.mkdirp(testRepoFolder);
-});
+beforeAll(() => __awaiter(this, void 0, void 0, function* () {
+    return yield Promise.all([downloadRestic_1.updateRestic(), fs_extra_1.mkdirp(testRepoFolder)]);
+}), 99999);
 afterAll(done => {
     rmdir(testRepoFolder, done);
 });
@@ -109,5 +110,100 @@ describe("repository functions", () => {
         expect(response.fullOutput).toMatch(/skipping/i);
         expect(response.fullOutput).toMatch(/processed 1 files?/i);
     }));
+    it("outputs empty snapshot array", () => __awaiter(this, void 0, void 0, function* () {
+        const response = yield resticCallFunctions_1.listSnapshots({
+            location,
+            password,
+            type
+        });
+        if (!response.success) {
+            return fail("response.success is false");
+        }
+        expect(response.snapshots).toBeDefined();
+        expect(response.snapshots).toHaveLength(0);
+    }));
+    describe("snapshot functions", () => {
+        beforeAll(() => __awaiter(this, void 0, void 0, function* () {
+            return resticCallFunctions_1.executeBackup({
+                location,
+                password,
+                type
+            }, 1, [toBackUp]);
+        }));
+        it("outputs snapshot array", () => __awaiter(this, void 0, void 0, function* () {
+            yield resticCallFunctions_1.executeBackup({
+                location,
+                password,
+                type
+            }, 1, [toBackUp]);
+            const response = yield resticCallFunctions_1.listSnapshots({
+                location,
+                password,
+                type
+            });
+            if (!response.success) {
+                return fail("response.success is false");
+            }
+            expect(response.snapshots).toBeDefined();
+            const sn = response.snapshots;
+            expect(sn).toHaveLength(1);
+            expect(sn[0].tags).toHaveLength(1);
+            expect(sn[0].paths).toHaveLength(1);
+            const files = yield resticCallFunctions_1.listFiles({
+                location,
+                password,
+                type
+            }, sn[0].id);
+            if (!files.success) {
+                return fail("response.success is false");
+            }
+            expect(files.files.length).toBeGreaterThanOrEqual(14);
+        }));
+        describe("restore", () => {
+            const restoreTargetDirectory = path.resolve(testRepoFolder, "../restoreSnapshot");
+            beforeEach(() => __awaiter(this, void 0, void 0, function* () {
+                return fs_extra_1.mkdirp(restoreTargetDirectory);
+            }));
+            beforeEach(done => {
+                rmdir(restoreTargetDirectory, done);
+            });
+            it("restores latest snapshot", () => __awaiter(this, void 0, void 0, function* () {
+                yield resticCallFunctions_1.executeBackup({
+                    location,
+                    password,
+                    type
+                }, 1, [toBackUp]);
+                const response = yield resticCallFunctions_1.restoreSnapshot({
+                    location,
+                    password,
+                    type
+                }, {
+                    restorePath: restoreTargetDirectory,
+                    selectedPaths: ["folder1", "folder 3"],
+                    snapshotId: "latest"
+                });
+                expect(response.success).toBeTruthy();
+                expect(response.fullOutput).toMatch(/restoring/);
+            }));
+            it("doesn't restore invalid snapshot", () => __awaiter(this, void 0, void 0, function* () {
+                yield resticCallFunctions_1.executeBackup({
+                    location,
+                    password,
+                    type
+                }, 1, [toBackUp]);
+                const response = yield resticCallFunctions_1.restoreSnapshot({
+                    location,
+                    password,
+                    type
+                }, {
+                    restorePath: restoreTargetDirectory,
+                    selectedPaths: ["folder1", "folder 3"],
+                    snapshotId: "thisisinvalid"
+                });
+                expect(response.success).toBeFalsy();
+                expect(response.fullOutput).toMatch(/invalid.*no.*match.*found/i);
+            }));
+        });
+    });
 });
 //# sourceMappingURL=restic.test.js.map

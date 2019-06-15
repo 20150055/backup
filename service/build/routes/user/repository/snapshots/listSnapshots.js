@@ -12,7 +12,6 @@ const express = require("express");
 const types_1 = require("../../../../shared/types");
 const ApiResponse_1 = require("../../../../ApiResponse");
 const checkAuth_1 = require("../../../checkAuth");
-const date_fns_1 = require("date-fns");
 exports.router = express.Router();
 exports.router.get("/:userId/repository/:repoId/snapshot", checkAuth_1.checkAuth, function (request, response) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -21,15 +20,13 @@ exports.router.get("/:userId/repository/:repoId/snapshot", checkAuth_1.checkAuth
         const snapshots = [
             {
                 id: "CAFFEA594F9F1D6948E059F1BB5D29088CEE4883".toLowerCase(),
-                date: date_fns_1.parse("05-12-2019"),
                 paths: [],
-                tags: ["asfsdfasdf"]
-            },
-            {
-                id: "3DA541559918A808C2402BBA5012F6C60B27661C".toLowerCase(),
-                date: new Date(),
-                paths: ["D/users/admin"],
-                tags: ["aaaaaaaa", "bbbbb"]
+                tags: ["asfsdfasdf"],
+                hostname: "",
+                short_id: "",
+                time: new Date().toString(),
+                tree: "",
+                username: ""
             }
         ];
         ApiResponse_1.sendResponse(response, 200, {

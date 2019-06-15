@@ -34,8 +34,7 @@ function createRepository(commonArgs) {
     });
 }
 exports.createRepository = createRepository;
-function executeBackup(commonArgs, backupJobId, paths, // TODO: Deleted type path
-onProgress) {
+function executeBackup(commonArgs, backupJobId, paths, onProgress) {
     return __awaiter(this, void 0, void 0, function* () {
         const environmentVariables = helpers_1.createEnv(commonArgs);
         let highestPercentage = 0;
@@ -69,4 +68,75 @@ onProgress) {
     });
 }
 exports.executeBackup = executeBackup;
+function listSnapshots(commonArgs) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const environmentVariables = helpers_1.createEnv(commonArgs);
+        const result = yield restic_1.spawnRestic({
+            args: ["snapshots", "--verbose", "--json"],
+            env: environmentVariables
+        });
+        if (result.success) {
+            try {
+                return Object.assign({}, result, { snapshots: (JSON.parse(result.fullOutput) || []) });
+            }
+            catch (err) {
+                return Object.assign({}, result, { snapshots: [] });
+            }
+        }
+        return result;
+    });
+}
+exports.listSnapshots = listSnapshots;
+/**
+ * This function doesn't have a progress since restic doesn't output progress information
+ * @param commonArgs
+ * @param restoreArgs
+ */
+function restoreSnapshot(commonArgs, restoreArgs) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const environmentVariables = helpers_1.createEnv(commonArgs);
+        const result = yield restic_1.spawnRestic({
+            args: [
+                "restore",
+                restoreArgs.snapshotId,
+                "--verbose",
+                "--target",
+                restoreArgs.restorePath,
+                ...restoreArgs.selectedPaths
+                    .map(p => ["--include", p])
+                    .reduce((prev, cur) => [...prev, ...cur], [])
+            ],
+            env: environmentVariables
+        });
+        return result;
+    });
+}
+exports.restoreSnapshot = restoreSnapshot;
+function listFiles(commonArgs, snapshotId) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const environmentVariables = helpers_1.createEnv(commonArgs);
+        const result = yield restic_1.spawnRestic({
+            args: ["ls", snapshotId],
+            env: environmentVariables
+        });
+        if (result.success) {
+            const files = result.fullOutput
+                .split("\n")
+                .map(s => ({
+                path: s
+            }));
+            // first line is `snapshot 9ef13ab0 of [...`
+            if (files[0] && /snapshot.*of/i.test(files[0].path)) {
+                files.shift();
+            }
+            if (files[files.length - 1] && !files[files.length - 1].path.length) {
+                files.pop();
+            }
+            return Object.assign({}, result, { // TODO
+                files });
+        }
+        return result;
+    });
+}
+exports.listFiles = listFiles;
 //# sourceMappingURL=resticCallFunctions.js.map
