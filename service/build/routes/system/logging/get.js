@@ -14,6 +14,7 @@ const ApiResponse_1 = require("../../../ApiResponse");
 const path = require("path");
 const sqliteConnection_1 = require("../../../sqliteConnection");
 const functions_1 = require("./functions");
+const constants_1 = require("../../../constants");
 exports.router = express.Router();
 exports.router.get("/log/:logId", function (request, response) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -31,7 +32,7 @@ exports.router.get("/log/:logId", function (request, response) {
             return;
         }
         // Build path to logfile
-        let logPath = path.join(path.dirname(path.dirname(path.dirname(path.dirname(__dirname)))), "logs");
+        let logPath = constants_1.getLogFolder();
         logPath = path.join(logPath, log.logType);
         logPath = path.join(logPath, "log.txt");
         ApiResponse_1.sendResponseFile(response, 200, logPath);
