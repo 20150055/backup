@@ -21,10 +21,11 @@ const logging_1 = require("../../../logging");
 const resticPath = path.join(__dirname, "../../../../../scripts/PsExec.exe");
 exports.router = express.Router();
 const app = express();
-exports.router.post("/clientInstall", function (request, response) {
+exports.router.post("/clientInstall/:clientId", function (request, response) {
     return __awaiter(this, void 0, void 0, function* () {
         let adminClient = request.body;
         let client;
+        let clientId = request.params.clientId;
         let responseString = "";
         if (adminClient.os === "Windows") {
             const mkdir = cp.exec('Start-Process -Verb runAs powershell.exe -ArgumentList \' -Command "New-Item -ItemType Directory -Force -Path "C:\\Program Files\\Backup380""\'');
@@ -59,7 +60,7 @@ exports.router.post("/clientInstall", function (request, response) {
                                 logLevel: types_1.LogLevel.success,
                                 eventDescription: "api.success.client.install",
                                 type: types_1.LogType.client,
-                                clientId: 1 // TODO change the hardcode-ID to real value
+                                clientId: clientId
                             };
                             logging_1.createLog(log);
                         }
@@ -69,15 +70,15 @@ exports.router.post("/clientInstall", function (request, response) {
                                 logLevel: types_1.LogLevel.error,
                                 eventDescription: "api.error.client.install",
                                 type: types_1.LogType.client,
-                                clientId: 1 // TODO change the hardcode-ID to real value
+                                clientId: clientId
                             };
                             logging_1.createLog(log);
                         }
-                        app_1.io.of("/api/").emit("finishedInstall", responseString, "Windows");
+                        app_1.io.of("/api/").emit("finishedInstall", responseString, "Windows", adminClient.ip, clientId);
                     });
                 }
                 else {
-                    app_1.io.of("/api/").emit("finishedInstall", "there was an error while executing the install script check your connection to the client and your credentials", "Windows");
+                    app_1.io.of("/api/").emit("finishedInstall", "there was an error while executing the install script check your connection to the client and your credentials", "Windows", adminClient.ip, clientId);
                 }
             });
         }
@@ -95,14 +96,14 @@ exports.router.post("/clientInstall", function (request, response) {
                     if (!called) {
                         called = true;
                         if (err.message.indexOf("All configured authentication methods failed") !== -1) {
-                            app_1.io.of("/api/").emit("finishedInstall", "Error: Please check your credentials (ip, name, password)", "Linux");
+                            app_1.io.of("/api/").emit("finishedInstall", "Error: Please check your credentials (ip, name, password)", "Linux", adminClient.ip, clientId);
                         }
                         else if (err.message.indexOf("Timed out while waiting for handshake") !==
                             -1) {
-                            app_1.io.of("/api/").emit("finishedInstall", "Error: conection to Client failed, check your ip", "Linux");
+                            app_1.io.of("/api/").emit("finishedInstall", "Error: conection to Client failed, check your ip", "Linux", clientId);
                         }
                         else {
-                            app_1.io.of("/api/").emit("finishedInstall", err, "Linux");
+                            app_1.io.of("/api/").emit("finishedInstall", err, "Linux", adminClient.ip, clientId);
                         }
                     }
                     return;
@@ -127,7 +128,7 @@ exports.router.post("/clientInstall", function (request, response) {
                                     logLevel: types_1.LogLevel.success,
                                     eventDescription: "api.success.client.install",
                                     type: types_1.LogType.client,
-                                    clientId: 1 // TODO change the hardcode-ID to real value
+                                    clientId: clientId
                                 };
                                 logging_1.createLog(log);
                             }
@@ -137,11 +138,11 @@ exports.router.post("/clientInstall", function (request, response) {
                                     logLevel: types_1.LogLevel.error,
                                     eventDescription: "api.error.client.install",
                                     type: types_1.LogType.client,
-                                    clientId: 1 // TODO change the hardcode-ID to real value
+                                    clientId: clientId
                                 };
                                 logging_1.createLog(log);
                             }
-                            app_1.io.of("/api/").emit("finishedInstall", responseString, "Linux");
+                            app_1.io.of("/api/").emit("finishedInstall", responseString, "Linux", adminClient.ip, clientId);
                             client.end();
                         })
                             .on("data", function (data) {
@@ -175,11 +176,11 @@ exports.router.post("/clientInstall", function (request, response) {
                     if (!called) {
                         called = true;
                         if (err.message.indexOf("All configured authentication methods failed") !== -1) {
-                            app_1.io.of("/api/").emit("finishedInstall", "Error: Please check your credentials (ip, name, password)", "MacOS");
+                            app_1.io.of("/api/").emit("finishedInstall", "Error: Please check your credentials (ip, name, password)", "MacOS", adminClient.ip, clientId);
                         }
                         else if (err.message.indexOf("Timed out while waiting for handshake") !==
                             -1) {
-                            app_1.io.of("/api/").emit("finishedInstall", "Error: conection to Client failed, check your ip", "MacOS");
+                            app_1.io.of("/api/").emit("finishedInstall", "Error: conection to Client failed, check your ip", "MacOS", adminClient.ip, clientId);
                         }
                         else {
                             app_1.io.of("/api/").emit("finishedInstall", err, "MacOS");
@@ -212,7 +213,7 @@ exports.router.post("/clientInstall", function (request, response) {
                                     logLevel: types_1.LogLevel.success,
                                     eventDescription: "api.success.client.install",
                                     type: types_1.LogType.client,
-                                    clientId: 1 // TODO change the hardcode-ID to real value
+                                    clientId: clientId
                                 };
                                 logging_1.createLog(log);
                             }
@@ -222,11 +223,11 @@ exports.router.post("/clientInstall", function (request, response) {
                                     logLevel: types_1.LogLevel.error,
                                     eventDescription: "api.error.client.install",
                                     type: types_1.LogType.client,
-                                    clientId: 1 // TODO change the hardcode-ID to real value
+                                    clientId: clientId
                                 };
                                 logging_1.createLog(log);
                             }
-                            app_1.io.of("/api/").emit("finishedInstall", responseString, "MacOS");
+                            app_1.io.of("/api/").emit("finishedInstall", responseString, "MacOS", adminClient.ip, clientId);
                             client.end();
                         })
                             .on("data", function (data) {

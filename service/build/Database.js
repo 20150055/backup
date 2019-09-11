@@ -18,6 +18,8 @@ const enumTypes_1 = require("./shared/types/enumTypes");
 const Log_1 = require("./entity/Log");
 const Client_1 = require("./entity/Client");
 const Admin_1 = require("./entity/Admin");
+const app_1 = require("./app");
+const request = require("supertest");
 class Database {
     constructor(conn) {
         this.connection = conn;
@@ -67,6 +69,19 @@ class Database {
             return false;
         });
     }
+    setAdminToken(adminId, token) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let admin = yield this.connection.manager
+                .getRepository(Admin_1.Admin)
+                .findOne({ id: adminId });
+            if (admin) {
+                admin.token = token;
+                yield this.connection.manager.save(admin);
+                return true;
+            }
+            return false;
+        });
+    }
     createUserSettings(userSettings) {
         return __awaiter(this, void 0, void 0, function* () {
             return yield this.connection.manager.save(userSettings);
@@ -99,9 +114,17 @@ class Database {
             return yield this.connection.manager.save(client);
         });
     }
+    createClientUser(user) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.connection.manager.save(user);
+        });
+    }
     createAdmin() {
         return __awaiter(this, void 0, void 0, function* () {
             const admin = new Admin_1.Admin();
+            admin.name = "admin1";
+            admin.password = "admin1";
+            admin.password = this.hash(admin.password);
             admin.clients = [];
             admin.id = 1;
             yield this.connection.manager.save(admin);
@@ -114,6 +137,18 @@ class Database {
                 .getRepository(Client_1.Client)
                 .findOne({ id: clientId });
             return client;
+        });
+    }
+    loadClientWithClientUser(clientId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const clientRepo = yield this.connection.manager.getRepository(Client_1.Client);
+            const clients = yield clientRepo.find({ relations: ["user"] });
+            for (let c of clients) {
+                if (c.id == clientId) {
+                    return c;
+                }
+            }
+            return null;
         });
     }
     loadAllClients() {
@@ -160,6 +195,13 @@ class Database {
                 .getRepository(BackupJob_1.BackupJob)
                 .findOne({ name: name });
             return job;
+        });
+    }
+    deleteDataBase() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const result = yield request(app_1.app).delete("/api/system/AppData"); /*.catch(error => {
+              //console.log("data",data);
+            });*/
         });
     }
     loadBackupJobById(id) {

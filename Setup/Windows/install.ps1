@@ -121,6 +121,12 @@ if ($mode -eq "u") {
 }
 
 if ($mode -eq "i") {
+    $exepath = Get-WmiObject win32_service | ? {$_.Name -eq 'backup380.exe'} |select Pathname|Format-Wide -Property PathName -AutoSize|Out-String
+    
+    if($exepath){
+        echo "Error: Backup380 is already installed";
+        exit;
+    }
     if(!(Test-Path -Path $path )){
         New-Item -ItemType Directory -Force -Path $path;
     }
@@ -330,20 +336,25 @@ if ($mode -eq "i") {
     else {
         echo "Error: Creating the desktop shortcut failed";
     }
-    Start-Service Backup380;
     $service = Get-Service | Where-Object {$_.DisplayName -eq "Backup380"} | Where-Object {$_.Status -eq "Running"};
     if (!$service) {
         $count = 0;
         do {
             $count++;
             if ($count -eq 20) {
-                Start-Service Backup380;
+                $test = Get-Service | Where-Object {$_.DisplayName -eq "Backup380"} | Where-Object {$_.Status -eq "Running"}
+                if($test){
+                    Start-Service Backup380;
+                } else {
+                    echo "Error: The Installation of the Backup380 service failed";
+                }
                 break;
+                
             }
             $service = Get-Service | Where-Object {$_.DisplayName -eq "Backup380"} | Where-Object {$_.Status -eq "Running"}
             Start-Sleep -Seconds 10
         }while (!$service)
-
+        Start-Sleep -Seconds 10
         if ($count -eq 20) {
             $service = Get-Service | Where-Object {$_.DisplayName -eq "Backup380"} | Where-Object {$_.Status -eq "Running"};
             if (!$service) {

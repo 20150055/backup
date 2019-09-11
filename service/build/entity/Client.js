@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const typeorm_1 = require("typeorm");
 const Admin_1 = require("./Admin");
 const Log_1 = require("./Log");
+const ClientUser_1 = require("./ClientUser");
 let Client = class Client {
 };
 __decorate([
@@ -39,6 +40,11 @@ __decorate([
     typeorm_1.OneToMany(type => Log_1.Log, log => log.id, { nullable: true }),
     __metadata("design:type", Array)
 ], Client.prototype, "log", void 0);
+__decorate([
+    typeorm_1.OneToOne(type => ClientUser_1.ClientUser),
+    typeorm_1.JoinColumn(),
+    __metadata("design:type", ClientUser_1.ClientUser)
+], Client.prototype, "user", void 0);
 Client = __decorate([
     typeorm_1.Entity()
 ], Client);

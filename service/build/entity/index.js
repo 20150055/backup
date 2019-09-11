@@ -6,6 +6,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 __export(require("./Admin"));
 __export(require("./BackupJob"));
 __export(require("./Client"));
+__export(require("./ClientUser"));
+__export(require("./BaseUser"));
 __export(require("./GlobalSettings"));
 __export(require("./LocalS3BackupRepository"));
 __export(require("./Log"));

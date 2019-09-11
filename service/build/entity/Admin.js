@@ -18,6 +18,18 @@ __decorate([
     __metadata("design:type", Number)
 ], Admin.prototype, "id", void 0);
 __decorate([
+    typeorm_1.Column(),
+    __metadata("design:type", String)
+], Admin.prototype, "name", void 0);
+__decorate([
+    typeorm_1.Column(),
+    __metadata("design:type", String)
+], Admin.prototype, "password", void 0);
+__decorate([
+    typeorm_1.Column({ nullable: true }),
+    __metadata("design:type", String)
+], Admin.prototype, "token", void 0);
+__decorate([
     typeorm_1.OneToMany(type => Client_1.Client, Client => Client.admin),
     __metadata("design:type", Array)
 ], Admin.prototype, "clients", void 0);

@@ -100,6 +100,7 @@ exports.bootstrap = () => __awaiter(this, void 0, void 0, function* () {
     else {
         log_1.log.devOnly("not in production, skipping update checks and backup scheduling");
     }
+    yield exports.delay(30000);
 });
 exports.start = () => __awaiter(this, void 0, void 0, function* () {
     const settings = yield sqliteConnection_1.database.loadGlobalSettingsById(1);
@@ -109,4 +110,7 @@ exports.start = () => __awaiter(this, void 0, void 0, function* () {
         console.log(`API is listening on port ${port}`);
     });
 });
+exports.delay = function delay(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+};
 //# sourceMappingURL=app.js.map

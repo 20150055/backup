@@ -50,7 +50,10 @@ function scheduleBackup(jobId) {
                     repoId: job.repoId
                 };
                 logging_1.createLog(logInfo);
-                setTimeout(() => checkActiveState(job.id, backupScheduleTime), backupScheduleTime - new Date().getTime());
+                if (process.env.NODE_ENV != "test") {
+                    console.log("called scheduling");
+                    setTimeout(() => checkActiveState(job.id, backupScheduleTime), backupScheduleTime - new Date().getTime());
+                }
             }
         }
     });
