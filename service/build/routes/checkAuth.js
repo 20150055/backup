@@ -14,8 +14,8 @@ const types_1 = require("../shared/types");
 const logging_1 = require("../logging");
 exports.checkAuth = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
     const dev = constants_1.getAuth();
-    const token = req.headers.authorization.replace("Bearer ", "");
-    const userId = req.params.userId;
+    const token = (req.headers.authorization || "").replace("Bearer ", "");
+    const userId = Number(req.params.userId || req.header("X-USERID"));
     if (token && userId) {
         const user = yield sqliteConnection_1.database.loadUserById(userId);
         if (user && user.token && user.token != "" && user.token === token) {

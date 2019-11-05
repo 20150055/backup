@@ -36,7 +36,7 @@ exports.curEnv = process.env.NODE_ENV === "test"
     : process.env.NODE_ENV === "development"
         ? Env.dev
         : Env.prod;
-exports.pathToRepoDb = exports.curEnv === Env.test ? os.tmpdir() + "/Backu380.db" : "../data/Backup380.db";
+exports.pathToRepoDb = exports.curEnv === Env.test ? os.tmpdir() + "/Backup380.db" : "../data/Backup380.db";
 exports.resticPath = path.resolve(getResticFolder(), `restic${exports.currentOs === OsType.windows ? ".exe" : ""}`);
 function getServerLogfilePath() {
     let dir = path.join(getLogFolder(), "server");

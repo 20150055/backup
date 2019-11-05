@@ -13,8 +13,9 @@ const ApiResponse_1 = require("../../../ApiResponse");
 const types_1 = require("../../../shared/types");
 const fsextra = require("fs-extra");
 const pathModule = require("path");
+const checkAuth_1 = require("../../checkAuth");
 exports.router = express.Router();
-exports.router.get("/directory", function (request, response) {
+exports.router.get("/directory", checkAuth_1.checkAuth, function (request, response) {
     return __awaiter(this, void 0, void 0, function* () {
         const body = {
             path: typeof request.query.path !== "string" || request.query.path === "false"
@@ -86,7 +87,7 @@ exports.router.get("/directory", function (request, response) {
         }
         // order them a-z if they're both folders or files
         availableFolders.sort((a, b) => a.folder === b.folder ? a.name.localeCompare(b.name) : a.folder ? -1 : 1);
-        if (availableFolders.length > 0) {
+        if (availableFolders.length > 0 || (typeof path === "string" && fsextra.pathExists(path))) {
             availableFolders.sort((a, b) => a.name.localeCompare(b.name));
             ApiResponse_1.sendResponse(response, 200, {
                 messages: [],
@@ -103,6 +104,20 @@ exports.router.get("/directory", function (request, response) {
                 ]
             });
         }
+    });
+});
+exports.router.post("/directory", checkAuth_1.checkAuth, function (request, response) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const body = request.body;
+        yield fsextra.mkdir(body.path);
+        ApiResponse_1.sendResponse(response, 200, {
+            messages: [
+                {
+                    name: "api.success.system.directory.create",
+                    type: types_1.MessageType.success
+                }
+            ]
+        });
     });
 });
 //# sourceMappingURL=index.js.map
