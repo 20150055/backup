@@ -12,9 +12,15 @@ const express = require("express");
 const types_1 = require("../../../shared/types");
 const sqliteConnection_1 = require("../../../sqliteConnection");
 const ApiResponse_1 = require("../../../ApiResponse");
+const axios_1 = require("axios");
 exports.router = express.Router();
 exports.router.get("/client/:clientId/dir", function (request, response) {
     return __awaiter(this, void 0, void 0, function* () {
+        const body = {
+            path: typeof request.query.path !== "string" || request.query.path === "false"
+                ? false
+                : request.query.path
+        };
         const clients = yield sqliteConnection_1.database.loadAllClients();
         const client = clients.find(c => {
             return c.id == request.params.clientId;
@@ -26,10 +32,18 @@ exports.router.get("/client/:clientId/dir", function (request, response) {
                 name: client.ip,
                 os: client.os
             };
-            ApiResponse_1.sendResponse(response, 200, {
-                messages: [{ name: "api.success.client.get", type: types_1.MessageType.success }],
-                payload: { client: c }
+            const responsedir = yield axios_1.default.get("http://" + client.ip + ":8380/api/system/directory?path=" + body.path, {
+                timeout: 10000
             });
+            if (responsedir.data.payload) {
+                console.log("dir", responsedir.data.payload.folder);
+                ApiResponse_1.sendResponse(response, 200, {
+                    messages: [
+                        { name: "api.success.client.dir.get", type: types_1.MessageType.success }
+                    ],
+                    payload: { folder: responsedir.data.payload.folder }
+                });
+            }
         }
         else {
             ApiResponse_1.sendResponse(response, 400, {

@@ -17,6 +17,7 @@ const getRepos = require("./client/getAllReposOnClient");
 const fetchUserFromClient = require("./client/fetchUserFromClient");
 const loginAndFetchUser = require("./client/loginAndFetchUser");
 const getClient = require("./client/get");
+const getClientDirs = require("./client/fetchDirsFromClient");
 exports.router = express.Router();
 exports.router.use("/admin", createClient.router);
 exports.router.use("/admin", deleteClient.router);
@@ -34,4 +35,5 @@ exports.router.use("/admin", getRepos.router);
 exports.router.use("/admin", fetchUserFromClient.router);
 exports.router.use("/admin", loginAndFetchUser.router);
 exports.router.use("/admin", getClient.router);
+exports.router.use("/admin", getClientDirs.router);
 //# sourceMappingURL=index.js.map
