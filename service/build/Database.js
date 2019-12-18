@@ -389,6 +389,70 @@ class Database {
             return logs;
         });
     }
+    getAllSuccessfullRestores() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield this.connection
+                .getRepository(Log_1.Log)
+                .find({ eventDescription: "api.success.backup.restore-snapshot" });
+        });
+    }
+    getAllBackupJobLogs() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const starts = yield this.connection
+                .getRepository(Log_1.Log)
+                .find({ eventDescription: "api.info.backup.execute" });
+            const success = yield this.connection
+                .getRepository(Log_1.Log)
+                .find({ eventDescription: "api.success.backup" });
+            const error = yield this.connection
+                .getRepository(Log_1.Log)
+                .find({ eventDescription: "api.error.backup" });
+            const jobInfo = {
+                starts: starts ? starts : [],
+                success: success ? success : [],
+                error: error ? error : []
+            };
+            return jobInfo;
+        });
+    }
+    getAllBackupJobLogsById(jobId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const starts = yield this.connection
+                .getRepository(Log_1.Log)
+                .createQueryBuilder("log")
+                .where("log.backupJob = :id", { id: jobId })
+                .andWhere("eventDescription = :message", { message: "api.info.backup.execute" })
+                .orderBy("id", "ASC")
+                .getMany();
+            const success = yield this.connection
+                .getRepository(Log_1.Log)
+                .createQueryBuilder("log")
+                .where("log.backupJob = :id", { id: jobId })
+                .andWhere("eventDescription = :message", { message: "api.success.backup" })
+                .orderBy("id", "ASC")
+                .getMany();
+            const error = yield this.connection
+                .getRepository(Log_1.Log)
+                .createQueryBuilder("log")
+                .where("log.backupJob = :id", { id: jobId })
+                .andWhere("eventDescription = :message", { message: "api.error.backup" })
+                .orderBy("id", "ASC")
+                .getMany();
+            const jobInfo = {
+                starts: starts ? starts : [],
+                success: success ? success : [],
+                error: error ? error : []
+            };
+            return jobInfo;
+        });
+    }
+    getOldestLogEntryDate() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield this.connection
+                .getRepository(Log_1.Log)
+                .findOne();
+        });
+    }
     createDefaultGlobalSettingsById() {
         return __awaiter(this, void 0, void 0, function* () {
             const settings = new GlobalSettings_1.GlobalSettings();

@@ -30,7 +30,7 @@ __decorate([
     __metadata("design:type", String)
 ], Admin.prototype, "token", void 0);
 __decorate([
-    typeorm_1.OneToMany(type => Client_1.Client, Client => Client.admin),
+    typeorm_1.OneToMany(type => Client_1.Client, client => client.admin),
     __metadata("design:type", Array)
 ], Admin.prototype, "clients", void 0);
 Admin = __decorate([

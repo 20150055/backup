@@ -13,18 +13,61 @@ const types_1 = require("../../../shared/types");
 const sqliteConnection_1 = require("../../../sqliteConnection");
 const ApiResponse_1 = require("../../../ApiResponse");
 const checkAuth_1 = require("../../checkAuth");
+const scheduling_1 = require("../../../scheduling");
+const logging_1 = require("../../../logging");
 exports.router = express.Router();
 exports.router.post("/:userId/repository/:repoId/check", checkAuth_1.checkAuth, function (request, response) {
     return __awaiter(this, void 0, void 0, function* () {
         const repo = yield sqliteConnection_1.database.loadLocalS3BackupRepositoryById(request.params.repoId);
-        // Testdata
-        yield new Promise(resolve => setTimeout(resolve, 2000));
-        let message = "Check successfull";
-        ApiResponse_1.sendResponse(response, 200, {
-            messages: [
-                { name: "api.success.backuprepository.check", type: types_1.MessageType.success, args: { message } }
-            ]
-        });
+        let logInfo;
+        if (repo) {
+            let resticOutput;
+            if (repo.repoType === types_1.RepoType.Local) {
+                resticOutput = yield scheduling_1.checkRepo({
+                    location: repo.repoLocation,
+                    password: repo.repoPassword,
+                    type: repo.repoType
+                });
+            }
+            else {
+                resticOutput = yield scheduling_1.checkRepo({
+                    location: repo.repoLocation,
+                    password: repo.repoPassword,
+                    type: repo.repoType,
+                    s3AccessKey: repo.accessKey,
+                    s3SecretKey: repo.secretAccessKey
+                });
+            }
+            if (resticOutput.success) {
+                logInfo = {
+                    userId: request.params.userId,
+                    logLevel: types_1.LogLevel.success,
+                    eventDescription: "api.success.backuprepository.check",
+                    message: "Check successfull",
+                    type: types_1.LogType.repository,
+                    repoId: request.params.repoId
+                };
+            }
+            else {
+                logInfo = {
+                    userId: request.params.userId,
+                    logLevel: types_1.LogLevel.error,
+                    eventDescription: "api.error.backuprepository.check",
+                    message: "Check failed",
+                    type: types_1.LogType.repository,
+                    repoId: request.params.repoId
+                };
+            }
+            logging_1.createLog(logInfo);
+            ApiResponse_1.sendResponse(response, (logInfo.logLevel == types_1.LogLevel.success ? 200 : 400), {
+                messages: [
+                    { name: logInfo.eventDescription,
+                        type: (logInfo.logLevel == types_1.LogLevel.success ? types_1.MessageType.success : types_1.MessageType.error),
+                        args: { "message": (logInfo.message ? logInfo.message : "") }
+                    }
+                ]
+            });
+        }
     });
 });
 //# sourceMappingURL=check.js.map

@@ -31,6 +31,11 @@ var Language;
     Language["de"] = "de";
     Language["en"] = "en";
 })(Language = exports.Language || (exports.Language = {}));
+var ExecutionState;
+(function (ExecutionState) {
+    ExecutionState["success"] = "success";
+    ExecutionState["error"] = "error";
+})(ExecutionState = exports.ExecutionState || (exports.ExecutionState = {}));
 // Update
 var UpdateResponse;
 (function (UpdateResponse) {

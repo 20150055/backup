@@ -15,6 +15,7 @@ const checkAuth_1 = require("../../../checkAuth");
 const app_1 = require("../../../../app");
 const sqliteConnection_1 = require("../../../../sqliteConnection");
 const scheduling_1 = require("../../../../scheduling");
+const logging_1 = require("../../../../logging");
 exports.router = express.Router();
 exports.router.post("/:userId/repository/:repoId/restore", checkAuth_1.checkAuth, function (request, response) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -22,6 +23,14 @@ exports.router.post("/:userId/repository/:repoId/restore", checkAuth_1.checkAuth
         const repoId = request.params.repoId;
         const repository = yield sqliteConnection_1.database.loadLocalS3BackupRepositoryById(repoId);
         if (!repository) {
+            let logInfo = {
+                userId: request.params.userId,
+                logLevel: types_1.LogLevel.error,
+                eventDescription: "api.error.backup.restore-snapshot.repository-not-existing",
+                type: types_1.LogType.repository,
+                repoId: repoId
+            };
+            logging_1.createLog(logInfo);
             ApiResponse_1.sendResponse(response, 400, {
                 messages: [
                     {
@@ -61,10 +70,18 @@ exports.router.post("/:userId/repository/:repoId/restore", checkAuth_1.checkAuth
         // io.of("/api/").emit("progress", 120, 300);
         app_1.io.of("/api/").emit("restore finished");
         if (resticOutput.success) {
+            let logInfo = {
+                userId: request.params.userId,
+                logLevel: types_1.LogLevel.success,
+                eventDescription: "api.success.backup.restore-snapshot",
+                type: types_1.LogType.repository,
+                repoId: repoId
+            };
+            logging_1.createLog(logInfo);
             ApiResponse_1.sendResponse(response, 200, {
                 messages: [
                     {
-                        name: "api.success.backup.restore-snapshot",
+                        name: logInfo.eventDescription,
                         type: types_1.MessageType.success
                     }
                 ],
@@ -72,10 +89,18 @@ exports.router.post("/:userId/repository/:repoId/restore", checkAuth_1.checkAuth
             });
         }
         else {
+            let logInfo = {
+                userId: request.params.userId,
+                logLevel: types_1.LogLevel.error,
+                eventDescription: "api.error.backup.restore-snapshot",
+                type: types_1.LogType.repository,
+                repoId: repoId
+            };
+            logging_1.createLog(logInfo);
             ApiResponse_1.sendResponse(response, 400, {
                 messages: [
                     {
-                        name: "api.error.backup.restore-snapshot",
+                        name: logInfo.eventDescription,
                         type: types_1.MessageType.error,
                         args: { resticOutput: resticOutput.fullOutput }
                     }

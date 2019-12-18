@@ -139,4 +139,60 @@ function listFiles(commonArgs, snapshotId) {
     });
 }
 exports.listFiles = listFiles;
+function checkRepo(commonArgs) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const environmentVariables = helpers_1.createEnv(commonArgs);
+        const result = yield restic_1.spawnRestic({
+            args: ["check"],
+            env: environmentVariables
+        });
+        if (result.success) {
+            return Object.assign({}, result);
+        }
+        return result;
+    });
+}
+exports.checkRepo = checkRepo;
+function unlockRepo(commonArgs) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const environmentVariables = helpers_1.createEnv(commonArgs);
+        const result = yield restic_1.spawnRestic({
+            args: ["unlock", "--remove-all"],
+            env: environmentVariables
+        });
+        if (result.success) {
+            return Object.assign({}, result);
+        }
+        return result;
+    });
+}
+exports.unlockRepo = unlockRepo;
+function pruneRepo(commonArgs) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const environmentVariables = helpers_1.createEnv(commonArgs);
+        const result = yield restic_1.spawnRestic({
+            args: ["prune"],
+            env: environmentVariables
+        });
+        if (result.success) {
+            return Object.assign({}, result);
+        }
+        return result;
+    });
+}
+exports.pruneRepo = pruneRepo;
+function rebuildRepoIndex(commonArgs) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const environmentVariables = helpers_1.createEnv(commonArgs);
+        const result = yield restic_1.spawnRestic({
+            args: ["rebuild-index"],
+            env: environmentVariables
+        });
+        if (result.success) {
+            return Object.assign({}, result);
+        }
+        return result;
+    });
+}
+exports.rebuildRepoIndex = rebuildRepoIndex;
 //# sourceMappingURL=resticCallFunctions.js.map

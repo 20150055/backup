@@ -132,8 +132,11 @@ const updateRestic = () => __awaiter(this, void 0, void 0, function* () {
         yield downloadRestic(currentVersion, constants_1.resticPath, constants_1.currentOs);
     }
     catch (error) {
-        notify_1.notifyUser({ message: `Error while downloading restic: ${error.message}` });
+        notify_1.notifyUser({ message: `Error while downloading restic: ${error.message} - retrying in 10 seconds` });
         log_1.log.error(error);
+        yield new Promise(resolve => setTimeout(resolve, 10000)); // wait 10 seconds between retries
+        log_1.log.info("retrying restic download");
+        yield updateRestic();
     }
 });
 exports.updateRestic = updateRestic;
