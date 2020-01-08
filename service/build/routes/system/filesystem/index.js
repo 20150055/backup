@@ -22,7 +22,6 @@ exports.router.get("/directory", checkAuth_1.checkAuth, function (request, respo
                 ? false
                 : request.query.path
         };
-        console.log("directory", request.query);
         let invalidValue = true;
         let availableFolders = [];
         let path = typeof body.path === "string" ? body.path : false;

@@ -21,10 +21,7 @@ exports.router.get("/client/:clientId/dir", function (request, response) {
                 ? false
                 : request.query.path
         };
-        const clients = yield sqliteConnection_1.database.loadAllClients();
-        const client = clients.find(c => {
-            return c.id == request.params.clientId;
-        });
+        const client = yield sqliteConnection_1.database.loadClientWithClientUser(request.params.clientId);
         if (client) {
             const c = {
                 id: client.id,
@@ -32,8 +29,12 @@ exports.router.get("/client/:clientId/dir", function (request, response) {
                 name: client.ip,
                 os: client.os
             };
-            const responsedir = yield axios_1.default.get("http://" + client.ip + ":8380/api/system/directory?path=" + body.path, {
-                timeout: 10000
+            const responsedir = yield axios_1.default.get("https://" + client.ip + ":8380/api/system/directory?path=" + body.path, {
+                timeout: 10000,
+                headers: {
+                    Authorization: client.user.token,
+                    "X-USERID": client.user.id
+                },
             });
             if (responsedir.data.payload) {
                 console.log("dir", responsedir.data.payload.folder);

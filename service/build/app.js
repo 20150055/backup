@@ -19,6 +19,7 @@ const types_1 = require("./shared/types");
 const sqliteConnection_1 = require("./sqliteConnection");
 const update_1 = require("./update");
 const http = require("http");
+const https = require("https");
 const sio = require("socket.io");
 const constants_1 = require("./constants");
 const downloadRestic_1 = require("./util/downloadRestic");
@@ -26,7 +27,7 @@ const scheduling_1 = require("./scheduling");
 const log_1 = require("./util/log");
 const app = express();
 exports.app = app;
-const server = http.createServer(app);
+var server = http.createServer(app);
 // allow every origin to access the api
 app.use((req, res, next) => {
     res.header("Access-Control-Allow-Origin", "*");
@@ -108,6 +109,17 @@ exports.start = () => __awaiter(this, void 0, void 0, function* () {
     // serverstart on port XXXX
     server.listen(port, function () {
         console.log(`API is listening on port ${port}`);
+    });
+    if (constants_1.curEnv == constants_1.Env.dev && !(fs.existsSync('key.key') && fs.existsSync('cert.cert'))) {
+        fs.writeFileSync('key.key', "");
+        fs.writeFileSync('cert.cert', "");
+    }
+    var privateKey = fs.readFileSync('key.key', 'utf8');
+    var certificate = fs.readFileSync('cert.cert', 'utf8');
+    var credentials = { key: privateKey, cert: certificate };
+    var httpsServer = https.createServer(credentials, app);
+    httpsServer.listen(3000, function () {
+        console.log("https works");
     });
 });
 exports.delay = function delay(ms) {
