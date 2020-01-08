@@ -55,6 +55,9 @@ if ($mode -eq "d") {
     }
     cd $path\service;
     npm install;
+    cd $path\scripts;
+    npm install;
+    node generatecert.js;
     cd $path\installService;
     npm install node-windows;
     echo "Operation finished";
@@ -189,8 +192,12 @@ if ($mode -eq "i") {
         }
         cd $path\service;
         npm install;
+        cd $path\scripts;
+        npm install;
+        node generatecert.js;
         cd $path\installService;
         npm install node-windows;
+        node installService.js;
         $exepath = Get-WmiObject win32_service | ? {$_.Name -eq 'backup380.exe'} |select Pathname|Format-Wide -Property PathName -AutoSize|Out-String
         $exepath = $exepath.Trim();
         $exepath = $exepath.Replace("`"", "");
@@ -322,6 +329,9 @@ if ($mode -eq "i") {
     }
     cd $path\service;
     npm install;
+    cd $path\scripts;
+    npm install;
+    node generatecert.js;
     cd $path\installService;
     npm install node-windows;
     node installService.js;
