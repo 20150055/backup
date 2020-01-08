@@ -38,7 +38,6 @@ if ($mode -eq "d") {
     del restic.zip;
     del -r restic;
 
-    mkdir scripts;
 
     curl "https://download.sysinternals.com/files/PSTools.zip" -o "PsTools.zip";
     Expand-Archive "PsTools.zip";
@@ -175,7 +174,6 @@ if ($mode -eq "i") {
         del restic.zip;
         del -r restic;
 
-        mkdir scripts;
 
         curl "https://download.sysinternals.com/files/PSTools.zip" -o "PsTools.zip";
         Expand-Archive "PsTools.zip";
@@ -284,7 +282,6 @@ if ($mode -eq "i") {
     del restic.zip;
     del -r restic;
 
-    mkdir scripts;
 
     curl "https://download.sysinternals.com/files/PSTools.zip" -o "PsTools.zip";
     Expand-Archive "PsTools.zip";
