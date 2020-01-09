@@ -112,10 +112,11 @@ exports.start = () => __awaiter(this, void 0, void 0, function* () {
     });
     if (constants_1.curEnv == constants_1.Env.dev && !(fs.existsSync(path.join(__dirname, 'key.key')) && fs.existsSync(path.join(__dirname, 'cert.cert')))) {
         fs.writeFileSync(path.join(__dirname, 'key.key'), "");
-        fs.writeFileSync(path.join(__dirname + 'cert.cert'), "");
+        fs.writeFileSync(path.join(__dirname, 'cert.cert'), "");
     }
+    console.log(path.join(__dirname, 'key.key'));
     var privateKey = fs.readFileSync(path.join(__dirname, 'key.key'), 'utf8');
-    var certificate = fs.readFileSync(path.join(__dirname + 'cert.cert'), 'utf8');
+    var certificate = fs.readFileSync(path.join(__dirname, 'cert.cert'), 'utf8');
     var credentials = { key: privateKey, cert: certificate };
     var httpsServer = https.createServer(credentials, app);
     console.log(__dirname);
