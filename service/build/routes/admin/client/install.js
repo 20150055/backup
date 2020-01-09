@@ -74,6 +74,16 @@ exports.router.post("/clientInstall/:clientId", function (request, response) {
                             };
                             logging_1.createLog(log);
                         }
+                        /*
+                         client = cp.exec(
+                        "..\\scripts\\PsExec.exe \\\\" +
+                        adminClient.ip +
+                        " -u " +
+                        adminClient.username +
+                        " -s -p " +
+                        adminClient.password +
+                        ' /accepteula cmd /c "powershell.exe "',
+          */
                         app_1.io.of("/api/").emit("finishedInstall", responseString, "Windows", adminClient.ip, clientId);
                     });
                 }
