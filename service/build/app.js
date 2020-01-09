@@ -110,16 +110,18 @@ exports.start = () => __awaiter(this, void 0, void 0, function* () {
     server.listen(port, function () {
         console.log(`API is listening on port ${port}`);
     });
-    if (constants_1.curEnv == constants_1.Env.dev && !(fs.existsSync(path.join(__dirname, 'key.key')) && fs.existsSync(path.join(__dirname, 'cert.cert')))) {
-        fs.writeFileSync(path.join(__dirname, 'key.key'), "");
-        fs.writeFileSync(path.join(__dirname, 'cert.cert'), "");
+    if (constants_1.curEnv == constants_1.Env.dev &&
+        !(fs.existsSync(path.join(__dirname, "privkey.key")) &&
+            fs.existsSync(path.join(__dirname, "pubkey.key")) &&
+            fs.existsSync(path.join(__dirname, "cert.cert")))) {
+        fs.writeFileSync("../service/build/cert.cert", "");
+        fs.writeFileSync("../service/build/pubkey.key", "");
+        fs.writeFileSync("../service/build/privkey.key", "");
     }
-    console.log(path.join(__dirname, 'key.key'));
-    var privateKey = fs.readFileSync(path.join(__dirname, 'key.key'), 'utf8');
-    var certificate = fs.readFileSync(path.join(__dirname, 'cert.cert'), 'utf8');
+    var privateKey = fs.readFileSync(path.join(__dirname, "privkey.key"), "utf8");
+    var certificate = fs.readFileSync(path.join(__dirname, "cert.cert"), "utf8");
     var credentials = { key: privateKey, cert: certificate };
     var httpsServer = https.createServer(credentials, app);
-    console.log(__dirname);
     httpsServer.listen(3000, function () {
         console.log("https works");
     });

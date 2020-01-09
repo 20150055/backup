@@ -11,6 +11,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express = require("express");
 const cp = require("child_process");
 const fs = require("fs");
+const axios_1 = require("axios");
 const types_1 = require("../../../shared/types");
 const ApiResponse_1 = require("../../../ApiResponse");
 const path = require("path");
@@ -44,47 +45,44 @@ exports.router.post("/clientInstall/:clientId", function (request, response) {
                     fs.readFile("\\\\" +
                         adminClient.ip +
                         "\\c$\\Program Files\\Backup380\\installlog.txt", function (err, data) {
-                        if (data.indexOf("Error:") !== -1) {
-                            responseString +=
-                                "installation finished with an error, a log can be found in the installation folder (C:\\Program Files\\Backup380)\n";
-                            responseString += data;
-                        }
-                        else {
-                            responseString +=
-                                "installation finished successfully, a log can be found in the installation folder (C:\\Program Files\\Backup380)\n";
-                            responseString += data;
-                        }
-                        if (responseString.indexOf("Operation finished") >= 0) {
-                            const log = {
-                                message: responseString,
-                                logLevel: types_1.LogLevel.success,
-                                eventDescription: "api.success.client.install",
-                                type: types_1.LogType.client,
-                                clientId: clientId
-                            };
-                            logging_1.createLog(log);
-                        }
-                        else {
-                            const log = {
-                                message: responseString,
-                                logLevel: types_1.LogLevel.error,
-                                eventDescription: "api.error.client.install",
-                                type: types_1.LogType.client,
-                                clientId: clientId
-                            };
-                            logging_1.createLog(log);
-                        }
-                        /*
-                         client = cp.exec(
-                        "..\\scripts\\PsExec.exe \\\\" +
-                        adminClient.ip +
-                        " -u " +
-                        adminClient.username +
-                        " -s -p " +
-                        adminClient.password +
-                        ' /accepteula cmd /c "powershell.exe "',
-          */
-                        app_1.io.of("/api/").emit("finishedInstall", responseString, "Windows", adminClient.ip, clientId);
+                        return __awaiter(this, void 0, void 0, function* () {
+                            if (data.indexOf("Error:") !== -1) {
+                                responseString +=
+                                    "installation finished with an error, a log can be found in the installation folder (C:\\Program Files\\Backup380)\n";
+                                responseString += data;
+                            }
+                            else {
+                                responseString +=
+                                    "installation finished successfully, a log can be found in the installation folder (C:\\Program Files\\Backup380)\n";
+                                responseString += data;
+                            }
+                            if (responseString.indexOf("Operation finished") >= 0) {
+                                const log = {
+                                    message: responseString,
+                                    logLevel: types_1.LogLevel.success,
+                                    eventDescription: "api.success.client.install",
+                                    type: types_1.LogType.client,
+                                    clientId: clientId
+                                };
+                                logging_1.createLog(log);
+                            }
+                            else {
+                                const log = {
+                                    message: responseString,
+                                    logLevel: types_1.LogLevel.error,
+                                    eventDescription: "api.error.client.install",
+                                    type: types_1.LogType.client,
+                                    clientId: clientId
+                                };
+                                logging_1.createLog(log);
+                            }
+                            const resp = yield axios_1.default.get("http://" + client.ip + ":8380/api/user/system/certificiate", {
+                                timeout: 5000
+                            });
+                            fs.writeFileSync(path.join(__dirname, "clientcert.cert"), resp.data);
+                            axios_1.default;
+                            app_1.io.of("/api/").emit("finishedInstall", responseString, "Windows", adminClient.ip, clientId);
+                        });
                     });
                 }
                 else {
