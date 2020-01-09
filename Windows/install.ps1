@@ -38,7 +38,6 @@ if ($mode -eq "d") {
     del restic.zip;
     del -r restic;
 
-    mkdir scripts;
 
     curl "https://download.sysinternals.com/files/PSTools.zip" -o "PsTools.zip";
     Expand-Archive "PsTools.zip";
@@ -175,7 +174,6 @@ if ($mode -eq "i") {
         del restic.zip;
         del -r restic;
 
-        mkdir scripts;
 
         curl "https://download.sysinternals.com/files/PSTools.zip" -o "PsTools.zip";
         Expand-Archive "PsTools.zip";
@@ -284,7 +282,6 @@ if ($mode -eq "i") {
     del restic.zip;
     del -r restic;
 
-    mkdir scripts;
 
     curl "https://download.sysinternals.com/files/PSTools.zip" -o "PsTools.zip";
     Expand-Archive "PsTools.zip";
@@ -346,6 +343,7 @@ if ($mode -eq "i") {
     else {
         echo "Error: Creating the desktop shortcut failed";
     }
+    certutil -addstore "Root" $path\cert.cert 
     $service = Get-Service | Where-Object {$_.DisplayName -eq "Backup380"} | Where-Object {$_.Status -eq "Running"};
     if (!$service) {
         $count = 0;
