@@ -1,0 +1,17 @@
+{
+  "name": "scripts",
+  "version": "1.0.0",
+  "description": "",
+  "main": "deployToGhPages.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "copyfiles": "^2.1.0",
+    "gh-pages": "^2.0.1",
+    "ncp": "^2.0.0",
+    "selfsigned": "^1.10.7"
+  }
+}
