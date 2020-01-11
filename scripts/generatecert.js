@@ -1,7 +1,7 @@
 var selfsigned = require('selfsigned');
 const fs = require('fs');
-
-var attrs = [{ name: 'commonName', value: 'localhost' }];
+const ip = require('ip');
+var attrs = [{ name: 'commonName', value: ip.address() }];
 var pems = selfsigned.generate(attrs, { days: 10000 });
 
 

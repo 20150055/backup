@@ -343,7 +343,7 @@ if ($mode -eq "i") {
     else {
         echo "Error: Creating the desktop shortcut failed";
     }
-    certutil -addstore "Root" $path\cert.cert 
+    certutil -addstore "Root" "$path/service/build/cert.cert";
     $service = Get-Service | Where-Object {$_.DisplayName -eq "Backup380"} | Where-Object {$_.Status -eq "Running"};
     if (!$service) {
         $count = 0;

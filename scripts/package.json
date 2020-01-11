@@ -11,6 +11,7 @@
   "dependencies": {
     "copyfiles": "^2.1.0",
     "gh-pages": "^2.0.1",
+    "ip": "^1.1.5",
     "ncp": "^2.0.0",
     "selfsigned": "^1.10.7"
   }

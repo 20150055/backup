@@ -76,11 +76,33 @@ exports.router.post("/clientInstall/:clientId", function (request, response) {
                                 };
                                 logging_1.createLog(log);
                             }
-                            const resp = yield axios_1.default.get("http://" + client.ip + ":8380/api/user/system/certificiate", {
-                                timeout: 5000
+                            let available = false;
+                            while (available == false) {
+                                console.log("checking availability");
+                                const resp = axios_1.default.get("http://" + adminClient.ip + ":8380/api/system/ping", {
+                                    timeout: 20000
+                                }).catch(function (err) {
+                                    console.log("error");
+                                }).then(function (response) {
+                                    if (response) {
+                                        console.log("response", response.status);
+                                        available = true;
+                                    }
+                                });
+                                yield app_1.delay(2500);
+                            }
+                            console.log("ip", adminClient.ip);
+                            const resp = yield axios_1.default.get("http://" + adminClient.ip + ":8380/api/system/certificate", {
+                                timeout: 20000
                             });
                             fs.writeFileSync(path.join(__dirname, "clientcert.cert"), resp.data);
-                            axios_1.default;
+                            console.log("addcert");
+                            const p = path.join(__dirname, "clientcert.cert");
+                            const addcert = cp.exec('powershell -Command "Start-Process -Verb runAs powershell.exe -ArgumentList \' -Command "certutil -addstore "Root" ' + p + '\'"', function (err, stdout) {
+                                console.log("error", err);
+                                console.log("stdout", stdout);
+                            });
+                            console.log("addcertfinished", addcert);
                             app_1.io.of("/api/").emit("finishedInstall", responseString, "Windows", adminClient.ip, clientId);
                         });
                     });
