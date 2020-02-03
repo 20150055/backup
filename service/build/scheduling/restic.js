@@ -29,6 +29,10 @@ function spawnRestic({ args = [], env = {} }, onProgress) {
         const buffer = [];
         child.on("error", err => {
             log_1.log.error(err);
+            return resolve({
+                success: false,
+                fullOutput: `${err}`
+            });
         });
         child.stderr.on("data", (chunk) => {
             buffer.push(chunk.toString());
