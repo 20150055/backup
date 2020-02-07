@@ -119,15 +119,13 @@ class Database {
             yield this.connection.manager.save(user);
         });
     }
-    createAdmin() {
+    createAdmin(admin) {
         return __awaiter(this, void 0, void 0, function* () {
-            const admin = new Admin_1.Admin();
-            admin.name = "admin1";
-            admin.password = "admin1";
             admin.password = this.hash(admin.password);
             admin.clients = [];
             admin.id = 1;
-            yield this.connection.manager.save(admin);
+            admin = yield this.connection.manager.save(admin);
+            return admin;
         });
     }
     // Load
@@ -187,6 +185,12 @@ class Database {
                 .getRepository(Admin_1.Admin)
                 .findOne({ id: id });
             return admin;
+        });
+    }
+    checkIfAdminExists() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const count = yield this.connection.manager.getRepository(Admin_1.Admin).count();
+            return count > 0;
         });
     }
     loadBackupJobByName(name) {

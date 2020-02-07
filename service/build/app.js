@@ -90,9 +90,6 @@ exports.bootstrap = () => __awaiter(this, void 0, void 0, function* () {
     if (!settings) {
         yield sqliteConnection_1.database.createDefaultGlobalSettingsById();
     }
-    if (!admin) {
-        yield sqliteConnection_1.database.createAdmin();
-    }
     yield downloadRestic_1.updateRestic();
     if (constants_1.curEnv === constants_1.Env.prod) {
         update_1.checkForUpdate();
