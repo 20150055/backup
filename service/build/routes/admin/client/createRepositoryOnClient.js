@@ -9,11 +9,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express = require("express");
+const fs = require("fs");
 const axios_1 = require("axios");
 const types_1 = require("../../../shared/types");
 const sqliteConnection_1 = require("../../../sqliteConnection");
 const ApiResponse_1 = require("../../../ApiResponse");
 const path = require("path");
+const functions_1 = require("./functions");
+const https = require("https");
 const resticPath = path.join(__dirname, "../../../../../scripts/PsExec.exe");
 exports.router = express.Router();
 const app = express();
@@ -24,62 +27,97 @@ exports.router.post("/client/:clientId/repository", function (request, response)
         const client = yield sqliteConnection_1.database.loadClientWithClientUser(clientId);
         let errormessages = [];
         if (client) {
-            const user = client.user;
-            if (user === null) {
+            if (fs.existsSync(path.join(__dirname, "clientcert" + client.id + ".pem"))) {
+                const user = client.user;
+                if (user === null) {
+                    errormessages.push({
+                        name: "api.error.admin.client.create-repo.missing-user",
+                        type: types_1.MessageType.error
+                    });
+                    ApiResponse_1.sendResponse(response, 400, {
+                        messages: errormessages
+                    });
+                }
+                else {
+                    try {
+                        const fingerprint = functions_1.generateCertFingerprint(client);
+                        if (fingerprint == client.fingerprint) {
+                            const repo = repositoryClient.repo;
+                            const resp = yield axios_1.default.post("https://" +
+                                repositoryClient.ip +
+                                ":3000/api/user/" +
+                                user.id +
+                                "/repository", repo, {
+                                headers: {
+                                    Authorization: user.token
+                                },
+                                timeout: 20000,
+                                httpsAgent: new https.Agent({
+                                    rejectUnauthorized: false,
+                                })
+                            });
+                            if (resp) {
+                                if (resp.data.payload) {
+                                    ApiResponse_1.sendResponse(response, 200, {
+                                        messages: [
+                                            {
+                                                name: "api.success.client.create.repo",
+                                                type: types_1.MessageType.success
+                                            }
+                                        ],
+                                        payload: { repo: resp.data.payload.repo }
+                                    });
+                                }
+                            }
+                        }
+                        else {
+                            errormessages.push({
+                                name: "api.error.admin.client.create-repository.fingerprint-invalid",
+                                type: types_1.MessageType.error
+                            });
+                            ApiResponse_1.sendResponse(response, 400, {
+                                messages: errormessages
+                            });
+                        }
+                    }
+                    catch (e) {
+                        if (e.response === undefined) {
+                            errormessages.push({
+                                name: "api.error.admin.client.create-repo.backup-not-answering",
+                                type: types_1.MessageType.error
+                            });
+                        }
+                        else {
+                            console.log("error", e.response.data.messages);
+                            errormessages.push({
+                                name: "api.error.admin.client.create-repo.unknown-error",
+                                type: types_1.MessageType.error
+                            });
+                        }
+                        ApiResponse_1.sendResponse(response, 400, {
+                            messages: errormessages
+                        });
+                    }
+                }
+            }
+            else {
                 errormessages.push({
-                    name: "api.error.admin.client.create-repo.missing-user",
+                    name: "api.error.admin.client.create-repository.certificate-invalid",
                     type: types_1.MessageType.error
                 });
                 ApiResponse_1.sendResponse(response, 400, {
                     messages: errormessages
                 });
             }
-            else {
-                try {
-                    const repo = repositoryClient.repo;
-                    const resp = yield axios_1.default.post("http://" +
-                        repositoryClient.ip +
-                        ":8380/api/user/" +
-                        user.id +
-                        "/repository", repo, {
-                        headers: {
-                            Authorization: user.token
-                        },
-                        timeout: 20000
-                    });
-                    if (resp) {
-                        if (resp.data.payload) {
-                            ApiResponse_1.sendResponse(response, 200, {
-                                messages: [
-                                    {
-                                        name: "api.success.client.create.repo",
-                                        type: types_1.MessageType.success
-                                    }
-                                ],
-                                payload: { repo: resp.data.payload.repo }
-                            });
-                        }
-                    }
-                }
-                catch (e) {
-                    if (e.response === undefined) {
-                        errormessages.push({
-                            name: "api.error.admin.client.create-repo.backup-not-answering",
-                            type: types_1.MessageType.error
-                        });
-                    }
-                    else {
-                        console.log("error", e.response.data.messages);
-                        errormessages.push({
-                            name: "api.error.admin.client.create-repo.unknown-error",
-                            type: types_1.MessageType.error
-                        });
-                    }
-                    ApiResponse_1.sendResponse(response, 400, {
-                        messages: errormessages
-                    });
-                }
-            }
+        }
+        else {
+            errormessages.push({
+                name: "api.error.admin.client.create-repository.client-does-not-exist",
+                type: types_1.MessageType.error
+            });
+            ApiResponse_1.sendResponse(response, 400, {
+                messages: errormessages
+            });
         }
     });
 });

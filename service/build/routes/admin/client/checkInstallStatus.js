@@ -9,11 +9,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express = require("express");
+const https = require("https");
+const fs = require("fs");
 const axios_1 = require("axios");
 const types_1 = require("../../../shared/types");
 const sqliteConnection_1 = require("../../../sqliteConnection");
 const ApiResponse_1 = require("../../../ApiResponse");
 const path = require("path");
+const functions_1 = require("./functions");
 const resticPath = path.join(__dirname, "../../../../../scripts/PsExec.exe");
 exports.router = express.Router();
 const app = express();
@@ -23,26 +26,54 @@ exports.router.get("/client/:clientId/installstatus", function (request, respons
         let errormessages = [];
         if (client) {
             try {
-                const resp = yield axios_1.default.get("http://" + client.ip + ":8380/api/system/ping", {
-                    timeout: 2000
-                });
-                if (resp.status === 200) {
-                    ApiResponse_1.sendResponse(response, 200, {
-                        messages: [
-                            {
-                                name: "api.success.client.get-install-status",
-                                type: types_1.MessageType.success
-                            }
-                        ],
-                        payload: { installed: true }
-                    });
+                if (fs.existsSync(path.join(__dirname, "clientcert" + client.id + ".pem"))) {
+                    const fingerprint = functions_1.generateCertFingerprint(client);
+                    if (client.fingerprint == fingerprint) {
+                        const resp = yield axios_1.default.get("https://" + client.ip + ":3000/api/system/ping", {
+                            timeout: 5000,
+                            httpsAgent: new https.Agent({
+                                rejectUnauthorized: false,
+                            })
+                        });
+                        if (resp.status === 200) {
+                            ApiResponse_1.sendResponse(response, 200, {
+                                messages: [
+                                    {
+                                        name: "api.success.client.get-install-status",
+                                        type: types_1.MessageType.success
+                                    }
+                                ],
+                                payload: { installed: true }
+                            });
+                        }
+                        else {
+                            errormessages.push({
+                                name: "api.error.admin.client.check-install-status.backup-not-answering",
+                                type: types_1.MessageType.error
+                            });
+                            ApiResponse_1.sendResponse(response, 400, {
+                                messages: errormessages,
+                                payload: { installed: false }
+                            });
+                        }
+                    }
+                    else {
+                        errormessages.push({
+                            name: "api.error.admin.client.check-install-status.fingerprint-invalid",
+                            type: types_1.MessageType.error
+                        });
+                        ApiResponse_1.sendResponse(response, 200, {
+                            messages: errormessages,
+                            payload: { installed: false }
+                        });
+                    }
                 }
                 else {
                     errormessages.push({
-                        name: "api.error.admin.client.check-install-status.backup-not-answering",
+                        name: "api.error.admin.client.check-install-status.certificate-invalid",
                         type: types_1.MessageType.error
                     });
-                    ApiResponse_1.sendResponse(response, 200, {
+                    ApiResponse_1.sendResponse(response, 400, {
                         messages: errormessages,
                         payload: { installed: false }
                     });
@@ -55,10 +86,6 @@ exports.router.get("/client/:clientId/installstatus", function (request, respons
                         type: types_1.MessageType.error
                     });
                 }
-                ApiResponse_1.sendResponse(response, 200, {
-                    messages: errormessages,
-                    payload: { installed: false }
-                });
             }
         }
         else {

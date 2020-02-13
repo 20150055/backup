@@ -9,11 +9,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express = require("express");
+const fs = require("fs");
 const axios_1 = require("axios");
 const types_1 = require("../../../shared/types");
 const sqliteConnection_1 = require("../../../sqliteConnection");
 const ApiResponse_1 = require("../../../ApiResponse");
 const path = require("path");
+const functions_1 = require("./functions");
+const https = require("https");
 const resticPath = path.join(__dirname, "../../../../../scripts/PsExec.exe");
 exports.router = express.Router();
 const app = express();
@@ -23,54 +26,84 @@ exports.router.get("/client/:clientId/getRepos", function (request, response) {
         const clientId = request.params.clientId;
         const client = yield sqliteConnection_1.database.loadClientWithClientUser(clientId);
         if (client) {
-            const user = client.user;
-            if (user === null) {
+            if (fs.existsSync(path.join(__dirname, "clientcert" + client.id + ".pem"))) {
+                const fingerprint = functions_1.generateCertFingerprint(client);
+                if (client.fingerprint == fingerprint) {
+                    const user = client.user;
+                    if (user === null) {
+                        errormessages.push({
+                            name: "api.error.admin.client.get-all-repos.missing-user",
+                            type: types_1.MessageType.error
+                        });
+                        ApiResponse_1.sendResponse(response, 400, {
+                            messages: errormessages
+                        });
+                    }
+                    else {
+                        try {
+                            const resp = yield axios_1.default.get("https://" +
+                                client.ip +
+                                ":3000/api/user/" +
+                                user.id +
+                                "/repository", {
+                                headers: {
+                                    Authorization: user.token
+                                },
+                                timeout: 3000,
+                                httpsAgent: new https.Agent({
+                                    rejectUnauthorized: false,
+                                })
+                            });
+                            if (resp) {
+                                if (resp.data.payload) {
+                                    ApiResponse_1.sendResponse(response, 200, {
+                                        messages: [
+                                            {
+                                                name: "api.success.client.getRepos",
+                                                type: types_1.MessageType.success
+                                            }
+                                        ],
+                                        payload: { repo: resp.data.payload.repo }
+                                    });
+                                }
+                            }
+                        }
+                        catch (e) {
+                            if (e.response === undefined) {
+                                errormessages.push({
+                                    name: "api.error.admin.client.get-all-repos.backup-not-answering",
+                                    type: types_1.MessageType.error
+                                });
+                            }
+                            ApiResponse_1.sendResponse(response, 200, {
+                                messages: errormessages
+                            });
+                        }
+                    }
+                }
+                else {
+                    errormessages.push({
+                        name: "api.error.admin.client.get-all-repos.fingerprint-invalid",
+                        type: types_1.MessageType.error
+                    });
+                    ApiResponse_1.sendResponse(response, 400, {
+                        messages: errormessages
+                    });
+                }
+            }
+            else {
                 errormessages.push({
-                    name: "api.error.admin.client.getRepos.missing-user",
+                    name: "api.error.admin.client.get-all-repos.certificate-invalid",
                     type: types_1.MessageType.error
                 });
                 ApiResponse_1.sendResponse(response, 400, {
                     messages: errormessages
                 });
             }
-            else {
-                try {
-                    const resp = yield axios_1.default.get("http://" + client.ip + ":8380/api/user/" + user.id + "/repository", {
-                        headers: {
-                            Authorization: user.token
-                        },
-                        timeout: 3000
-                    });
-                    if (resp) {
-                        if (resp.data.payload) {
-                            ApiResponse_1.sendResponse(response, 200, {
-                                messages: [
-                                    {
-                                        name: "api.success.client.getRepos",
-                                        type: types_1.MessageType.success
-                                    }
-                                ],
-                                payload: { repo: resp.data.payload.repo }
-                            });
-                        }
-                    }
-                }
-                catch (e) {
-                    if (e.response === undefined) {
-                        errormessages.push({
-                            name: "api.error.admin.client.check-install-status.backup-not-answering",
-                            type: types_1.MessageType.error
-                        });
-                    }
-                    ApiResponse_1.sendResponse(response, 200, {
-                        messages: errormessages
-                    });
-                }
-            }
         }
         else {
             errormessages.push({
-                name: "api.error.admin.client.check-install-status.client-does-not-exist",
+                name: "api.error.admin.client.get-all-repos.client-does-not-exist",
                 type: types_1.MessageType.error
             });
             ApiResponse_1.sendResponse(response, 400, {

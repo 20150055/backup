@@ -13,15 +13,19 @@ const cp = require("child_process");
 const fs = require("fs");
 const axios_1 = require("axios");
 const types_1 = require("../../../shared/types");
+const sqliteConnection_1 = require("../../../sqliteConnection");
 const ApiResponse_1 = require("../../../ApiResponse");
 const path = require("path");
 const ssh = require("ssh2");
 const scp = require("scp2");
 const app_1 = require("../../../app");
 const logging_1 = require("../../../logging");
+const forge = require("node-forge");
+const entity_1 = require("../../../entity");
 const resticPath = path.join(__dirname, "../../../../../scripts/PsExec.exe");
 exports.router = express.Router();
 const app = express();
+const { pki, md } = forge;
 exports.router.post("/clientInstall/:clientId", function (request, response) {
     return __awaiter(this, void 0, void 0, function* () {
         let adminClient = request.body;
@@ -29,7 +33,6 @@ exports.router.post("/clientInstall/:clientId", function (request, response) {
         let clientId = request.params.clientId;
         let responseString = "";
         if (adminClient.os === "Windows") {
-            const mkdir = cp.exec('Start-Process -Verb runAs powershell.exe -ArgumentList \' -Command "New-Item -ItemType Directory -Force -Path "C:\\Program Files\\Backup380""\'');
             const copy = cp.exec('powershell.exe Copy-Item -Path ..\\Setup\\Windows\\install.ps1 -Destination "\\\\' +
                 adminClient.ip +
                 '\\admin$"');
@@ -39,12 +42,12 @@ exports.router.post("/clientInstall/:clientId", function (request, response) {
                 adminClient.username +
                 " -s -p " +
                 adminClient.password +
-                ' /accepteula cmd /c "powershell.exe -executionpolicy bypass -noninteractive -File C:\\Windows\\install.ps1 -path "C:\\Program Files\\Backup380" -mode "i" > "C:\\Program Files\\Backup380\\installlog.txt""', function (err, stdout, stderr) {
+                ' /accepteula cmd /c "powershell.exe -executionpolicy bypass -noninteractive -File C:\\Windows\\install.ps1 -path "C:\\Program Files\\Backup380" -mode "i" > "C:\\Program Files\\installlog.txt""', function (err, stdout, stderr) {
                 console.log("err", err);
                 if (!err) {
                     fs.readFile("\\\\" +
                         adminClient.ip +
-                        "\\c$\\Program Files\\Backup380\\installlog.txt", function (err, data) {
+                        "\\c$\\Program Files\\installlog.txt", function (err, data) {
                         return __awaiter(this, void 0, void 0, function* () {
                             if (data.indexOf("Error:") !== -1) {
                                 responseString +=
@@ -79,11 +82,14 @@ exports.router.post("/clientInstall/:clientId", function (request, response) {
                             let available = false;
                             while (available == false) {
                                 console.log("checking availability");
-                                const resp = axios_1.default.get("http://" + adminClient.ip + ":8380/api/system/ping", {
+                                const resp = axios_1.default
+                                    .get("http://" + adminClient.ip + ":8380/api/system/ping", {
                                     timeout: 20000
-                                }).catch(function (err) {
+                                })
+                                    .catch(function (err) {
                                     console.log("error");
-                                }).then(function (response) {
+                                })
+                                    .then(function (response) {
                                     if (response) {
                                         console.log("response", response.status);
                                         available = true;
@@ -91,19 +97,47 @@ exports.router.post("/clientInstall/:clientId", function (request, response) {
                                 });
                                 yield app_1.delay(2500);
                             }
-                            console.log("ip", adminClient.ip);
-                            const resp = yield axios_1.default.get("http://" + adminClient.ip + ":8380/api/system/certificate", {
-                                timeout: 20000
-                            });
-                            fs.writeFileSync(path.join(__dirname, "clientcert.cert"), resp.data);
-                            console.log("addcert");
-                            const p = path.join(__dirname, "clientcert.cert");
-                            const addcert = cp.exec('powershell -Command "Start-Process -Verb runAs powershell.exe -ArgumentList \' -Command "certutil -addstore "Root" ' + p + '\'"', function (err, stdout) {
-                                console.log("error", err);
-                                console.log("stdout", stdout);
-                            });
-                            console.log("addcertfinished", addcert);
+                            const certificate = cp.execSync("powershell.exe Copy-Item -Path '\\\\" +
+                                adminClient.ip +
+                                "\\c$\\Program Files\\Backup380\\service\\build\\cert.cert' -Destination '" +
+                                path.join(__dirname, "clientcert" + clientId + ".cert") +
+                                "'");
+                            const p = path.join(__dirname, "clientcert" + clientId + ".cert");
+                            /*const addcert = cp.execSync(
+                              'powershell -Command "Start-Process -Verb runAs powershell.exe -ArgumentList \' -Command "certutil -addstore "Root" ' +
+                                p +
+                                "'\""
+                            );*/
+                            fs.renameSync(path.join(__dirname, "clientcert" + clientId + ".cert"), path.join(__dirname, "clientcert" + clientId + ".pem"));
+                            const certpem = fs.readFileSync(path.join(__dirname, "clientcert" + clientId + ".pem"), "utf8");
+                            const cert = pki.certificateFromPem(certpem);
+                            const der = forge.asn1.toDer(pki.certificateToAsn1(cert)).getBytes();
+                            const m = md.sha256.create();
+                            m.start();
+                            m.update(der);
+                            const fingerprint = m.digest()
+                                .toHex()
+                                .match(/.{2}/g)
+                                .join(':')
+                                .toUpperCase();
+                            console.log(fingerprint);
+                            const oldClient = yield sqliteConnection_1.database.loadClientById(request.params.clientId);
+                            if (oldClient) {
+                                let newClient = new entity_1.Client();
+                                newClient.id = oldClient.id;
+                                newClient.fingerprint = fingerprint;
+                                yield sqliteConnection_1.database.createClient(newClient);
+                            }
+                            console.log("certificate", certificate);
                             app_1.io.of("/api/").emit("finishedInstall", responseString, "Windows", adminClient.ip, clientId);
+                            /*const resp = await axios.get(
+                              "http://" + adminClient.ip + ":8380/api/system/certificate",
+                        
+                              {
+                                timeout: 20000
+                              }
+                            );
+                            fs.writeFileSync(path.join(__dirname,"clientcert.cert"),resp.data);*/
                         });
                     });
                 }

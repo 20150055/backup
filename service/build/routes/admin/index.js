@@ -20,6 +20,8 @@ const getClient = require("./client/get");
 const getClientDirs = require("./client/fetchDirsFromClient");
 const adminExists = require("./anyExists");
 const register = require("./register");
+const getUser = require("./client/getUser");
+const getCert = require("./client/getCertOnClient");
 exports.router = express.Router();
 exports.router.use("/admin", createClient.router);
 exports.router.use("/admin", deleteClient.router);
@@ -40,4 +42,6 @@ exports.router.use("/admin", fetchUserFromClient.router);
 exports.router.use("/admin", loginAndFetchUser.router);
 exports.router.use("/admin", getClient.router);
 exports.router.use("/admin", getClientDirs.router);
+exports.router.use("/admin", getUser.router);
+exports.router.use("/admin", getCert.router);
 //# sourceMappingURL=index.js.map

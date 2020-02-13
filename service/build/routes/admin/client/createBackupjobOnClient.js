@@ -9,11 +9,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express = require("express");
+const fs = require("fs");
 const axios_1 = require("axios");
 const types_1 = require("../../../shared/types");
 const sqliteConnection_1 = require("../../../sqliteConnection");
 const ApiResponse_1 = require("../../../ApiResponse");
 const path = require("path");
+const functions_1 = require("./functions");
+const https = require("https");
 const resticPath = path.join(__dirname, "../../../../../scripts/PsExec.exe");
 exports.router = express.Router();
 const app = express();
@@ -24,87 +27,92 @@ exports.router.post("/client/:clientId/backupJob", function (request, response) 
         const client = yield sqliteConnection_1.database.loadClientWithClientUser(clientId);
         let errormessages = [];
         if (client) {
-            const user = client.user;
-            if (user === null) {
-                errormessages.push({
-                    name: "api.error.admin.client.create-backupjob.missing-user",
-                    type: types_1.MessageType.error
-                });
-                ApiResponse_1.sendResponse(response, 400, {
-                    messages: errormessages
-                });
-            }
-            else {
-                try {
-                    const resp = yield axios_1.default.post("http://" +
-                        backupjobClient.ip +
-                        ":8380/api/user/" +
-                        user.id +
-                        "/backupJob", backupjobClient.backupjob, {
-                        headers: {
-                            Authorization: user.token
-                        },
-                        timeout: 5000
+            if (fs.existsSync(path.join(__dirname, "clientcert" + client.id + ".pem"))) {
+                const user = client.user;
+                if (user === null) {
+                    errormessages.push({
+                        name: "api.error.admin.client.create-backupjob.missing-user",
+                        type: types_1.MessageType.error
                     });
-                    if (resp.data.payload) {
-                        ApiResponse_1.sendResponse(response, 200, {
-                            messages: [
-                                {
-                                    name: "api.success.client.create.job",
-                                    type: types_1.MessageType.success
-                                }
-                            ],
-                            payload: { job: resp.data.payload.job }
-                        });
-                        /*const clientJob: BackupJob = {
-                      active: job.data.payload.active,
-                      archived: job.data.payload.archived,
-                      backupLocations: job.data.payload.backupLocations,
-                      cronInterval: job.data.payload.cronInterval,
-                      id: job.data.payload.id,
-                      emailNotification: job.data.payload.emailNotification,
-                      log: null,
-                      maxBackups: job.data.payload.maxBackups,
-                      name: job.data.payload.name,
-                      prevScheduledDate: job.data.payload.prevScheduledDate,
-                      repoId: job.data.payload.repoId,
-                      startDate: job.data.payload.startDate,
-                      user: user.id
-                    };*/
-                        /*const jobs = user.job;
-                    jobs.push(clientJob);
-                    user.job = jobs;
-                    client.user = user;
-                    await database.createClient(client);*/
-                    }
-                }
-                catch (e) {
-                    console.log("error", e);
-                    if (e.response === undefined) {
-                        errormessages.push({
-                            name: "api.error.admin.client.create-backupjob.backup-not-answering",
-                            type: types_1.MessageType.error
-                        });
-                    }
-                    else {
-                        errormessages.push({
-                            name: "api.error.admin.client.create-backupjob.unknown-error",
-                            type: types_1.MessageType.error
-                        });
-                    }
                     ApiResponse_1.sendResponse(response, 400, {
                         messages: errormessages
                     });
                 }
+                else {
+                    try {
+                        const fingerprint = functions_1.generateCertFingerprint(client);
+                        if (fingerprint == client.fingerprint) {
+                            const resp = yield axios_1.default.post("https://" +
+                                backupjobClient.ip +
+                                ":3000/api/user/" +
+                                user.id +
+                                "/backupJob", backupjobClient.backupjob, {
+                                headers: {
+                                    Authorization: user.token
+                                },
+                                timeout: 5000,
+                                httpsAgent: new https.Agent({
+                                    rejectUnauthorized: false,
+                                })
+                            });
+                            if (resp.data.payload) {
+                                ApiResponse_1.sendResponse(response, 200, {
+                                    messages: [
+                                        {
+                                            name: "api.success.client.create.job",
+                                            type: types_1.MessageType.success
+                                        }
+                                    ],
+                                    payload: { job: resp.data.payload.job }
+                                });
+                            }
+                        }
+                        else {
+                            errormessages.push({
+                                name: "api.error.admin.client.create-backupjob.fingerprint-invalid",
+                                type: types_1.MessageType.error
+                            });
+                            ApiResponse_1.sendResponse(response, 400, {
+                                messages: errormessages
+                            });
+                        }
+                    }
+                    catch (e) {
+                        if (e.response === undefined) {
+                            errormessages.push({
+                                name: "api.error.admin.client.create-backupjob.backup-not-answering",
+                                type: types_1.MessageType.error
+                            });
+                        }
+                        else {
+                            errormessages.push({
+                                name: "api.error.admin.client.create-backupjob.unknown-error",
+                                type: types_1.MessageType.error
+                            });
+                        }
+                        ApiResponse_1.sendResponse(response, 400, {
+                            messages: errormessages
+                        });
+                    }
+                }
+            }
+            else {
+                errormessages.push({
+                    name: "api.error.admin.client.create-backupjob.certificate-invalid",
+                    type: types_1.MessageType.error
+                });
+                ApiResponse_1.sendResponse(response, 400, {
+                    messages: errormessages,
+                });
             }
         }
         else {
             errormessages.push({
-                name: "api.error.admin.client.create.backupjob",
+                name: "api.error.admin.client.check-install-status.client-does-not-exist",
                 type: types_1.MessageType.error
             });
             ApiResponse_1.sendResponse(response, 400, {
-                messages: errormessages
+                messages: errormessages,
             });
         }
     });
